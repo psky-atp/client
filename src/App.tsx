@@ -2,7 +2,7 @@ import { createSignal, For, onMount, type Component } from "solid-js";
 
 const CHARLIMIT = 12;
 const MAXPOSTS = 50;
-const DID = "did:plc:tvvjkkw276ge47luiaq3uodr";
+const DID = "did:plc:bpmiiiabnbf2hf7uuqdbjne6";
 const SERVER_URL = "https://pico.api.bsky.mom";
 const WEBSOCKET = "wss://pico.api.bsky.mom/subscribe";
 
