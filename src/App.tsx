@@ -3,6 +3,8 @@ import { createSignal, For, onMount, type Component } from "solid-js";
 const CHARLIMIT = 12;
 const MAXPOSTS = 50;
 const DID = "did:plc:tvvjkkw276ge47luiaq3uodr";
+const SERVER_URL = "http://localhost:8080";
+const WEBSOCKET = "ws://localhost:8080/subscribe";
 
 type PostRecord = {
   rkey: string;
@@ -12,7 +14,7 @@ type PostRecord = {
 
 const PostFeed: Component = () => {
   const [posts, setPosts] = createSignal<PostRecord[]>([]);
-  const socket = new WebSocket("ws://localhost:8080/subscribe");
+  const socket = new WebSocket(WEBSOCKET);
 
   onMount(async () => {
     setPosts(await getPosts());
@@ -23,7 +25,7 @@ const PostFeed: Component = () => {
   });
 
   const getPosts = async () => {
-    const res = await fetch("http://localhost:8080/posts");
+    const res = await fetch(`${SERVER_URL}/posts`);
     const json = await res.json();
     return json;
   };
@@ -62,7 +64,7 @@ const PostComposer: Component = () => {
   };
 
   const sendPost = async (post: string) => {
-    await fetch("http://localhost:8080/post", {
+    await fetch(`${SERVER_URL}/post`, {
       method: "POST",
       body: JSON.stringify({ post: post }),
       headers: { "Content-Type": "application/json" },
@@ -103,7 +105,7 @@ const PostComposer: Component = () => {
           }}
           class="bg-slate-500 px-2 py-1 font-bold text-white hover:bg-slate-700"
         >
-          Send
+          Pico
         </button>
       </form>
     </div>
@@ -113,7 +115,19 @@ const PostComposer: Component = () => {
 const App: Component = () => {
   return (
     <div class="m-5 flex flex-col items-center font-mono">
-      <h1 class="mb-5 text-2xl">picosky</h1>
+      <h1 class="mb-3 text-2xl">picosky</h1>
+      <p class="text-xs">
+        original idea by{" "}
+        <a class="text-sky-500" href="https://bsky.app/profile/cam.fyi">
+          @cam.fyi
+        </a>
+      </p>
+      <p class="mb-3 text-xs">
+        developed by{" "}
+        <a class="text-sky-500" href="https://bsky.app/profile/bsky.mom">
+          @bsky.mom
+        </a>
+      </p>
       <PostComposer />
       <PostFeed />
     </div>
