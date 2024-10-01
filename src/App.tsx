@@ -1,11 +1,10 @@
 import { createSignal, For, onMount, type Component } from "solid-js";
-import "dotenv/config";
 
-const CHARLIMIT = Number(process.env.CHARLIMIT);
-const MAXPOSTS = Number(process.env.MAXPOSTS);
-const DID = process.env.DID;
-const SERVER_URL = process.env.SERVER_URL;
-const WEBSOCKET = process.env.WEBSOCKET;
+const CHARLIMIT = 12;
+const MAXPOSTS = 50;
+const DID = "did:plc:tvvjkkw276ge47luiaq3uodr";
+const SERVER_URL = "https://pico.api.bsky.mom";
+const WEBSOCKET = "wss://pico.api.bsky.mom/subscribe";
 
 type PostRecord = {
   rkey: string;
