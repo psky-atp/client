@@ -1,10 +1,11 @@
 import { createSignal, For, onMount, type Component } from "solid-js";
+import "dotenv/config";
 
-const CHARLIMIT = 12;
-const MAXPOSTS = 50;
-const DID = "did:plc:tvvjkkw276ge47luiaq3uodr";
-const SERVER_URL = "http://localhost:8080";
-const WEBSOCKET = "ws://localhost:8080/subscribe";
+const CHARLIMIT = Number(process.env.CHARLIMIT);
+const MAXPOSTS = Number(process.env.MAXPOSTS);
+const DID = process.env.DID;
+const SERVER_URL = process.env.SERVER_URL;
+const WEBSOCKET = process.env.WEBSOCKET;
 
 type PostRecord = {
   rkey: string;
@@ -14,7 +15,7 @@ type PostRecord = {
 
 const PostFeed: Component = () => {
   const [posts, setPosts] = createSignal<PostRecord[]>([]);
-  const socket = new WebSocket(WEBSOCKET);
+  const socket = new WebSocket(WEBSOCKET!);
 
   onMount(async () => {
     setPosts(await getPosts());
