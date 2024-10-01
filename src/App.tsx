@@ -85,7 +85,8 @@ const PostComposer: Component = () => {
           id="post"
           placeholder="12 chars max"
           required
-          class="mb-4 mr-2 w-48 border border-black px-2 py-1"
+          size="12"
+          class="mb-4 mr-2 border border-black px-2 py-1"
           onInput={(e) => (postInput = e.currentTarget.value)}
           onPaste={(e) => {
             if (
