@@ -11,6 +11,18 @@
   <meta property="og:description" content="anon and simple" />
   <link rel="shortcut icon" type="image/ico" href="/src/assets/favicon.ico" />
   <title>picosky</title>
+  <script>
+    if (
+      localStorage.theme === "dark" ||
+      (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
+    ) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  </script>
+
 </head>
 
 <body>
