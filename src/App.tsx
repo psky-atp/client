@@ -51,10 +51,14 @@ const PostFeed: Component = () => {
 };
 
 const PostComposer: Component = () => {
-  const [theme, setTheme] = createSignal<string>(localStorage.theme);
+  const [theme, setTheme] = createSignal("");
   let postInput = "";
   const segmenter = new Intl.Segmenter();
 
+  onMount(() => {
+    if (localStorage.theme !== undefined) setTheme(localStorage.theme);
+    else setTheme("light");
+  });
   const graphemeLen = (text: string): number => {
     let iterator = segmenter.segment(text)[Symbol.iterator]();
     let count = 0;
@@ -78,7 +82,9 @@ const PostComposer: Component = () => {
         <button
           onclick={() => {
             localStorage.theme =
-              localStorage.theme == "light" ? "dark" : "light";
+              localStorage.theme == "light" || !localStorage.theme ?
+                "dark"
+              : "light";
             if (localStorage.theme == "dark")
               document.documentElement.classList.add("dark");
             else document.documentElement.classList.remove("dark");
