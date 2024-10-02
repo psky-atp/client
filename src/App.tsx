@@ -82,10 +82,10 @@ const PostComposer: Component = () => {
         <button
           onclick={() => {
             localStorage.theme =
-              localStorage.theme == "light" || !localStorage.theme ?
+              localStorage.theme === "light" || !localStorage.theme ?
                 "dark"
               : "light";
-            if (localStorage.theme == "dark")
+            if (localStorage.theme === "dark")
               document.documentElement.classList.add("dark");
             else document.documentElement.classList.remove("dark");
             setTheme(localStorage.theme);
