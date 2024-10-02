@@ -1,4 +1,5 @@
 import { createSignal, For, onMount, type Component } from "solid-js";
+import { WebSocket } from "partysocket";
 
 const CHARLIMIT = 12;
 const MAXPOSTS = 50;
@@ -16,8 +17,10 @@ const PostFeed: Component = () => {
   const [posts, setPosts] = createSignal<PostRecord[]>([]);
   const socket = new WebSocket(WEBSOCKET!);
 
-  onMount(async () => {
-    setPosts(await getPosts());
+  onMount(() => {
+    socket.addEventListener("open", async () => {
+      setPosts(await getPosts());
+    });
     socket.addEventListener("message", (event) => {
       const data = JSON.parse(event.data) as PostRecord;
       setPosts([data, ...posts().slice(0, MAXPOSTS - 1)]);
