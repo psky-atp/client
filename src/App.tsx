@@ -54,14 +54,26 @@ const PostFeed: Component = () => {
 };
 
 const PostComposer: Component = () => {
-  const [theme, setTheme] = createSignal("");
+  const [saveToggle, setSaveToggle] = createSignal(false);
+  const [firstChar, setFirstChar] = createSignal("");
   let postInput = "";
   const segmenter = new Intl.Segmenter();
 
   onMount(() => {
-    if (localStorage.theme !== undefined) setTheme(localStorage.theme);
-    else setTheme("light");
+    setSaveToggle(
+      localStorage.getItem("saveFirstChar") === "true" ? true : false,
+    );
+
+    setFirstChar(localStorage.getItem("firstChar") ?? "");
+    const textInputElem = document.getElementById(
+      "textInput",
+    ) as HTMLInputElement;
+    if (saveToggle() && firstChar()) {
+      textInputElem.setAttribute("value", firstChar());
+      textInputElem.value = firstChar();
+    }
   });
+
   const graphemeLen = (text: string): number => {
     let iterator = segmenter.segment(text)[Symbol.iterator]();
     let count = 0;
@@ -80,8 +92,95 @@ const PostComposer: Component = () => {
   };
 
   return (
-    <div class="mb-4 flex items-center">
-      <div class="mr-4 w-10">
+    <div class="mb-4 flex">
+      <div class="mr-2 flex w-16 items-center">
+        <input
+          type="checkbox"
+          id="saveChar"
+          checked={saveToggle()}
+          class="ml-3 mr-2 accent-stone-600"
+          onChange={(e) => {
+            setSaveToggle(e.currentTarget.checked);
+            localStorage.setItem(
+              "saveFirstChar",
+              saveToggle() ? "true" : "false",
+            );
+          }}
+        />
+        <label for="saveChar" class="text-xs">
+          save char
+        </label>
+      </div>
+      <div>
+        <form
+          id="postForm"
+          onsubmit={(e) => {
+            e.currentTarget.reset();
+            e.preventDefault();
+          }}
+        >
+          <input
+            type="text"
+            id="textInput"
+            placeholder="12 chars max"
+            required
+            size="12"
+            class="mr-2 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700"
+            onInput={(e) => (postInput = e.currentTarget.value)}
+            onPaste={(e) => {
+              if (
+                graphemeLen(e.clipboardData?.getData("text") ?? "") >= CHARLIMIT
+              )
+                e.preventDefault();
+            }}
+            onBeforeInput={(e) => {
+              if (e.data && graphemeLen(postInput) >= CHARLIMIT)
+                e.preventDefault();
+            }}
+          />
+          <button
+            onclick={() => {
+              if (!postInput.length) return;
+              const textInputElem = document.getElementById(
+                "textInput",
+              ) as HTMLInputElement;
+              if (saveToggle()) {
+                setFirstChar(postInput[0]);
+                const textInputElem = document.getElementById(
+                  "textInput",
+                ) as HTMLInputElement;
+                textInputElem.setAttribute("value", firstChar());
+                textInputElem.value = firstChar();
+                localStorage.setItem("firstChar", firstChar());
+              } else {
+                textInputElem.setAttribute("value", "");
+                textInputElem.value = "";
+              }
+              sendPost(postInput);
+              postInput = saveToggle() ? firstChar() : "";
+            }}
+            class="bg-stone-600 px-1 py-1 text-sm font-bold hover:bg-stone-700"
+          >
+            pico
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+const App: Component = () => {
+  const [theme, setTheme] = createSignal("");
+
+  onMount(() => {
+    if (localStorage.theme !== undefined) setTheme(localStorage.theme);
+    else setTheme("light");
+  });
+
+  return (
+    <div class="flex flex-col items-center p-5 font-mono dark:text-white">
+      <h1 class="mb-3 text-2xl">picosky</h1>
+      <div class="absolute left-5 top-5 mr-4 w-10 text-sm">
         <button
           onclick={() => {
             localStorage.theme =
@@ -97,51 +196,6 @@ const PostComposer: Component = () => {
           {theme() == "dark" ? "light" : "dark"}
         </button>
       </div>
-      <form
-        class="items-center"
-        id="postForm"
-        onsubmit={(e) => {
-          e.currentTarget.reset();
-          e.preventDefault();
-        }}
-      >
-        <input
-          type="text"
-          id="post"
-          placeholder="12 chars max"
-          required
-          size="12"
-          class="mr-2 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700"
-          onInput={(e) => (postInput = e.currentTarget.value)}
-          onPaste={(e) => {
-            if (
-              graphemeLen(e.clipboardData?.getData("text") ?? "") >= CHARLIMIT
-            )
-              e.preventDefault();
-          }}
-          onBeforeInput={(e) => {
-            if (e.data && graphemeLen(postInput) >= CHARLIMIT)
-              e.preventDefault();
-          }}
-        />
-        <button
-          onclick={() => {
-            if (postInput.length) sendPost(postInput);
-            postInput = "";
-          }}
-          class="bg-slate-500 px-2 py-1 font-bold text-white hover:bg-slate-700 dark:bg-stone-600 dark:hover:bg-stone-700"
-        >
-          pico
-        </button>
-      </form>
-    </div>
-  );
-};
-
-const App: Component = () => {
-  return (
-    <div class="flex flex-col items-center p-5 font-mono dark:text-white">
-      <h1 class="mb-3 text-2xl">picosky</h1>
       <p class="text-xs">
         original idea by{" "}
         <a class="text-sky-500" href="https://bsky.app/profile/cam.fyi">
