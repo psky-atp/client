@@ -105,11 +105,13 @@ const PostComposer: Component = () => {
               "saveFirstChar",
               saveToggle() ? "true" : "false",
             );
-            const textInputElem = document.getElementById(
-              "textInput",
-            ) as HTMLInputElement;
-            textInputElem.setAttribute("value", "");
-            textInputElem.value = "";
+            if (!saveToggle()) {
+              const textInputElem = document.getElementById(
+                "textInput",
+              ) as HTMLInputElement;
+              textInputElem.setAttribute("value", "");
+              textInputElem.value = "";
+            }
           }}
         />
         <label for="saveChar" class="text-xs">
