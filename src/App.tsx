@@ -160,7 +160,7 @@ const PostComposer: Component = () => {
               }
               postInput = saveToggle() ? firstChar() : "";
             }}
-            class="bg-stone-600 px-1 py-1 text-sm font-bold hover:bg-stone-700"
+            class="bg-stone-600 px-1 py-1 text-sm font-bold text-white hover:bg-stone-700"
           >
             pico
           </button>
