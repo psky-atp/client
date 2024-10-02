@@ -105,6 +105,11 @@ const PostComposer: Component = () => {
               "saveFirstChar",
               saveToggle() ? "true" : "false",
             );
+            const textInputElem = document.getElementById(
+              "textInput",
+            ) as HTMLInputElement;
+            textInputElem.setAttribute("value", "");
+            textInputElem.value = "";
           }}
         />
         <label for="saveChar" class="text-xs">
@@ -141,9 +146,7 @@ const PostComposer: Component = () => {
           <button
             onclick={() => {
               if (!postInput.length) return;
-              const textInputElem = document.getElementById(
-                "textInput",
-              ) as HTMLInputElement;
+              sendPost(postInput);
               if (saveToggle()) {
                 setFirstChar(postInput[0]);
                 const textInputElem = document.getElementById(
@@ -152,11 +155,7 @@ const PostComposer: Component = () => {
                 textInputElem.setAttribute("value", firstChar());
                 textInputElem.value = firstChar();
                 localStorage.setItem("firstChar", firstChar());
-              } else {
-                textInputElem.setAttribute("value", "");
-                textInputElem.value = "";
               }
-              sendPost(postInput);
               postInput = saveToggle() ? firstChar() : "";
             }}
             class="bg-stone-600 px-1 py-1 text-sm font-bold hover:bg-stone-700"
