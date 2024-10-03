@@ -6,8 +6,7 @@ const MAXPOSTS = 50;
 const SERVER_URL = "pico.api.bsky.mom";
 
 type PostRecord = {
-  rkey: string;
-  did: string;
+  uri: string;
   post: string;
   indexedAt: number;
 };
@@ -43,7 +42,7 @@ const PostFeed: Component = () => {
         {(record) => (
           <a
             target="_blank"
-            href={`https://bsky.app/profile/${record.did}/post/${record.rkey}`}
+            href={`https://bsky.app/profile/${record.uri.replace("social.psky.feed.post", "post").replace("at://", "")}`}
           >
             <span class="flex gap-x-2 hover:bg-slate-200 dark:hover:bg-zinc-700">
               <span class="w-48 truncate">{record.post}</span>
