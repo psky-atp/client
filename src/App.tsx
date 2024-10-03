@@ -41,7 +41,7 @@ const PostFeed: Component = () => {
     <div class="flex flex-col">
       <For each={posts()}>
         {(record) => (
-          <span class="flex gap-x-2 hover:bg-slate-200 dark:hover:bg-zinc-700">
+          <span class="flex gap-x-2">
             <span class="w-60 truncate">{record.post}</span>
             <span class="flex w-24 flex-col text-sm sm:w-36">
               <span>{new Date(record.indexedAt).toLocaleTimeString()}</span>
