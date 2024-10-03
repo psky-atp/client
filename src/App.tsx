@@ -42,7 +42,7 @@ const PostFeed: Component = () => {
       <For each={posts()}>
         {(record) => (
           <span class="mb-0.5 flex items-center gap-x-2 border-b text-sm dark:border-b-neutral-700">
-            <span class="w-60 truncate">{record.post}</span>
+            <span class="w-56 truncate">{record.post}</span>
             <span class="flex w-24 flex-col sm:w-36">
               <span>{new Date(record.indexedAt).toLocaleTimeString()}</span>
               <span class="truncate text-xs text-stone-500 dark:text-stone-400">
