@@ -3,8 +3,7 @@ import { WebSocket } from "partysocket";
 
 const CHARLIMIT = 12;
 const MAXPOSTS = 50;
-//const SERVER_URL = "pico.api.bsky.mom";
-const SERVER_URL = "localhost:8080";
+const SERVER_URL = "pico.api.bsky.mom";
 
 type PostRecord = {
   uri: string;
@@ -17,7 +16,7 @@ let unreadCount = 0;
 
 const PostFeed: Component = () => {
   const [posts, setPosts] = createSignal<PostRecord[]>([]);
-  const socket = new WebSocket(`ws://${SERVER_URL}/subscribe`);
+  const socket = new WebSocket(`wss://${SERVER_URL}/subscribe`);
 
   onMount(() => {
     socket.addEventListener("open", async () => {
@@ -34,7 +33,7 @@ const PostFeed: Component = () => {
   });
 
   const getPosts = async () => {
-    const res = await fetch(`http://${SERVER_URL}/posts`);
+    const res = await fetch(`https://${SERVER_URL}/posts`);
     return await res.json();
   };
 
@@ -94,7 +93,7 @@ const PostComposer: Component = () => {
   };
 
   const sendPost = async (post: string) => {
-    await fetch(`http://${SERVER_URL}/post`, {
+    await fetch(`https://${SERVER_URL}/post`, {
       method: "POST",
       body: JSON.stringify({ post: post }),
       headers: { "Content-Type": "application/json" },
