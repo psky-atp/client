@@ -25,7 +25,7 @@ const PostFeed: Component = () => {
     });
     socket.addEventListener("message", (event) => {
       const data = JSON.parse(event.data) as PostRecord;
-      setPosts([data, ...untrack(posts).slice(0, MAXPOSTS - 1)]);
+      setPosts([data, ...untrack(posts).slice(0, MAXPOSTS)]);
       if (!document.hasFocus()) {
         unreadCount++;
         document.title = `(${unreadCount}) picosky`;
@@ -35,8 +35,7 @@ const PostFeed: Component = () => {
 
   const getPosts = async () => {
     const res = await fetch(`${SERVER_URL}/posts`);
-    const json = await res.json();
-    return json;
+    return await res.json();
   };
 
   return (
