@@ -88,7 +88,7 @@ const PostComposer: Component = () => {
   };
 
   const sendPost = async (post: string) => {
-    await fetch(`${SERVER_URL}/post`, {
+    await fetch(`https://${SERVER_URL}/post`, {
       method: "POST",
       body: JSON.stringify({ post: post }),
       headers: { "Content-Type": "application/json" },
