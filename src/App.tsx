@@ -4,7 +4,6 @@ import { WebSocket } from "partysocket";
 const CHARLIMIT = 12;
 const MAXPOSTS = 50;
 const SERVER_URL = "https://pico.api.bsky.mom";
-const WEBSOCKET = "wss://pico.api.bsky.mom/subscribe";
 
 type PostRecord = {
   rkey: string;
@@ -17,7 +16,7 @@ let unreadCount = 0;
 
 const PostFeed: Component = () => {
   const [posts, setPosts] = createSignal<PostRecord[]>([]);
-  const socket = new WebSocket(WEBSOCKET!);
+  const socket = new WebSocket(`wss://${SERVER_URL}/subscribe`);
 
   onMount(() => {
     socket.addEventListener("open", async () => {
