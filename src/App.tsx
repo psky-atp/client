@@ -3,7 +3,7 @@ import { WebSocket } from "partysocket";
 
 const CHARLIMIT = 12;
 const MAXPOSTS = 50;
-const SERVER_URL = "https://pico.api.bsky.mom";
+const SERVER_URL = "pico.api.bsky.mom";
 
 type PostRecord = {
   rkey: string;
@@ -33,7 +33,7 @@ const PostFeed: Component = () => {
   });
 
   const getPosts = async () => {
-    const res = await fetch(`${SERVER_URL}/posts`);
+    const res = await fetch(`https://${SERVER_URL}/posts`);
     return await res.json();
   };
 
