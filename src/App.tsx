@@ -96,13 +96,13 @@ const PostComposer: Component = () => {
   };
 
   return (
-    <div class="mb-4 flex">
-      <div class="mr-2 flex w-16 items-center">
+    <div class="mb-4 flex w-full">
+      <div class="flex items-center">
         <input
           type="checkbox"
           id="saveChar"
           checked={saveToggle()}
-          class="ml-3 mr-2 accent-stone-600"
+          class="mr-2 accent-stone-600"
           onChange={(e) => {
             setSaveToggle(e.currentTarget.checked);
             localStorage.setItem(
@@ -118,11 +118,9 @@ const PostComposer: Component = () => {
             }
           }}
         />
-        <label for="saveChar" class="text-xs">
+        <label for="saveChar" class="w-10 text-xs">
           save char
         </label>
-      </div>
-      <div>
         <form
           id="postForm"
           onsubmit={(e) => {
