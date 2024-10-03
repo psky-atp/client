@@ -1,4 +1,4 @@
-import { createSignal, For, onMount, type Component } from "solid-js";
+import { createSignal, For, onMount, untrack, type Component } from "solid-js";
 import { WebSocket } from "partysocket";
 
 const CHARLIMIT = 12;
@@ -13,6 +13,8 @@ type PostRecord = {
   indexedAt: number;
 };
 
+let unreadCount = 0;
+
 const PostFeed: Component = () => {
   const [posts, setPosts] = createSignal<PostRecord[]>([]);
   const socket = new WebSocket(WEBSOCKET!);
@@ -23,7 +25,11 @@ const PostFeed: Component = () => {
     });
     socket.addEventListener("message", (event) => {
       const data = JSON.parse(event.data) as PostRecord;
-      setPosts([data, ...posts().slice(0, MAXPOSTS - 1)]);
+      setPosts([data, ...untrack(posts).slice(0, MAXPOSTS - 1)]);
+      if (!document.hasFocus()) {
+        unreadCount++;
+        document.title = `(${unreadCount}) picosky`;
+      }
     });
   });
 
@@ -176,6 +182,11 @@ const App: Component = () => {
   onMount(() => {
     if (localStorage.theme !== undefined) setTheme(localStorage.theme);
     else setTheme("light");
+
+    window.addEventListener("focus", () => {
+      unreadCount = 0;
+      document.title = "picosky";
+    });
   });
 
   return (
