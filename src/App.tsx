@@ -8,6 +8,7 @@ const SERVER_URL = "pico.api.bsky.mom";
 type PostRecord = {
   uri: string;
   post: string;
+  handle: string;
   indexedAt: number;
 };
 
@@ -45,8 +46,13 @@ const PostFeed: Component = () => {
             href={`https://bsky.app/profile/${record.uri.replace("social.psky.feed.post", "post").replace("at://", "")}`}
           >
             <span class="flex gap-x-2 hover:bg-slate-200 dark:hover:bg-zinc-700">
-              <span class="w-48 truncate">{record.post}</span>
-              <span>{new Date(record.indexedAt).toLocaleTimeString()}</span>
+              <span class="w-60 truncate">{record.post}</span>
+              <span class="flex w-24 flex-col text-sm sm:w-36">
+                <span>{new Date(record.indexedAt).toLocaleTimeString()}</span>
+                <span class="truncate text-xs text-stone-500 dark:text-stone-400">
+                  {record.handle}{" "}
+                </span>
+              </span>
             </span>
           </a>
         )}
