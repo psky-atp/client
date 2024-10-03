@@ -155,7 +155,7 @@ const PostComposer: Component = () => {
               if (!postInput.length) return;
               sendPost(postInput);
               if (saveToggle()) {
-                setFirstChar(postInput[0]);
+                setFirstChar([...segmenter.segment(postInput)][0].segment);
                 const textInputElem = document.getElementById(
                   "textInput",
                 ) as HTMLInputElement;
