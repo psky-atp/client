@@ -25,7 +25,7 @@ const PostFeed: Component = () => {
     });
     socket.addEventListener("message", (event) => {
       const data = JSON.parse(event.data) as PostRecord;
-      setPosts([data, ...untrack(posts).slice(0, MAXPOSTS)]);
+      setPosts([data, ...untrack(posts).slice(0, MAXPOSTS - 1)]);
       if (!document.hasFocus()) {
         unreadCount++;
         document.title = `(${unreadCount}) picosky`;
