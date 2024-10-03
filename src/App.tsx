@@ -2,7 +2,7 @@ import { createSignal, For, onMount, untrack, type Component } from "solid-js";
 import { WebSocket } from "partysocket";
 
 const CHARLIMIT = 12;
-const MAXPOSTS = 50;
+const MAXPOSTS = 100;
 const SERVER_URL = "pico.api.bsky.mom";
 
 type PostRecord = {
