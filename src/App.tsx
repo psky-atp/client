@@ -188,38 +188,40 @@ const App: Component = () => {
   });
 
   return (
-    <div class="flex flex-col items-center p-5 font-mono dark:text-white">
-      <h1 class="mb-3 text-2xl">picosky</h1>
-      <div class="absolute left-5 top-5 mr-4 w-10 text-sm sm:fixed">
-        <button
-          onclick={() => {
-            localStorage.theme =
-              localStorage.theme === "light" || !localStorage.theme ?
-                "dark"
-              : "light";
-            if (localStorage.theme === "dark")
-              document.documentElement.classList.add("dark");
-            else document.documentElement.classList.remove("dark");
-            setTheme(localStorage.theme);
-          }}
-        >
-          {theme() == "dark" ? "light" : "dark"}
-        </button>
+    <div class="flex flex-col items-center p-4 font-mono dark:text-white">
+      <div class="relative flex flex-col items-center">
+        <h1 class="mb-2 text-xl">picosky</h1>
+        <div class="absolute left-0 top-0 text-sm">
+          <button
+            onclick={() => {
+              localStorage.theme =
+                localStorage.theme === "light" || !localStorage.theme ?
+                  "dark"
+                : "light";
+              if (localStorage.theme === "dark")
+                document.documentElement.classList.add("dark");
+              else document.documentElement.classList.remove("dark");
+              setTheme(localStorage.theme);
+            }}
+          >
+            {theme() == "dark" ? "light" : "dark"}
+          </button>
+        </div>
+        <p class="text-xs">
+          original idea by{" "}
+          <a class="text-sky-500" href="https://bsky.app/profile/cam.fyi">
+            @cam.fyi
+          </a>
+        </p>
+        <p class="mb-3 text-xs">
+          developed by{" "}
+          <a class="text-sky-500" href="https://bsky.app/profile/bsky.mom">
+            @bsky.mom
+          </a>
+        </p>
+        <PostComposer />
+        <PostFeed />
       </div>
-      <p class="text-xs">
-        original idea by{" "}
-        <a class="text-sky-500" href="https://bsky.app/profile/cam.fyi">
-          @cam.fyi
-        </a>
-      </p>
-      <p class="mb-3 text-xs">
-        developed by{" "}
-        <a class="text-sky-500" href="https://bsky.app/profile/bsky.mom">
-          @bsky.mom
-        </a>
-      </p>
-      <PostComposer />
-      <PostFeed />
     </div>
   );
 };
