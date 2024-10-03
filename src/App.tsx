@@ -3,12 +3,12 @@ import { WebSocket } from "partysocket";
 
 const CHARLIMIT = 12;
 const MAXPOSTS = 50;
-const DID = "did:plc:bpmiiiabnbf2hf7uuqdbjne6";
 const SERVER_URL = "https://pico.api.bsky.mom";
 const WEBSOCKET = "wss://pico.api.bsky.mom/subscribe";
 
 type PostRecord = {
   rkey: string;
+  did: string;
   post: string;
   indexedAt: number;
 };
@@ -44,7 +44,7 @@ const PostFeed: Component = () => {
         {(record) => (
           <a
             target="_blank"
-            href={`https://bsky.app/profile/${DID}/post/${record.rkey}`}
+            href={`https://bsky.app/profile/${record.did}/post/${record.rkey}`}
           >
             <span class="flex gap-x-2 hover:bg-slate-200 dark:hover:bg-zinc-700">
               <span class="w-48 truncate">{record.post}</span>
