@@ -33,7 +33,7 @@ const PostFeed: Component = () => {
   });
 
   const getPosts = async () => {
-    const res = await fetch(`https://${SERVER_URL}/posts`);
+    const res = await fetch(`https://${SERVER_URL}/posts?limit=${MAXPOSTS}`);
     return await res.json();
   };
 
