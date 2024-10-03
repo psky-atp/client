@@ -195,7 +195,7 @@ const App: Component = () => {
   return (
     <div class="flex flex-col items-center p-5 font-mono dark:text-white">
       <h1 class="mb-3 text-2xl">picosky</h1>
-      <div class="absolute left-5 top-5 mr-4 w-10 text-sm">
+      <div class="fixed left-5 top-5 mr-4 w-10 text-sm">
         <button
           onclick={() => {
             localStorage.theme =
