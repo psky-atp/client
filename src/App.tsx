@@ -42,17 +42,19 @@ const PostFeed: Component = () => {
       <For each={posts()}>
         {(record) => (
           <span class="mb-0.5 flex items-center gap-x-3 border-b text-sm dark:border-b-neutral-800">
-            <span class="flex w-20 flex-col text-xs">
-              {(record.handle == "psky.social" ?
-                  <span class="break-words text-stone-500 dark:text-stone-400">
-                    {record.handle}{" "}
-                  </span> :
-                  <a target="_blank"
-                    href={`https://bsky.social/profile/${record.handle}`} 
-                    class="break-words text-violet-600 dark:text-violet-400">
-                    {record.handle}{" "}
-                  </a>
-              )}
+            <span class="flex w-[5.5rem] flex-col text-xs">
+              <a
+                target="_blank"
+                href={`https://bsky.app/profile/${record.handle}`}
+                classList={{
+                  "text-violet-600 dark:text-violet-400":
+                    record.handle !== "psky.social",
+                  "break-words text-stone-500 dark:text-stone-400": true,
+                }}
+              >
+                {record.handle}{" "}
+              </a>
+
               <span>{new Date(record.indexedAt).toLocaleTimeString()}</span>
             </span>
             <span class="max-h-40 w-60 overflow-hidden break-words sm:w-80">
