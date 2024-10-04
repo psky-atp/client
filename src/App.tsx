@@ -1,7 +1,7 @@
 import { createSignal, For, onMount, untrack, type Component } from "solid-js";
 import { WebSocket } from "partysocket";
 
-const CHARLIMIT = 12;
+const CHARLIMIT = 64;
 const MAXPOSTS = 100;
 const SERVER_URL = "pico.api.bsky.mom";
 
@@ -42,7 +42,9 @@ const PostFeed: Component = () => {
       <For each={posts()}>
         {(record) => (
           <span class="mb-0.5 flex items-center gap-x-2 border-b text-sm dark:border-b-neutral-800">
-            <span class="w-56 truncate">{record.post}</span>
+            <span class="max-h-40 w-56 overflow-hidden break-words">
+              {record.post}
+            </span>
             <span class="flex w-24 flex-col text-xs">
               <span>{new Date(record.indexedAt).toLocaleTimeString()}</span>
               <span class="truncate text-stone-500 dark:text-stone-400">
@@ -131,7 +133,7 @@ const PostComposer: Component = () => {
           <input
             type="text"
             id="textInput"
-            placeholder="12 chars max"
+            placeholder="64 chars max"
             required
             size="16"
             class="mr-2 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700"
