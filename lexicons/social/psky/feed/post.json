@@ -1,0 +1,25 @@
+{
+  "lexicon": 1,
+  "id": "social.psky.feed.post",
+  "defs": {
+    "main": {
+      "type": "record",
+      "description": "A Picosky post containing at most 12 graphemes.",
+      "key": "tid",
+      "record": {
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "text": {
+            "type": "string",
+            "maxLength": 1000,
+            "maxGraphemes": 64,
+            "description": "Text content."
+          }
+        }
+      }
+    }
+  }
+}
