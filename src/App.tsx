@@ -131,7 +131,7 @@ const Login: Component = () => {
         </div>
       </Show>
       <Show when={notice()}>
-        <div class="mt-3">{notice()}</div>
+        <div class="mt-3 text-xs">{notice()}</div>
       </Show>
     </div>
   );
