@@ -161,35 +161,37 @@ const PostFeed: Component = () => {
   };
 
   return (
-    <div class="flex flex-col w-full">
-      <For each={posts()}>
-        {(record) => <PostItem record={record}/>}
-      </For>
+    <div class="flex w-full flex-col">
+      <For each={posts()}>{(record) => <PostItem record={record} />}</For>
       <p></p>
     </div>
   );
 };
 
 interface PostItemProps {
-  record: PostRecord
+  record: PostRecord;
 }
 const PostItem: Component<PostItemProps> = ({ record }: PostItemProps) => {
   return (
-    <div class="py-1 flex items-start gap-x-3 border-b text-sm dark:border-b-neutral-800">
-      <div class="flex flex-col items-start w-full max-h-40 my-0.5">
-        <span class="flex w-full items-center text-xs gap-x-2 break-words text-stone-500 dark:text-stone-400">
-          <a classList={{
-            "text-violet-600 dark:text-violet-400":
-              record.handle !== "psky.social"
-          }}
-          target="_blank"
-          href={`https://bsky.app/profile/${record.handle}`}>
+    <div class="flex items-start gap-x-3 border-b py-1 text-sm dark:border-b-neutral-800">
+      <div class="my-0.5 flex max-h-40 w-full flex-col items-start">
+        <span class="flex w-full items-center gap-x-2 break-words text-xs text-stone-500 dark:text-stone-400">
+          <a
+            classList={{
+              "text-violet-600 dark:text-violet-400":
+                record.handle !== "psky.social",
+            }}
+            target="_blank"
+            href={`https://bsky.app/profile/${record.handle}`}
+          >
             @{record.handle}{" "}
           </a>
 
-          <span class="flex-1">- {new Date(record.indexedAt).toLocaleTimeString()}</span>
+          <span class="flex-1">
+            - {new Date(record.indexedAt).toLocaleTimeString()}
+          </span>
         </span>
-        <span class="w-full h-full overflow-hidden whitespace-pre-wrap break-words font-sans">
+        <span class="h-full w-full overflow-hidden whitespace-pre-wrap break-words font-sans">
           {record.post}
         </span>
       </div>
@@ -252,7 +254,7 @@ const PostComposer: Component = () => {
   };
 
   return (
-    <div class="mb-4 flex justify-center items-center">
+    <div class="mb-4 flex items-center justify-center">
       <input
         type="checkbox"
         id="saveChar"
@@ -333,7 +335,7 @@ const App: Component = () => {
 
   return (
     <div class="flex flex-col items-center py-4 font-mono dark:text-white">
-      <div class="relative flex flex-col items-center w-80 sm:w-96">
+      <div class="relative flex w-80 flex-col items-center sm:w-96">
         <h1 class="mb-2 text-xl">picosky</h1>
         <div class="absolute left-0 top-0 text-sm">
           <button
