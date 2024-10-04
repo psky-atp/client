@@ -41,8 +41,8 @@ const PostFeed: Component = () => {
     <div class="flex flex-col">
       <For each={posts()}>
         {(record) => (
-          <span class="mb-0.5 flex items-center gap-x-2 border-b text-sm dark:border-b-neutral-800">
-            <span class="max-h-40 w-56 overflow-hidden break-words">
+          <span class="mb-0.5 flex items-center gap-x-3 border-b text-sm dark:border-b-neutral-800">
+            <span class="max-h-40 w-60 overflow-hidden break-words sm:w-80">
               {record.post}
             </span>
             <span class="flex w-24 flex-col text-xs">
@@ -98,7 +98,7 @@ const PostComposer: Component = () => {
   };
 
   return (
-    <div class="mb-4 flex w-full">
+    <div class="mb-4 flex w-full justify-center">
       <div class="flex items-center">
         <input
           type="checkbox"
@@ -111,13 +111,6 @@ const PostComposer: Component = () => {
               "saveFirstChar",
               saveToggle() ? "true" : "false",
             );
-            if (!saveToggle()) {
-              const textInputElem = document.getElementById(
-                "textInput",
-              ) as HTMLInputElement;
-              textInputElem.setAttribute("value", "");
-              textInputElem.value = "";
-            }
           }}
         />
         <label for="saveChar" class="w-10 text-xs">
@@ -135,8 +128,7 @@ const PostComposer: Component = () => {
             id="textInput"
             placeholder="64 chars max"
             required
-            size="16"
-            class="mr-2 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700"
+            class="mr-2 w-52 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-72"
             onInput={(e) => (postInput = e.currentTarget.value)}
             onPaste={(e) => {
               if (
