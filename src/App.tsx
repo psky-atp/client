@@ -175,11 +175,12 @@ const PostItem: Component<PostItemProps> = ({ record }: PostItemProps) => {
   return (
     <div class="flex items-start gap-x-3 border-b py-1 text-sm dark:border-b-neutral-800">
       <div class="my-0.5 flex max-h-40 w-full flex-col items-start">
-        <span class="flex w-full items-center gap-x-2 break-words text-xs text-stone-500 dark:text-stone-400">
+        <span class="flex w-full items-center justify-between gap-x-2 break-words text-xs text-stone-500 dark:text-stone-400">
           <a
             classList={{
               "text-violet-600 dark:text-violet-400":
                 record.handle !== "psky.social",
+              truncate: true,
             }}
             target="_blank"
             href={`https://bsky.app/profile/${record.handle}`}
@@ -187,8 +188,8 @@ const PostItem: Component<PostItemProps> = ({ record }: PostItemProps) => {
             @{record.handle}{" "}
           </a>
 
-          <span class="flex-1">
-            - {new Date(record.indexedAt).toLocaleTimeString()}
+          <span class="w-32 text-right">
+            {new Date(record.indexedAt).toLocaleTimeString()}
           </span>
         </span>
         <span class="h-full w-full overflow-hidden whitespace-pre-wrap break-words font-sans">
