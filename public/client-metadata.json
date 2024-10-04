@@ -1,6 +1,6 @@
 {
   "client_id": "https://oauth.pico-client.pages.dev/client-metadata.json",
-  "client_name": "cleanfollow-bsky",
+  "client_name": "picosky",
   "client_uri": "https://oauth.pico-client.pages.dev/",
   "redirect_uris": ["https://oauth.pico-client.pages.dev/"],
   "scope": "atproto transition:generic",

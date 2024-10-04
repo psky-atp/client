@@ -58,8 +58,7 @@ const Login: Component = () => {
   onMount(async () => {
     setNotice("Loading...");
     client = await BrowserOAuthClient.load({
-      clientId:
-        "https://oauth.pico-client.pages.dev/client-metadata.json&scope=atproto+transition%3Ageneric",
+      clientId: "https://oauth.pico-client.pages.dev/client-metadata.json",
       handleResolver: "https://boletus.us-west.host.bsky.network",
     });
     //client = await BrowserOAuthClient.load({
