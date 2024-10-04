@@ -1,5 +1,21 @@
-import { createSignal, For, onMount, untrack, type Component } from "solid-js";
+import {
+  createSignal,
+  For,
+  onMount,
+  Show,
+  untrack,
+  type Component,
+} from "solid-js";
 import { WebSocket } from "partysocket";
+
+import {
+  BrowserOAuthClient,
+  OAuthSession,
+} from "@atproto/oauth-client-browser";
+import "@atcute/bluesky/lexicons";
+import { XRPC } from "@atcute/client";
+import { SocialPskyFeedPost } from "@atcute/client/lexicons";
+import * as TID from "@atcute/tid";
 
 const CHARLIMIT = 64;
 const MAXPOSTS = 100;
@@ -13,6 +29,108 @@ type PostRecord = {
 };
 
 let unreadCount = 0;
+const [loginState, setLoginState] = createSignal(false);
+let rpc: XRPC;
+let session: OAuthSession;
+
+const resolveDid = async (did: string) => {
+  const res = await fetch(
+    did.startsWith("did:web") ?
+      `https://${did.split(":")[2]}/.well-known/did.json`
+    : "https://plc.directory/" + did,
+  );
+
+  return res.json().then((doc) => {
+    for (const alias of doc.alsoKnownAs) {
+      if (alias.includes("at://")) {
+        return alias.split("//")[1];
+      }
+    }
+  });
+};
+
+const Login: Component = () => {
+  const [loginInput, setLoginInput] = createSignal("");
+  const [handle, setHandle] = createSignal("");
+  const [notice, setNotice] = createSignal("");
+  let client: BrowserOAuthClient;
+
+  onMount(async () => {
+    setNotice("Loading...");
+    client = new BrowserOAuthClient({
+      clientMetadata: undefined,
+      handleResolver: "https://boletus.us-west.host.bsky.network",
+    });
+
+    client.addEventListener("deleted", () => {
+      setLoginState(false);
+    });
+    const result = await client.init().catch(() => {});
+
+    if (result) {
+      session = result.session;
+      rpc = new XRPC({
+        handler: { handle: session.fetchHandler.bind(session) },
+      });
+      setLoginState(true);
+      setHandle(await resolveDid(session.did));
+    }
+    setNotice("");
+  });
+
+  const loginBsky = async (handle: string) => {
+    setNotice("Redirecting...");
+    try {
+      await client.signIn(handle, {
+        scope: "atproto transition:generic",
+        signal: new AbortController().signal,
+      });
+    } catch (err) {
+      setNotice("Error during OAuth redirection");
+    }
+  };
+
+  const logoutBsky = async () => {
+    if (session.sub) await client.revoke(session.sub);
+  };
+
+  return (
+    <div class="mb-4 flex flex-col items-center text-sm">
+      <Show when={!loginState() && !notice().includes("Loading")}>
+        <form class="flex items-center" onsubmit={(e) => e.preventDefault()}>
+          <label for="handle" class="mr-2">
+            Handle:
+          </label>
+          <input
+            type="text"
+            id="handle"
+            placeholder="user.bsky.social"
+            class="mr-2 w-52 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-72"
+            onInput={(e) => setLoginInput(e.currentTarget.value)}
+          />
+          <button
+            onclick={() => loginBsky(loginInput())}
+            class="bg-stone-600 px-1 py-1 text-sm font-bold text-white hover:bg-stone-700"
+          >
+            Login
+          </button>
+        </form>
+      </Show>
+      <Show when={loginState() && handle()}>
+        <div class="mb-3 text-xs">
+          Logged in as @{handle()} (
+          <a href="" class="text-red-500" onclick={() => logoutBsky()}>
+            Logout
+          </a>
+          )
+        </div>
+      </Show>
+      <Show when={notice()}>
+        <div class="mt-3">{notice()}</div>
+      </Show>
+    </div>
+  );
+};
 
 const PostFeed: Component = () => {
   const [posts, setPosts] = createSignal<PostRecord[]>([]);
@@ -90,11 +208,27 @@ const PostComposer: Component = () => {
   };
 
   const sendPost = async (post: string) => {
-    await fetch(`https://${SERVER_URL}/post`, {
-      method: "POST",
-      body: JSON.stringify({ post: post }),
-      headers: { "Content-Type": "application/json" },
-    });
+    if (!loginState()) {
+      await fetch(`https://${SERVER_URL}/post`, {
+        method: "POST",
+        body: JSON.stringify({ post: post }),
+        headers: { "Content-Type": "application/json" },
+      });
+    } else {
+      await rpc
+        .call("com.atproto.repo.putRecord", {
+          data: {
+            repo: session.did,
+            collection: "social.psky.feed.post",
+            rkey: TID.now(),
+            record: {
+              $type: "social.psky.feed.post",
+              text: post,
+            } as SocialPskyFeedPost.Record,
+          },
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   return (
@@ -211,6 +345,7 @@ const App: Component = () => {
             @bsky.mom
           </a>
         </p>
+        <Login />
         <PostComposer />
         <PostFeed />
       </div>
