@@ -58,9 +58,15 @@ const Login: Component = () => {
   onMount(async () => {
     setNotice("Loading...");
     client = await BrowserOAuthClient.load({
-      clientId: "https://oauth.pico-client.pages.dev/client-metadata.json",
+      clientId:
+        "https://oauth.pico-client.pages.dev/client-metadata.json&scope=atproto+transition%3Ageneric",
       handleResolver: "https://boletus.us-west.host.bsky.network",
     });
+    //client = await BrowserOAuthClient.load({
+    //  clientId:
+    //    "http://localhost?redirect_uri=http%3A%2F%2F127.0.0.1%3A1313%2F&scope=atproto+transition%3Ageneric",
+    //  handleResolver: "https://boletus.us-west.host.bsky.network",
+    //});
 
     client.addEventListener("deleted", () => {
       setLoginState(false);
@@ -117,7 +123,7 @@ const Login: Component = () => {
         </form>
       </Show>
       <Show when={loginState() && handle()}>
-        <div class="mb-3 text-xs">
+        <div class="text-xs">
           Logged in as @{handle()} (
           <a href="" class="text-red-500" onclick={() => logoutBsky()}>
             Logout
