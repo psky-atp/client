@@ -1,8 +1,8 @@
 {
   "client_id": "https://oauth.pico-client.pages.dev/client-metadata.json",
   "client_name": "cleanfollow-bsky",
-  "client_uri": "https://https://oauth.pico-client.pages.dev/",
-  "redirect_uris": ["https://https://oauth.pico-client.pages.dev/"],
+  "client_uri": "https://oauth.pico-client.pages.dev/",
+  "redirect_uris": ["https://oauth.pico-client.pages.dev/"],
   "scope": "atproto transition:generic",
   "grant_types": ["authorization_code", "refresh_token"],
   "response_types": ["code"],
