@@ -42,14 +42,14 @@ const PostFeed: Component = () => {
       <For each={posts()}>
         {(record) => (
           <span class="mb-0.5 flex items-center gap-x-3 border-b text-sm dark:border-b-neutral-800">
-            <span class="max-h-40 w-60 overflow-hidden break-words sm:w-80">
-              {record.post}
-            </span>
-            <span class="flex w-24 flex-col text-xs">
-              <span>{new Date(record.indexedAt).toLocaleTimeString()}</span>
-              <span class="truncate text-stone-500 dark:text-stone-400">
+            <span class="flex w-20 flex-col text-xs">
+              <span class={`break-words text-stone-500 dark:text-stone-400 ${record.handle == "psky.social" ? '' : 'text-violet-600 dark:text-violet-400'}`}>
                 {record.handle}{" "}
               </span>
+              <span>{new Date(record.indexedAt).toLocaleTimeString()}</span>
+            </span>
+            <span class="max-h-40 w-60 overflow-hidden break-words sm:w-80">
+              {record.post}
             </span>
           </span>
         )}
