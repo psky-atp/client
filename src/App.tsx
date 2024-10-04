@@ -180,7 +180,7 @@ const PostFeed: Component = () => {
 
               <span>{new Date(record.indexedAt).toLocaleTimeString()}</span>
             </span>
-            <span class="max-h-40 w-60 overflow-hidden break-words font-sans sm:w-80">
+            <span class="max-h-40 w-60 overflow-hidden whitespace-pre-wrap break-words font-sans sm:w-80">
               {record.post}
             </span>
           </span>
@@ -347,16 +347,9 @@ const App: Component = () => {
             {theme() == "dark" ? "light" : "dark"}
           </button>
         </div>
-        <p class="text-xs">
-          original idea by{" "}
-          <a class="text-sky-500" href="https://bsky.app/profile/cam.fyi">
-            @cam.fyi
-          </a>
-        </p>
         <p class="mb-3 text-xs">
-          developed by{" "}
-          <a class="text-sky-500" href="https://bsky.app/profile/bsky.mom">
-            @bsky.mom
+          <a class="text-sky-500" href="https://bsky.app/profile/psky.social">
+            @psky.social
           </a>
         </p>
         <Login />
