@@ -10,6 +10,7 @@ import {
 import { PostRecord } from "../utils/types.js";
 import { APP_NAME, MAXPOSTS, SERVER_URL } from "../utils/constants.js";
 import PostItem from "./PostItem.jsx";
+import { WebSocket } from "partysocket";
 
 interface PostFeedProps {
   unreadCount: Accessor<number>;
