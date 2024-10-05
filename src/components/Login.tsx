@@ -5,6 +5,8 @@ import {
 import { Component, createSignal, onMount, Show } from "solid-js";
 import resolveDid from "../utils/api.js";
 import { XRPC } from "@atcute/client";
+import * as TID from "@atcute/tid";
+import { SocialPskyActorProfile } from "@atcute/client/lexicons";
 
 interface LoginState {
   session?: OAuthSession;
@@ -21,6 +23,7 @@ const isLocal = () =>
   window.location.hostname === "0.0.0.0";
 const Login: Component = () => {
   const [loginInput, setLoginInput] = createSignal("");
+  const [nickname, setNickname] = createSignal("");
   const [handle, setHandle] = createSignal("");
   const [notice, setNotice] = createSignal("");
   let client: BrowserOAuthClient;
@@ -68,8 +71,24 @@ const Login: Component = () => {
     if (isLoggedIn()) await client.revoke(loginState().session!.sub);
   };
 
+  const updateNickname = async (nickname: string) => {
+    await loginState()
+      .rpc!.call("com.atproto.repo.putRecord", {
+        data: {
+          repo: loginState().session!.did,
+          collection: "social.psky.actor.profile",
+          rkey: "self",
+          record: {
+            $type: "social.psky.actor.profile",
+            nickname: nickname,
+          } as SocialPskyActorProfile.Record,
+        },
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
-    <div class="mb-4 flex flex-col items-center text-sm">
+    <div class="mb-3 flex flex-col items-center text-sm">
       <Show when={isLoggedIn() && handle()}>
         <div class="text-xs">
           Logged in as @{handle()} (
@@ -78,6 +97,28 @@ const Login: Component = () => {
           </a>
           )
         </div>
+        <form
+          class="mt-2 flex items-center"
+          onsubmit={(e) => {
+            e.currentTarget.reset();
+            e.preventDefault();
+          }}
+        >
+          <input
+            type="text"
+            id="nickname"
+            placeholder="nickname"
+            maxlength="32"
+            class="mr-2 w-40 border border-black px-2 py-1 font-sans dark:border-white dark:bg-neutral-700"
+            onInput={(e) => setNickname(e.currentTarget.value)}
+          />
+          <button
+            onclick={() => updateNickname(nickname())}
+            class="bg-stone-600 px-1 py-1 text-xs font-bold text-white hover:bg-stone-700"
+          >
+            Update
+          </button>
+        </form>
       </Show>
       <Show when={!isLoggedIn() && !notice().includes("Loading")}>
         <form class="flex items-center" onsubmit={(e) => e.preventDefault()}>
@@ -88,7 +129,7 @@ const Login: Component = () => {
             type="text"
             id="handle"
             placeholder="user.bsky.social"
-            class="mr-2 w-52 border border-black px-2 py-1 sm:w-64 dark:border-white dark:bg-neutral-700"
+            class="mr-2 w-52 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-64"
             onInput={(e) => setLoginInput(e.currentTarget.value)}
           />
           <button

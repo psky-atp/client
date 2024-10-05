@@ -7,10 +7,12 @@
     "start": "vite",
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "lex": "npx lex-cli generate ./lexicons/social/psky/**/*.json -o ./src/utils/lexicon.ts"
   },
   "license": "0BSD",
   "devDependencies": {
+    "@atcute/lex-cli": "^1.0.2",
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.39",
     "prettier": "^3.3.3",

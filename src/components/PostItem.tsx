@@ -12,12 +12,12 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
     >
       <div class="my-0.5 flex max-h-40 w-full flex-col items-start">
         <span class="flex w-full items-center justify-between gap-x-2 break-words text-xs text-stone-500 dark:text-stone-400">
-          <span>
+          <span class="w-full truncate">
             <span class="font-sans font-bold text-black dark:text-white">
               {props.record.nickname ? `${props.record.nickname} ` : ""}
             </span>
             <a
-              class="truncate text-zinc-600 dark:text-zinc-400"
+              class="text-zinc-600 dark:text-zinc-400"
               target="_blank"
               href={`https://bsky.app/profile/${props.record.handle}`}
             >

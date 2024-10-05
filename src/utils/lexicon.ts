@@ -4,8 +4,20 @@
 import "@atcute/client/lexicons";
 
 declare module "@atcute/client/lexicons" {
+  namespace SocialPskyActorProfile {
+    /** A declaration of a Picosky account profile. */
+    interface Record {
+      $type: "social.psky.actor.profile";
+      /**
+       * Maximum string length: 320 \
+       * Maximum grapheme length: 32
+       */
+      nickname?: string;
+    }
+  }
+
   namespace SocialPskyFeedPost {
-    /** A Picosky post containing at most 12 graphemes. */
+    /** A Picosky post containing at most 64 graphemes. */
     interface Record {
       $type: "social.psky.feed.post";
       /**
@@ -18,6 +30,7 @@ declare module "@atcute/client/lexicons" {
   }
 
   interface Records {
+    "social.psky.actor.profile": SocialPskyActorProfile.Record;
     "social.psky.feed.post": SocialPskyFeedPost.Record;
   }
 

@@ -4,7 +4,7 @@
   "defs": {
     "main": {
       "type": "record",
-      "description": "A Picosky post containing at most 12 graphemes.",
+      "description": "A Picosky post containing at most 64 graphemes.",
       "key": "tid",
       "record": {
         "type": "object",
