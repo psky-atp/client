@@ -11,7 +11,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
       class={`flex flex-col items-start gap-x-3 border-b py-1 text-sm dark:border-b-neutral-800 ${props.class ?? ""}`}
     >
       <div class="my-0.5 flex max-h-40 w-full flex-col items-start">
-        <span class="flex w-full items-center justify-between gap-x-2 break-words text-xs text-stone-500 dark:text-stone-400">
+        <span class="flex w-full items-center justify-between gap-x-2 break-words text-xs text-stone-500 sm:text-sm dark:text-stone-400">
           <span class="w-full truncate">
             <span class="font-bold text-black dark:text-white">
               {props.record.nickname ? `${props.record.nickname} ` : ""}
@@ -25,7 +25,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
             </a>
           </span>
 
-          <span class="w-32 text-right font-mono">
+          <span class="w-32 text-right font-mono text-xs">
             {new Date(props.record.indexedAt).toLocaleTimeString()}
           </span>
         </span>
