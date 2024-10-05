@@ -119,7 +119,7 @@ const Login: Component = () => {
             onclick={() => updateNickname(nickname())}
             class="bg-stone-600 px-1 py-1 text-xs font-bold text-white hover:bg-stone-700"
           >
-            Update
+            update
           </button>
         </form>
       </Show>
