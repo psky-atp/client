@@ -96,7 +96,7 @@ const PostFeed: Component<PostFeedProps> = ({
                 posts()[idx() + 1].did === record.did &&
                 record.indexedAt - posts()[idx() + 1].indexedAt < 600000
               }
-              lastSeenPost={idx() && idx() === unreadCount()}
+              firstUnread={idx() + 1 === unreadCount()}
             />
           )}
         </For>
