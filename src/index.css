@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.last-post-msg::before {
+  @apply border-b dark:border-b-neutral-800 pb-1 mb-1;
+  content: "New messages!";
+  color: rgb(196, 24, 24);
+  text-align: center;
+  width: 100%;
+}
