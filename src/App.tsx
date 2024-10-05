@@ -1,7 +1,9 @@
 import {
+  Accessor,
   createSignal,
   For,
   onMount,
+  Setter,
   Show,
   untrack,
   type Component,
@@ -28,7 +30,6 @@ type PostRecord = {
   indexedAt: number;
 };
 
-let unreadCount = 0;
 const [loginState, setLoginState] = createSignal(false);
 let rpc: XRPC;
 let session: OAuthSession;
@@ -137,7 +138,11 @@ const Login: Component = () => {
   );
 };
 
-const PostFeed: Component = () => {
+interface PostFeedProps {
+  unreadCount: Accessor<number>,
+  setUnreadCount: Setter<number>
+}
+const PostFeed: Component<PostFeedProps> = ({unreadCount, setUnreadCount}) => {
   const [posts, setPosts] = createSignal<PostRecord[]>([]);
   const socket = new WebSocket(`wss://${SERVER_URL}/subscribe`);
 
@@ -148,9 +153,10 @@ const PostFeed: Component = () => {
     socket.addEventListener("message", (event) => {
       const data = JSON.parse(event.data) as PostRecord;
       setPosts([data, ...untrack(posts).slice(0, MAXPOSTS - 1)]);
-      if (!document.hasFocus()) {
-        unreadCount++;
-        document.title = `(${unreadCount}) picosky`;
+      const currUnreadCount = unreadCount();
+      if (!document.hasFocus() || currUnreadCount) {
+        setUnreadCount(currUnreadCount + 1);
+        document.title = `(${currUnreadCount + 1}) picosky`;
       }
     });
   });
@@ -162,7 +168,7 @@ const PostFeed: Component = () => {
 
   return (
     <div class="flex w-full flex-col">
-      <For each={posts()}>{(record) => <PostItem record={record} />}</For>
+      <For each={posts()}>{(record, idx) => <PostItem record={record} class={idx() && idx() == unreadCount() ? 'last-post-msg' : ''}/>}</For>
       <p></p>
     </div>
   );
@@ -170,37 +176,38 @@ const PostFeed: Component = () => {
 
 interface PostItemProps {
   record: PostRecord;
+  class?: string;
 }
-const PostItem: Component<PostItemProps> = ({ record }: PostItemProps) => {
+const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
   return (
-    <div class="flex items-start gap-x-3 border-b py-1 text-sm dark:border-b-neutral-800">
+    <div class={`flex flex-col items-start gap-x-3 border-b py-1 text-sm dark:border-b-neutral-800 ${props.class ?? ''}`}>
       <div class="my-0.5 flex max-h-40 w-full flex-col items-start">
         <span class="flex w-full items-center justify-between gap-x-2 break-words text-xs text-stone-500 dark:text-stone-400">
           <a
             classList={{
               "text-violet-600 dark:text-violet-400":
-                record.handle !== "anon.psky.social",
+                props.record.handle !== "anon.psky.social",
               truncate: true,
             }}
             target="_blank"
-            href={`https://bsky.app/profile/${record.handle}`}
+            href={`https://bsky.app/profile/${props.record.handle}`}
           >
-            @{record.handle}{" "}
+            @{props.record.handle}{" "}
           </a>
 
           <span class="w-32 text-right">
-            {new Date(record.indexedAt).toLocaleTimeString()}
+            {new Date(props.record.indexedAt).toLocaleTimeString()}
           </span>
         </span>
         <span class="h-full w-full overflow-hidden whitespace-pre-wrap break-words font-sans">
-          {record.post}
+          {props.record.post}
         </span>
       </div>
     </div>
   );
 };
 
-const PostComposer: Component = () => {
+const PostComposer: Component<{setUnreadCount: Setter<number>}> = ({setUnreadCount}) => {
   const [saveToggle, setSaveToggle] = createSignal(false);
   const [firstChar, setFirstChar] = createSignal("");
   let postInput = "";
@@ -252,6 +259,8 @@ const PostComposer: Component = () => {
         })
         .catch((err) => console.log(err));
     }
+    setUnreadCount(0);
+    document.title = "picosky";
   };
 
   return (
@@ -324,15 +333,17 @@ const PostComposer: Component = () => {
 
 const App: Component = () => {
   const [theme, setTheme] = createSignal("");
+  const [unreadCount, setUnreadCount] = createSignal(0);
+
+  const resetUnreadCount = () => {
+    setUnreadCount(0);
+    document.title = "picosky";
+  };
 
   onMount(() => {
     if (localStorage.theme !== undefined) setTheme(localStorage.theme);
     else setTheme("light");
-
-    window.addEventListener("focus", () => {
-      unreadCount = 0;
-      document.title = "picosky";
-    });
+    window.addEventListener("blur", resetUnreadCount)
   });
 
   return (
@@ -361,8 +372,8 @@ const App: Component = () => {
           </a>
         </p>
         <Login />
-        <PostComposer />
-        <PostFeed />
+        <PostComposer setUnreadCount={setUnreadCount}/>
+        <PostFeed setUnreadCount={setUnreadCount} unreadCount={unreadCount}/>
       </div>
     </div>
   );
