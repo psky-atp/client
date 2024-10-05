@@ -23,7 +23,7 @@ const App: Component = () => {
   });
 
   return (
-    <div class="flex flex-col items-center py-4 font-mono dark:text-white">
+    <div class="flex flex-col items-center py-4 dark:text-white">
       <div class="relative flex w-80 flex-col items-center sm:w-[32rem]">
         <h1 class="mb-2 text-xl">picosky</h1>
         <div class="absolute left-0 top-0 text-sm">

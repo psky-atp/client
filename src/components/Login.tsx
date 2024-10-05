@@ -90,8 +90,8 @@ const Login: Component = () => {
   return (
     <div class="mb-3 flex flex-col items-center text-sm">
       <Show when={isLoggedIn() && handle()}>
-        <div class="absolute right-0 top-0 flex flex-col text-right text-xs">
-          <span>@{handle()}</span>
+        <div class="truncate text-xs">
+          <span>Logged in as @{handle()} </span>
           <span>
             (
             <a href="" class="text-red-500" onclick={() => logoutBsky()}>
@@ -112,7 +112,7 @@ const Login: Component = () => {
             id="nickname"
             placeholder="nickname"
             maxlength="32"
-            class="mr-2 w-40 border border-black px-2 py-1 font-sans dark:border-white dark:bg-neutral-700"
+            class="mr-2 w-40 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700"
             onInput={(e) => setNickname(e.currentTarget.value)}
           />
           <button

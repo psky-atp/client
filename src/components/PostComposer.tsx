@@ -61,7 +61,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
           placeholder="64 chars max"
           required
           autocomplete="off"
-          class="mr-2 w-52 border border-black px-2 py-1 font-sans dark:border-white dark:bg-neutral-700 sm:w-64"
+          class="mr-2 w-52 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-64"
           onInput={(e) => (postInput = e.currentTarget.value)}
           onPaste={(e) => {
             if (
