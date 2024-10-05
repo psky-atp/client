@@ -179,7 +179,7 @@ const PostItem: Component<PostItemProps> = ({ record }: PostItemProps) => {
           <a
             classList={{
               "text-violet-600 dark:text-violet-400":
-                record.handle !== "psky.social",
+                record.handle !== "anon.psky.social",
               truncate: true,
             }}
             target="_blank"
