@@ -40,7 +40,8 @@ const PostFeed: Component<PostFeedProps> = ({
 
   const getPosts = async () => {
     const res = await fetch(`https://${SERVER_URL}/posts?limit=${MAXPOSTS}`);
-    return await res.json();
+    const json = await res.json();
+    return await json.posts;
   };
 
   return (
