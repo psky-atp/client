@@ -13,7 +13,7 @@ const App: Component = () => {
 
   const resetUnreadCount = () => {
     setUnreadCount(0);
-    document.title = "picosky";
+    document.title = APP_NAME;
   };
 
   onMount(() => {

@@ -1,8 +1,10 @@
 interface PostRecord {
-  uri: string;
+  did: string;
+  rkey: string;
   post: string;
   handle: string;
+  nickname?: string;
   indexedAt: number;
-};
+}
 
 export type { PostRecord };
