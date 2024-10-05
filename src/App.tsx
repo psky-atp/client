@@ -5,8 +5,6 @@ import Login from "./components/Login.jsx";
 import PostComposer from "./components/PostComposer.jsx";
 import PostFeed from "./components/PostFeed.jsx";
 
-import "@atcute/bluesky/lexicons";
-
 const App: Component = () => {
   const [theme, setTheme] = createSignal("");
   const [unreadCount, setUnreadCount] = createSignal(0);

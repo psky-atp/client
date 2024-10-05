@@ -5,7 +5,6 @@ import {
 import { Component, createSignal, onMount, Show } from "solid-js";
 import resolveDid from "../utils/api.js";
 import { XRPC } from "@atcute/client";
-import * as TID from "@atcute/tid";
 import { SocialPskyActorProfile } from "@atcute/client/lexicons";
 
 interface LoginState {
@@ -132,7 +131,7 @@ const Login: Component = () => {
             type="text"
             id="handle"
             placeholder="user.bsky.social"
-            class="mr-2 w-52 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-64"
+            class="mr-2 w-52 border border-black px-2 py-1 sm:w-64 dark:border-white dark:bg-neutral-700"
             onInput={(e) => setLoginInput(e.currentTarget.value)}
           />
           <button
