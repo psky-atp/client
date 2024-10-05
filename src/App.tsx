@@ -334,27 +334,16 @@ const PostComposer: Component<{setUnreadCount: Setter<number>}> = ({setUnreadCou
 const App: Component = () => {
   const [theme, setTheme] = createSignal("");
   const [unreadCount, setUnreadCount] = createSignal(0);
-  const [pendingReset, setPendingReset] = createSignal<NodeJS.Timeout>();
 
   const resetUnreadCount = () => {
-    let pending = pendingReset();
-    if (pending) clearTimeout(pending);
-    pending = setTimeout(() => {
-      setUnreadCount(0);
-      setPendingReset(undefined);
-      document.title = "picosky";
-    }, 15000);
-    setPendingReset(pending);
-  }
+    setUnreadCount(0);
+    document.title = "picosky";
+  };
 
   onMount(() => {
     if (localStorage.theme !== undefined) setTheme(localStorage.theme);
     else setTheme("light");
-    window.addEventListener("focus", resetUnreadCount);
-    window.addEventListener("blur", () => {
-      let pending = pendingReset();
-      if (pending) clearTimeout(pending);
-    })
+    window.addEventListener("blur", resetUnreadCount)
   });
 
   return (
