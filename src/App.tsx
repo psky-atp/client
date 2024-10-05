@@ -1,8 +1,4 @@
-import {
-  createSignal,
-  onMount,
-  type Component,
-} from "solid-js";
+import { createSignal, onMount, type Component } from "solid-js";
 
 import { APP_NAME } from "./utils/constants.js";
 import Login from "./components/Login.jsx";
@@ -23,7 +19,7 @@ const App: Component = () => {
   onMount(() => {
     if (localStorage.theme !== undefined) setTheme(localStorage.theme);
     else setTheme("light");
-    window.addEventListener("blur", resetUnreadCount)
+    window.addEventListener("blur", resetUnreadCount);
   });
 
   return (
@@ -52,8 +48,8 @@ const App: Component = () => {
           </a>
         </p>
         <Login />
-        <PostComposer setUnreadCount={setUnreadCount}/>
-        <PostFeed setUnreadCount={setUnreadCount} unreadCount={unreadCount}/>
+        <PostComposer setUnreadCount={setUnreadCount} />
+        <PostFeed setUnreadCount={setUnreadCount} unreadCount={unreadCount} />
       </div>
     </div>
   );

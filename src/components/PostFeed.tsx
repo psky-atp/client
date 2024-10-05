@@ -1,13 +1,24 @@
-import { Accessor, Component, createSignal, For, onMount, Setter, untrack } from "solid-js";
-import { PostRecord } from "../utils/defs.js";
+import {
+  Accessor,
+  Component,
+  createSignal,
+  For,
+  onMount,
+  Setter,
+  untrack,
+} from "solid-js";
+import { PostRecord } from "../utils/types.js";
 import { APP_NAME, MAXPOSTS, SERVER_URL } from "../utils/constants.js";
 import PostItem from "./PostItem.jsx";
 
 interface PostFeedProps {
-  unreadCount: Accessor<number>,
-  setUnreadCount: Setter<number>
+  unreadCount: Accessor<number>;
+  setUnreadCount: Setter<number>;
 }
-const PostFeed: Component<PostFeedProps> = ({unreadCount, setUnreadCount}) => {
+const PostFeed: Component<PostFeedProps> = ({
+  unreadCount,
+  setUnreadCount,
+}) => {
   const [posts, setPosts] = createSignal<PostRecord[]>([]);
   const socket = new WebSocket(`wss://${SERVER_URL}/subscribe`);
 
@@ -33,7 +44,14 @@ const PostFeed: Component<PostFeedProps> = ({unreadCount, setUnreadCount}) => {
 
   return (
     <div class="flex w-full flex-col">
-      <For each={posts()}>{(record, idx) => <PostItem record={record} class={idx() && idx() == unreadCount() ? 'last-post-msg' : ''}/>}</For>
+      <For each={posts()}>
+        {(record, idx) => (
+          <PostItem
+            record={record}
+            class={idx() && idx() == unreadCount() ? "last-post-msg" : ""}
+          />
+        )}
+      </For>
       <p></p>
     </div>
   );

@@ -1,5 +1,5 @@
 import { Component } from "solid-js";
-import { PostRecord } from "../utils/defs.js";
+import { PostRecord } from "../utils/types.js";
 
 interface PostItemProps {
   record: PostRecord;
@@ -7,7 +7,9 @@ interface PostItemProps {
 }
 const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
   return (
-    <div class={`flex flex-col items-start gap-x-3 border-b py-1 text-sm dark:border-b-neutral-800 ${props.class ?? ''}`}>
+    <div
+      class={`flex flex-col items-start gap-x-3 border-b py-1 text-sm dark:border-b-neutral-800 ${props.class ?? ""}`}
+    >
       <div class="my-0.5 flex max-h-40 w-full flex-col items-start">
         <span class="flex w-full items-center justify-between gap-x-2 break-words text-xs text-stone-500 dark:text-stone-400">
           <a

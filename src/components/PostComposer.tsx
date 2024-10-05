@@ -4,7 +4,9 @@ import { SocialPskyFeedPost } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
 import { APP_NAME, CHARLIMIT, SERVER_URL } from "../utils/constants.js";
 
-const PostComposer: Component<{setUnreadCount: Setter<number>}> = ({setUnreadCount}) => {
+const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
+  setUnreadCount,
+}) => {
   const [saveToggle, setSaveToggle] = createSignal(false);
   const [firstChar, setFirstChar] = createSignal("");
   let postInput = "";
@@ -37,8 +39,8 @@ const PostComposer: Component<{setUnreadCount: Setter<number>}> = ({setUnreadCou
   const sendPost = async (post: string) => {
     if (isLoggedIn()) {
       let currLoginState = loginState();
-      await currLoginState.rpc!
-        .call("com.atproto.repo.putRecord", {
+      await currLoginState
+        .rpc!.call("com.atproto.repo.putRecord", {
           data: {
             repo: currLoginState.session!.did,
             collection: "social.psky.feed.post",
@@ -92,7 +94,7 @@ const PostComposer: Component<{setUnreadCount: Setter<number>}> = ({setUnreadCou
           placeholder="64 chars max"
           required
           autocomplete="off"
-          class="mr-2 w-52 border border-black px-2 py-1 font-sans dark:border-white dark:bg-neutral-700 sm:w-64"
+          class="mr-2 w-52 border border-black px-2 py-1 font-sans sm:w-64 dark:border-white dark:bg-neutral-700"
           onInput={(e) => (postInput = e.currentTarget.value)}
           onPaste={(e) => {
             if (
