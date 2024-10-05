@@ -90,12 +90,15 @@ const Login: Component = () => {
   return (
     <div class="mb-3 flex flex-col items-center text-sm">
       <Show when={isLoggedIn() && handle()}>
-        <div class="text-xs">
-          Logged in as @{handle()} (
-          <a href="" class="text-red-500" onclick={() => logoutBsky()}>
-            Logout
-          </a>
-          )
+        <div class="absolute right-0 top-0 flex flex-col text-right text-xs">
+          <span>@{handle()}</span>
+          <span>
+            (
+            <a href="" class="text-red-500" onclick={() => logoutBsky()}>
+              Logout
+            </a>
+            )
+          </span>
         </div>
         <form
           class="mt-2 flex items-center"
