@@ -4,8 +4,8 @@
 
 .last-post-msg::before {
   @apply border-b dark:border-b-neutral-800 pb-1 mb-1;
-  content: "New messages!";
-  color: rgb(196, 24, 24);
+  content: "New messages";
+  color: rgb(239, 68, 68);
   text-align: center;
   width: 100%;
 }
