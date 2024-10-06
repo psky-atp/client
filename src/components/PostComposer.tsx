@@ -47,7 +47,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
     <div class="mb-4 flex items-center justify-center">
       <div
         classList={{
-          "mr-2 w-14 text-right": true,
+          "mr-2 select-none w-14 text-right": true,
           "text-red-500": postInput().length > CHARLIMIT,
         }}
       >
