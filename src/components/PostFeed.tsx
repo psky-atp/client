@@ -24,7 +24,7 @@ const PostFeed: Component<PostFeedProps> = ({
 }) => {
   const [posts, setPosts] = createSignal<PostRecord[]>([]);
   const socket = new WebSocket(`wss://${SERVER_URL}/subscribe`);
-  let cursor = "0";
+  let cursor = 0;
   let feedSize = 100;
 
   createEffect(async () => {
@@ -33,7 +33,7 @@ const PostFeed: Component<PostFeedProps> = ({
 
   onMount(() => {
     socket.addEventListener("open", async () => {
-      setPosts(await getPosts());
+      setPosts(await getPosts(false));
     });
     socket.addEventListener("message", (event) => {
       const data = JSON.parse(event.data) as PostRecord;
@@ -48,7 +48,7 @@ const PostFeed: Component<PostFeedProps> = ({
 
   const getPosts = async (updateCursor?: boolean) => {
     const res = await fetch(
-      `https://${SERVER_URL}/posts?limit=${MAXPOSTS}&cursor=${cursor ?? "0"}`,
+      `https://${SERVER_URL}/posts?limit=${MAXPOSTS}&cursor=${cursor}`,
     );
     const json = await res.json();
     cursor = (updateCursor ?? true) ? json.cursor.toString() : "0";
@@ -71,8 +71,10 @@ const PostFeed: Component<PostFeedProps> = ({
         <button
           class="mt-3 bg-stone-600 px-1 py-1 font-bold text-white hover:bg-stone-700"
           onclick={async () => {
+            // HACK: force to the cursor to only be updated after a first click
+            cursor = cursor == 0 ? 100 : cursor;
             setPosts(posts().concat(await getPosts()));
-            feedSize += 100;
+            feedSize += MAXPOSTS;
           }}
         >
           Load More
