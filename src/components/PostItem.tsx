@@ -38,7 +38,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
                 : word + " ";
               if (word.startsWith("https://"))
                 return (
-                  <a target="_blank" href={word}>
+                  <a target="_blank" class="text-sky-500" href={word}>
                     {wordElem}
                   </a>
                 );
