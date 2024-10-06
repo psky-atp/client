@@ -17,6 +17,11 @@
             "maxLength": 1000,
             "maxGraphemes": 64,
             "description": "Text content."
+          },
+          "facets": {
+            "type": "array",
+            "description": "Annotations of text (mentions, URLs, hashtags, etc)",
+            "items": { "type": "ref", "ref": "social.psky.richtext.facet" }
           }
         }
       }

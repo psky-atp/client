@@ -3,28 +3,25 @@ import {
   OAuthSession,
 } from "@atproto/oauth-client-browser";
 import { Component, createSignal, onMount, Show } from "solid-js";
-import resolveDid from "../utils/api.js";
+import { resolveDid } from "../utils/api.js";
 import { XRPC } from "@atcute/client";
 import { SocialPskyActorProfile } from "@atcute/client/lexicons";
+import { PDS_URL } from "../utils/constants.js";
 
 interface LoginState {
   session?: OAuthSession;
+  handle?: string;
   rpc?: XRPC;
 }
-
-export const [handle, setHandle] = createSignal("");
-
 const [loginState, setLoginState] = createSignal<LoginState>({});
 const isLoggedIn = () => {
   const state = loginState();
   return state.session && state.session.sub && state.rpc;
 };
-
 const isLocal = () =>
   window.location.hostname === "localhost" ||
   window.location.hostname === "127.0.0.1" ||
   window.location.hostname === "0.0.0.0";
-
 const Login: Component = () => {
   const [loginInput, setLoginInput] = createSignal("");
   const [nickname, setNickname] = createSignal("");
@@ -38,7 +35,7 @@ const Login: Component = () => {
         isLocal() ?
           "http://localhost?redirect_uri=http%3A%2F%2F127.0.0.1%3A1313%2F&scope=atproto+transition%3Ageneric"
         : "https://psky.social/client-metadata.json",
-      handleResolver: "https://boletus.us-west.host.bsky.network",
+      handleResolver: `https://${PDS_URL}`,
     });
     client.addEventListener("deleted", () => {
       setLoginState({});
@@ -48,12 +45,12 @@ const Login: Component = () => {
     if (result) {
       const state = {
         session: result.session,
+        handle: await resolveDid(result.session.did),
         rpc: new XRPC({
           handler: { handle: result.session.fetchHandler.bind(result.session) },
         }),
       };
       setLoginState(state);
-      setHandle(await resolveDid(state.session.did));
     }
     setNotice("");
   });
@@ -92,9 +89,9 @@ const Login: Component = () => {
 
   return (
     <div class="mb-3 flex flex-col items-center text-sm">
-      <Show when={isLoggedIn() && handle()}>
+      <Show when={isLoggedIn() && loginState().handle}>
         <div class="truncate text-xs">
-          <span>Logged in as @{handle()} </span>
+          <span>Logged in as @{loginState().handle} </span>
           <span>
             (
             <a href="" class="text-red-500" onclick={() => logoutBsky()}>
@@ -135,7 +132,7 @@ const Login: Component = () => {
             type="text"
             id="handle"
             placeholder="user.bsky.social"
-            class="mr-2 w-52 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-64"
+            class="mr-2 w-52 border border-black px-2 py-1 sm:w-64 dark:border-white dark:bg-neutral-700"
             onInput={(e) => setLoginInput(e.currentTarget.value)}
           />
           <button

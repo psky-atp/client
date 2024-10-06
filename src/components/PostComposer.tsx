@@ -3,23 +3,16 @@ import { isLoggedIn, loginState } from "./Login.jsx";
 import { SocialPskyFeedPost } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
 import { APP_NAME, CHARLIMIT, SERVER_URL } from "../utils/constants.js";
+import detectFacets from "../utils/rich-text/lib.js";
+import { graphemeLen } from "../utils/lib.js";
 
 const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
   setUnreadCount,
 }) => {
   let postInput = "";
-  const segmenter = new Intl.Segmenter();
 
-  const graphemeLen = (text: string): number => {
-    let iterator = segmenter.segment(text)[Symbol.iterator]();
-    let count = 0;
-
-    while (!iterator.next().done) count++;
-
-    return count;
-  };
-
-  const sendPost = async (post: string) => {
+  const sendPost = async (text: string) => {
+    let facets = await detectFacets(text);
     if (isLoggedIn()) {
       let currLoginState = loginState();
       await currLoginState
@@ -30,7 +23,8 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
             rkey: TID.now(),
             record: {
               $type: "social.psky.feed.post",
-              text: post,
+              text,
+              facets,
             } as SocialPskyFeedPost.Record,
           },
         })
@@ -38,7 +32,10 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
     } else {
       await fetch(`https://${SERVER_URL}/post`, {
         method: "POST",
-        body: JSON.stringify({ post: post }),
+        body: JSON.stringify({
+          text: text,
+          facets: facets,
+        }),
         headers: { "Content-Type": "application/json" },
       });
     }
@@ -61,7 +58,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
           placeholder="64 chars max"
           required
           autocomplete="off"
-          class="mr-2 w-52 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-64"
+          class="mr-2 w-52 border border-black px-2 py-1 sm:w-64 dark:border-white dark:bg-neutral-700"
           onInput={(e) => (postInput = e.currentTarget.value)}
           onPaste={(e) => {
             if (
