@@ -8,6 +8,9 @@ import {
 } from "../utils/rich-text/util.js";
 import { loginState } from "./Login.jsx";
 import { Brand, SocialPskyRichtextFacet } from "@atcute/client/lexicons";
+import { postInput, setPostInput } from "./PostComposer.jsx";
+import { graphemeLen } from "../utils/lib.js";
+import { CHARLIMIT } from "../utils/constants.js";
 
 interface PostItemProps {
   record: PostRecord;
@@ -41,13 +44,20 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
             <span class="font-bold text-black dark:text-white">
               {props.record.nickname ? `${props.record.nickname} ` : ""}
             </span>
-            <a
-              class="text-zinc-600 dark:text-zinc-400"
-              target="_blank"
-              href={`https://bsky.app/profile/${props.record.handle}`}
+            <span
+              class="cursor-pointer text-zinc-600 dark:text-zinc-400"
+              onclick={() => {
+                const newInput = `${postInput()}@${props.record.handle} `;
+                if (graphemeLen(newInput) > CHARLIMIT) return;
+                setPostInput(newInput);
+                const textInputElem = document.getElementById(
+                  "textInput",
+                ) as HTMLInputElement;
+                textInputElem.value = postInput();
+              }}
             >
-              @{props.record.handle}{" "}
-            </a>
+              @{props.record.handle}
+            </span>
           </span>
 
           <span class="w-32 text-right font-mono text-xs">

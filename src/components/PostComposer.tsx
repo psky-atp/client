@@ -6,11 +6,11 @@ import { APP_NAME, CHARLIMIT, SERVER_URL } from "../utils/constants.js";
 import detectFacets from "../utils/rich-text/lib.js";
 import { graphemeLen } from "../utils/lib.js";
 
+export const [postInput, setPostInput] = createSignal("");
+
 const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
   setUnreadCount,
 }) => {
-  const [postInput, setPostInput] = createSignal("");
-
   const sendPost = async (text: string) => {
     let facets = await detectFacets(text);
     if (isLoggedIn()) {
