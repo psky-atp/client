@@ -58,12 +58,10 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
           placeholder="64 chars max"
           required
           autocomplete="off"
-          class="mr-2 w-52 border border-black px-2 py-1 sm:w-64 dark:border-white dark:bg-neutral-700"
+          class="mr-2 w-52 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-64"
           onInput={(e) => (postInput = e.currentTarget.value)}
           onPaste={(e) => {
-            if (
-              graphemeLen(e.clipboardData?.getData("text") ?? "") >= CHARLIMIT
-            )
+            if (graphemeLen(e.clipboardData?.getData("text") ?? "") > CHARLIMIT)
               e.preventDefault();
           }}
           onBeforeInput={(e) => {
@@ -73,7 +71,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
         />
         <button
           onclick={() => {
-            if (!postInput.length) return;
+            if (!postInput.length || graphemeLen(postInput) > CHARLIMIT) return;
             sendPost(postInput);
             postInput = "";
           }}
