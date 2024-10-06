@@ -18,7 +18,7 @@ export function isMention(v: unknown): v is Mention {
   return (
     isObj(v) &&
     hasProp(v, "$type") &&
-    v.$type === "app.bsky.richtext.facet#mention"
+    v.$type === "social.psky.richtext.facet#mention"
   );
 }
 
