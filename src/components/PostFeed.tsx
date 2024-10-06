@@ -71,7 +71,11 @@ const PostFeed: Component<PostFeedProps> = ({
         <button
           class="mt-3 bg-stone-600 px-1 py-1 font-bold text-white hover:bg-stone-700"
           onclick={async () => {
-            // HACK: force to the cursor to only be updated after a first click
+            // HACK: force the cursor to only be updated after a first click
+            // fetching getPosts can happen twice:
+            // - when connecting to the websocket
+            // - when the handle is found, to refresh and show mentions as highlighted
+            // this would result in cursor getting updated, then fetching older posts
             cursor = cursor == 0 ? 100 : cursor;
             setPosts(posts().concat(await getPosts()));
             feedSize += MAXPOSTS;
