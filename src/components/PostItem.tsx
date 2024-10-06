@@ -41,9 +41,13 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
       >
         <span class="flex w-full items-center justify-between gap-x-2 break-words text-xs text-stone-500 dark:text-stone-400 sm:text-sm">
           <span class="w-full truncate">
-            <span class="font-bold text-black dark:text-white">
+            <a
+              class="font-bold text-black dark:text-white"
+              target="_blank"
+              href={`https://bsky.app/profile/${props.record.handle}`}
+            >
               {props.record.nickname ? `${props.record.nickname} ` : ""}
-            </span>
+            </a>
             <span
               class="cursor-pointer text-zinc-600 dark:text-zinc-400"
               onclick={() => {
