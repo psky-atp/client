@@ -55,7 +55,7 @@ const Login: Component = () => {
     setNotice("");
   });
 
-  const loginBsky = async (handle: string) => {
+  const login = async (handle: string) => {
     setNotice("Redirecting...");
     try {
       await client.signIn(handle, {
@@ -67,7 +67,7 @@ const Login: Component = () => {
     }
   };
 
-  const logoutBsky = async () => {
+  const logout = async () => {
     if (isLoggedIn()) await client.revoke(loginState().session!.sub);
   };
 
@@ -94,7 +94,7 @@ const Login: Component = () => {
           <span>Logged in as @{loginState().handle} </span>
           <span>
             (
-            <a href="" class="text-red-500" onclick={() => logoutBsky()}>
+            <a href="" class="text-red-500" onclick={() => logout()}>
               Logout
             </a>
             )
@@ -136,7 +136,7 @@ const Login: Component = () => {
             onInput={(e) => setLoginInput(e.currentTarget.value)}
           />
           <button
-            onclick={() => loginBsky(loginInput())}
+            onclick={() => login(loginInput())}
             class="bg-stone-600 px-1 py-1 text-sm font-bold text-white hover:bg-stone-700"
           >
             Login
