@@ -36,7 +36,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
             mentionsUser,
         }}
       >
-        <span class="flex w-full items-center justify-between gap-x-2 break-words text-xs text-stone-500 sm:text-sm dark:text-stone-400">
+        <span class="flex w-full items-center justify-between gap-x-2 break-words text-xs text-stone-500 dark:text-stone-400 sm:text-sm">
           <span class="w-full truncate">
             <span class="font-bold text-black dark:text-white">
               {props.record.nickname ? `${props.record.nickname} ` : ""}
@@ -85,8 +85,7 @@ const RichText: Component<{
         ];
       },
       [text] as (string | JSX.Element)[],
-    )
-    .slice(1) ?? text;
+    ) ?? text;
 
 type Feature = Brand.Union<
   | SocialPskyRichtextFacet.Link
