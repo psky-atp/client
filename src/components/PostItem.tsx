@@ -1,4 +1,4 @@
-import { Component } from "solid-js";
+import { Component, For } from "solid-js";
 import { PostRecord } from "../utils/types.js";
 
 interface PostItemProps {
@@ -11,7 +11,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
       class={`flex flex-col items-start gap-x-3 border-b py-1 text-sm dark:border-b-neutral-800 ${props.class ?? ""}`}
     >
       <div class="my-0.5 flex max-h-40 w-full flex-col items-start">
-        <span class="flex w-full items-center justify-between gap-x-2 break-words text-xs text-stone-500 sm:text-sm dark:text-stone-400">
+        <span class="flex w-full items-center justify-between gap-x-2 break-words text-xs text-stone-500 dark:text-stone-400 sm:text-sm">
           <span class="w-full truncate">
             <span class="font-bold text-black dark:text-white">
               {props.record.nickname ? `${props.record.nickname} ` : ""}
@@ -30,7 +30,21 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
           </span>
         </span>
         <span class="h-full w-full overflow-hidden whitespace-pre-wrap break-words">
-          {props.record.post}
+          <For each={props.record.post.split(" ")}>
+            {(word, index) => {
+              const wordElem =
+                index() == props.record.post.split(" ").length - 1 ?
+                  word
+                : word + " ";
+              if (word.startsWith("https://"))
+                return (
+                  <a target="_blank" href={word}>
+                    {wordElem}
+                  </a>
+                );
+              else return <>{wordElem}</>;
+            }}
+          </For>
         </span>
       </div>
     </div>
