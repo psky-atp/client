@@ -11,7 +11,8 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
     return (
       post.startsWith(`@${handle()} `) ||
       post.includes(` @${handle()} `) ||
-      post.endsWith(` @${handle()}`)
+      post.endsWith(` @${handle()}`) ||
+      post === `@${handle()}`
     );
   };
 
@@ -57,7 +58,11 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
                     {wordElem}
                   </a>
                 );
-              else if (word.includes(`@${handle()}`))
+              else if (
+                /^@([a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/.test(
+                  word,
+                )
+              )
                 return <span class="font-bold">{wordElem}</span>;
               else return <>{wordElem}</>;
             }}
