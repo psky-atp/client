@@ -10,6 +10,7 @@ import { PDS_URL } from "../utils/constants.js";
 
 interface LoginState {
   session?: OAuthSession;
+  handle?: string;
   rpc?: XRPC;
 }
 const [loginState, setLoginState] = createSignal<LoginState>({});
@@ -24,7 +25,6 @@ const isLocal = () =>
 const Login: Component = () => {
   const [loginInput, setLoginInput] = createSignal("");
   const [nickname, setNickname] = createSignal("");
-  const [handle, setHandle] = createSignal("");
   const [notice, setNotice] = createSignal("");
   let client: BrowserOAuthClient;
 
@@ -45,12 +45,12 @@ const Login: Component = () => {
     if (result) {
       const state = {
         session: result.session,
+        handle: await resolveDid(result.session.did),
         rpc: new XRPC({
           handler: { handle: result.session.fetchHandler.bind(result.session) },
         }),
       };
       setLoginState(state);
-      setHandle(await resolveDid(state.session.did));
     }
     setNotice("");
   });
@@ -89,9 +89,9 @@ const Login: Component = () => {
 
   return (
     <div class="mb-3 flex flex-col items-center text-sm">
-      <Show when={isLoggedIn() && handle()}>
+      <Show when={isLoggedIn() && loginState().handle}>
         <div class="truncate text-xs">
-          <span>Logged in as @{handle()} </span>
+          <span>Logged in as @{loginState().handle} </span>
           <span>
             (
             <a href="" class="text-red-500" onclick={() => logoutBsky()}>
