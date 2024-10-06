@@ -132,7 +132,7 @@ const Login: Component = () => {
             type="text"
             id="handle"
             placeholder="user.bsky.social"
-            class="mr-2 w-52 border border-black px-2 py-1 sm:w-64 dark:border-white dark:bg-neutral-700"
+            class="mr-2 w-44 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700"
             onInput={(e) => setLoginInput(e.currentTarget.value)}
           />
           <button
