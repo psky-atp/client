@@ -65,7 +65,10 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
           </span>
 
           <span class="w-32 text-right font-mono text-xs">
-            {new Date(props.record.indexedAt).toLocaleTimeString()}
+            {new Date(props.record.indexedAt).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
           </span>
         </span>
 
