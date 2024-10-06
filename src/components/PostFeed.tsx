@@ -1,6 +1,7 @@
 import {
   Accessor,
   Component,
+  createEffect,
   createSignal,
   For,
   onMount,
@@ -11,6 +12,7 @@ import { PostRecord } from "../utils/types.js";
 import { APP_NAME, MAXPOSTS, SERVER_URL } from "../utils/constants.js";
 import PostItem from "./PostItem.jsx";
 import { WebSocket } from "partysocket";
+import { loginState } from "./Login.jsx";
 
 interface PostFeedProps {
   unreadCount: Accessor<number>;
@@ -22,6 +24,10 @@ const PostFeed: Component<PostFeedProps> = ({
 }) => {
   const [posts, setPosts] = createSignal<PostRecord[]>([]);
   const socket = new WebSocket(`wss://${SERVER_URL}/subscribe`);
+
+  createEffect(async () => {
+    if (loginState().handle) setPosts(await getPosts());
+  });
 
   onMount(() => {
     socket.addEventListener("open", async () => {
