@@ -12,23 +12,19 @@ interface LoginState {
   session?: OAuthSession;
   rpc?: XRPC;
 }
-
-export const [handle, setHandle] = createSignal("");
-
 const [loginState, setLoginState] = createSignal<LoginState>({});
 const isLoggedIn = () => {
   const state = loginState();
   return state.session && state.session.sub && state.rpc;
 };
-
 const isLocal = () =>
   window.location.hostname === "localhost" ||
   window.location.hostname === "127.0.0.1" ||
   window.location.hostname === "0.0.0.0";
-
 const Login: Component = () => {
   const [loginInput, setLoginInput] = createSignal("");
   const [nickname, setNickname] = createSignal("");
+  const [handle, setHandle] = createSignal("");
   const [notice, setNotice] = createSignal("");
   let client: BrowserOAuthClient;
 
