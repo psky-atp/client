@@ -3,8 +3,7 @@ import { isLoggedIn, loginState } from "./Login.jsx";
 import { SocialPskyFeedPost } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
 import { APP_NAME, CHARLIMIT, SERVER_URL } from "../utils/constants.js";
-import { RichText } from "@atproto/api";
-import detectFacets from "../utils/detectFacets.js";
+import detectFacets from "../utils/rich-text/lib.js";
 
 const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
   setUnreadCount,
@@ -22,13 +21,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
   };
 
   const sendPost = async (text: string) => {
-    let rt = new RichText({ text });
-    detectFacets(rt);
-    let recordData = {
-      text: rt.text,
-      facets: rt.facets,
-    };
-
+    let facets = await detectFacets(text);
     if (isLoggedIn()) {
       let currLoginState = loginState();
       await currLoginState
@@ -39,7 +32,8 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
             rkey: TID.now(),
             record: {
               $type: "social.psky.feed.post",
-              ...recordData,
+              text,
+              facets,
             } as SocialPskyFeedPost.Record,
           },
         })
@@ -47,7 +41,10 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
     } else {
       await fetch(`https://${SERVER_URL}/post`, {
         method: "POST",
-        body: JSON.stringify(recordData),
+        body: JSON.stringify({
+          text: text,
+          facets: facets,
+        }),
         headers: { "Content-Type": "application/json" },
       });
     }
