@@ -3,6 +3,8 @@ import { isLoggedIn, loginState } from "./Login.jsx";
 import { SocialPskyFeedPost } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
 import { APP_NAME, CHARLIMIT, SERVER_URL } from "../utils/constants.js";
+import { RichText } from "@atproto/api";
+import detectFacets from "../utils/detectFacets.js";
 
 const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
   setUnreadCount,
@@ -19,7 +21,14 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
     return count;
   };
 
-  const sendPost = async (post: string) => {
+  const sendPost = async (text: string) => {
+    let rt = new RichText({ text });
+    detectFacets(rt);
+    let recordData = {
+      text: rt.text,
+      facets: rt.facets,
+    };
+
     if (isLoggedIn()) {
       let currLoginState = loginState();
       await currLoginState
@@ -30,7 +39,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
             rkey: TID.now(),
             record: {
               $type: "social.psky.feed.post",
-              text: post,
+              ...recordData,
             } as SocialPskyFeedPost.Record,
           },
         })
@@ -38,7 +47,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
     } else {
       await fetch(`https://${SERVER_URL}/post`, {
         method: "POST",
-        body: JSON.stringify({ post: post }),
+        body: JSON.stringify(recordData),
         headers: { "Content-Type": "application/json" },
       });
     }
@@ -61,7 +70,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
           placeholder="64 chars max"
           required
           autocomplete="off"
-          class="mr-2 w-52 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-64"
+          class="mr-2 w-52 border border-black px-2 py-1 sm:w-64 dark:border-white dark:bg-neutral-700"
           onInput={(e) => (postInput = e.currentTarget.value)}
           onPaste={(e) => {
             if (

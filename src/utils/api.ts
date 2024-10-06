@@ -14,4 +14,13 @@ const resolveDid = async (did: string) => {
   });
 };
 
-export default resolveDid;
+const resolveHandle = async (handle: string) => {
+  const res = await fetch(
+    "https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=" +
+      handle,
+  );
+
+  return res.json().then((json) => json.did);
+};
+
+export { resolveDid, resolveHandle };

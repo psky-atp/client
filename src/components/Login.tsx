@@ -3,7 +3,7 @@ import {
   OAuthSession,
 } from "@atproto/oauth-client-browser";
 import { Component, createSignal, onMount, Show } from "solid-js";
-import resolveDid from "../utils/api.js";
+import { resolveDid } from "../utils/api.js";
 import { XRPC } from "@atcute/client";
 import { SocialPskyActorProfile } from "@atcute/client/lexicons";
 
