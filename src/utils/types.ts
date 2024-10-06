@@ -1,10 +1,10 @@
-import { Facet } from "./rich-text/defs.js";
+import { SocialPskyRichtextFacet } from "@atcute/client/lexicons";
 
 interface PostRecord {
   did: string;
   rkey: string;
   post: string;
-  facets: Facet[];
+  facets?: SocialPskyRichtextFacet.Main[];
   handle: string;
   nickname?: string;
   indexedAt: number;

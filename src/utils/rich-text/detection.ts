@@ -1,5 +1,4 @@
 import TLDs from "tlds";
-import { Facet } from "./defs.js";
 import { UnicodeString } from "./unicode.js";
 import {
   URL_REGEX,
@@ -7,6 +6,9 @@ import {
   TAG_REGEX as ROOM_REGEX,
   TRAILING_PUNCTUATION_REGEX,
 } from "./util.js";
+import { SocialPskyRichtextFacet } from "@atcute/client/lexicons";
+
+type Facet = SocialPskyRichtextFacet.Main;
 
 export default function detect(text: UnicodeString): Facet[] | undefined {
   const facets: Facet[] = [];
@@ -28,7 +30,6 @@ function detectMentions(match: any, text: UnicodeString, facets: Facet[]) {
 
     const start = text.utf16.indexOf(match[3], match.index) - 1;
     facets.push({
-      $type: "social.psky.richtext.facet",
       index: {
         byteStart: text.utf16IndexToUtf8Index(start),
         byteEnd: text.utf16IndexToUtf8Index(start + match[3].length + 1),
