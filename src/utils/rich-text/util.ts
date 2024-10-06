@@ -14,12 +14,6 @@ export const TAG_REGEX =
   // eslint-disable-next-line no-misleading-character-class
   /(^|\s)[#＃]((?!\ufe0f)[^\s\u00AD\u2060\u200A\u200B\u200C\u200D\u20e2]*[^\d\s\p{P}\u00AD\u2060\u200A\u200B\u200C\u200D\u20e2]+[^\s\u00AD\u2060\u200A\u200B\u200C\u200D\u20e2]*)?/gu;
 
-// counts the number of graphemes (user-displayed characters) in a string
-export const graphemeLen = (str: string): number => {
-  const splitter = new Graphemer();
-  return splitter.countGraphemes(str);
-};
-
 export function isMention(v: unknown): v is Mention {
   return (
     isObj(v) &&

@@ -7,7 +7,7 @@
  * and utf16, and that's precisely what this library handles.
  */
 
-import { graphemeLen } from "./util.js";
+import { graphemeLen } from "../lib.js";
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();

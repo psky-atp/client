@@ -4,21 +4,12 @@ import { SocialPskyFeedPost } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
 import { APP_NAME, CHARLIMIT, SERVER_URL } from "../utils/constants.js";
 import detectFacets from "../utils/rich-text/lib.js";
+import { graphemeLen } from "../utils/lib.js";
 
 const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
   setUnreadCount,
 }) => {
   let postInput = "";
-  const segmenter = new Intl.Segmenter();
-
-  const graphemeLen = (text: string): number => {
-    let iterator = segmenter.segment(text)[Symbol.iterator]();
-    let count = 0;
-
-    while (!iterator.next().done) count++;
-
-    return count;
-  };
 
   const sendPost = async (text: string) => {
     let facets = await detectFacets(text);
