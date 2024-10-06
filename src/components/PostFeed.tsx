@@ -52,10 +52,10 @@ const PostFeed: Component<PostFeedProps> = ({
     );
     const json = await res.json();
     // HACK: force the cursor to only be updated after a first click
-    // fetching getPosts can happen twice:
+    // getPosts can be triggered twice in a row:
     // - when connecting to the websocket
-    // - when the handle is found, to refresh and show mentions as highlighted
-    // this would result in cursor getting updated, then fetching older posts
+    // - then when the handle is found, to refresh and highlight mentions
+    // this would result in cursor getting updated, fetching older posts
     cursor = (updateCursor ?? true) ? json.cursor.toString() : "0";
     return json.posts;
   };
