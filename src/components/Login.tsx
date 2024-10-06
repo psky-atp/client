@@ -6,6 +6,7 @@ import { Component, createSignal, onMount, Show } from "solid-js";
 import { resolveDid } from "../utils/api.js";
 import { XRPC } from "@atcute/client";
 import { SocialPskyActorProfile } from "@atcute/client/lexicons";
+import { PDS_URL } from "../utils/constants.js";
 
 interface LoginState {
   session?: OAuthSession;
@@ -38,7 +39,7 @@ const Login: Component = () => {
         isLocal() ?
           "http://localhost?redirect_uri=http%3A%2F%2F127.0.0.1%3A1313%2F&scope=atproto+transition%3Ageneric"
         : "https://psky.social/client-metadata.json",
-      handleResolver: "https://boletus.us-west.host.bsky.network",
+      handleResolver: `https://${PDS_URL}`,
     });
     client.addEventListener("deleted", () => {
       setLoginState({});
@@ -135,7 +136,7 @@ const Login: Component = () => {
             type="text"
             id="handle"
             placeholder="user.bsky.social"
-            class="mr-2 w-52 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-64"
+            class="mr-2 w-52 border border-black px-2 py-1 sm:w-64 dark:border-white dark:bg-neutral-700"
             onInput={(e) => setLoginInput(e.currentTarget.value)}
           />
           <button

@@ -1,3 +1,5 @@
+import { BSKY_PUB_API_URL } from "./constants.js";
+
 const resolveDid = async (did: string) => {
   const res = await fetch(
     did.startsWith("did:web") ?
@@ -16,7 +18,7 @@ const resolveDid = async (did: string) => {
 
 const resolveHandle = async (handle: string) => {
   const res = await fetch(
-    "https://bsky.social/xrpc/com.atproto.identity.resolveHandle?handle=" +
+    `https://${BSKY_PUB_API_URL}/xrpc/com.atproto.identity.resolveHandle?handle=` +
       handle,
   );
 
