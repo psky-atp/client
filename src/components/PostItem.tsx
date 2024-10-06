@@ -57,7 +57,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
                     {wordElem}
                   </a>
                 );
-              else if (word === `@${handle()}`)
+              else if (word.includes(`@${handle()}`))
                 return <span class="font-bold">{wordElem}</span>;
               else return <>{wordElem}</>;
             }}
