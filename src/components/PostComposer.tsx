@@ -66,7 +66,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
           placeholder="pico pico"
           required
           autocomplete="off"
-          class="mr-2 w-52 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-64"
+          class="mr-2 w-52 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-96"
           onInput={(e) => setPostInput(e.currentTarget.value)}
           onPaste={(e) => {
             if (graphemeLen(e.clipboardData?.getData("text") ?? "") > CHARLIMIT)
@@ -84,7 +84,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
             sendPost(postInput());
             setPostInput("");
           }}
-          class="bg-stone-600 px-1 py-1 text-sm font-bold text-white hover:bg-stone-700"
+          class="bg-stone-600 px-1 py-1 text-xs font-bold text-white hover:bg-stone-700"
         >
           pico
         </button>
