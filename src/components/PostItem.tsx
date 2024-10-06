@@ -1,11 +1,20 @@
 import { Component, For } from "solid-js";
 import { PostRecord } from "../utils/types.js";
+import { handle } from "./Login.jsx";
 
 interface PostItemProps {
   record: PostRecord;
   class?: string;
 }
 const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
+  const isMention = (post: string) => {
+    return (
+      post.startsWith(`@${handle()} `) ||
+      post.includes(` @${handle()} `) ||
+      post.endsWith(` @${handle()}`)
+    );
+  };
+
   return (
     <div
       class={`flex flex-col items-start gap-x-3 border-b py-1 text-sm dark:border-b-neutral-800 ${props.class ?? ""}`}
@@ -29,7 +38,13 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
             {new Date(props.record.indexedAt).toLocaleTimeString()}
           </span>
         </span>
-        <span class="h-full w-full overflow-hidden whitespace-pre-wrap break-words">
+        <span
+          classList={{
+            "text-red-500": isMention(props.record.post),
+            "h-full w-full overflow-hidden whitespace-pre-wrap break-words":
+              true,
+          }}
+        >
           <For each={props.record.post.split(" ")}>
             {(word, index) => {
               const wordElem =
@@ -42,6 +57,8 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
                     {wordElem}
                   </a>
                 );
+              else if (word === `@${handle()}`)
+                return <span class="font-bold">{wordElem}</span>;
               else return <>{wordElem}</>;
             }}
           </For>

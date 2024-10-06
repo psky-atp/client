@@ -11,19 +11,23 @@ interface LoginState {
   session?: OAuthSession;
   rpc?: XRPC;
 }
+
+export const [handle, setHandle] = createSignal("");
+
 const [loginState, setLoginState] = createSignal<LoginState>({});
 const isLoggedIn = () => {
   const state = loginState();
   return state.session && state.session.sub && state.rpc;
 };
+
 const isLocal = () =>
   window.location.hostname === "localhost" ||
   window.location.hostname === "127.0.0.1" ||
   window.location.hostname === "0.0.0.0";
+
 const Login: Component = () => {
   const [loginInput, setLoginInput] = createSignal("");
   const [nickname, setNickname] = createSignal("");
-  const [handle, setHandle] = createSignal("");
   const [notice, setNotice] = createSignal("");
   let client: BrowserOAuthClient;
 
@@ -131,7 +135,7 @@ const Login: Component = () => {
             type="text"
             id="handle"
             placeholder="user.bsky.social"
-            class="mr-2 w-52 border border-black px-2 py-1 sm:w-64 dark:border-white dark:bg-neutral-700"
+            class="mr-2 w-52 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-64"
             onInput={(e) => setLoginInput(e.currentTarget.value)}
           />
           <button
