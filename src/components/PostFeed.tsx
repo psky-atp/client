@@ -24,9 +24,11 @@ const PostFeed: Component<PostFeedProps> = ({
 }) => {
   const [posts, setPosts] = createSignal<PostRecord[]>([]);
   const socket = new WebSocket(`wss://${SERVER_URL}/subscribe`);
+  let cursor = "0";
+  let feedSize = 100;
 
   createEffect(async () => {
-    if (loginState().handle) setPosts(await getPosts());
+    if (loginState().handle) setPosts(await getPosts(false));
   });
 
   onMount(() => {
@@ -35,7 +37,7 @@ const PostFeed: Component<PostFeedProps> = ({
     });
     socket.addEventListener("message", (event) => {
       const data = JSON.parse(event.data) as PostRecord;
-      setPosts([data, ...untrack(posts).slice(0, MAXPOSTS - 1)]);
+      setPosts([data, ...untrack(posts).slice(0, feedSize - 1)]);
       const currUnreadCount = unreadCount();
       if (!document.hasFocus() || currUnreadCount) {
         setUnreadCount(currUnreadCount + 1);
@@ -44,23 +46,38 @@ const PostFeed: Component<PostFeedProps> = ({
     });
   });
 
-  const getPosts = async () => {
-    const res = await fetch(`https://${SERVER_URL}/posts?limit=${MAXPOSTS}`);
+  const getPosts = async (updateCursor?: boolean) => {
+    const res = await fetch(
+      `https://${SERVER_URL}/posts?limit=${MAXPOSTS}&cursor=${cursor ?? "0"}`,
+    );
     const json = await res.json();
-    return await json.posts;
+    cursor = (updateCursor ?? true) ? json.cursor.toString() : "0";
+    return json.posts;
   };
 
   return (
-    <div class="flex w-full flex-col">
-      <For each={posts()}>
-        {(record, idx) => (
-          <PostItem
-            record={record}
-            class={idx() && idx() == unreadCount() ? "last-post-msg" : ""}
-          />
-        )}
-      </For>
-      <p></p>
+    <div class="flex w-full flex-col items-center">
+      <div class="w-full">
+        <For each={posts()}>
+          {(record, idx) => (
+            <PostItem
+              record={record}
+              class={idx() && idx() == unreadCount() ? "last-post-msg" : ""}
+            />
+          )}
+        </For>
+      </div>
+      <div>
+        <button
+          class="mt-3 bg-stone-600 px-1 py-1 font-bold text-white hover:bg-stone-700"
+          onclick={async () => {
+            setPosts(posts().concat(await getPosts()));
+            feedSize += 100;
+          }}
+        >
+          Load More
+        </button>
+      </div>
     </div>
   );
 };
