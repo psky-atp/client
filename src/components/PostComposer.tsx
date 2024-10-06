@@ -1,4 +1,4 @@
-import { Component, Setter } from "solid-js";
+import { Component, createSignal, Setter } from "solid-js";
 import { isLoggedIn, loginState } from "./Login.jsx";
 import { SocialPskyFeedPost } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
@@ -9,7 +9,7 @@ import { graphemeLen } from "../utils/lib.js";
 const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
   setUnreadCount,
 }) => {
-  let postInput = "";
+  const [postInput, setPostInput] = createSignal("");
 
   const sendPost = async (text: string) => {
     let facets = await detectFacets(text);
@@ -45,6 +45,14 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
 
   return (
     <div class="mb-4 flex items-center justify-center">
+      <div
+        classList={{
+          "mr-2": true,
+          "text-red-500": postInput().length > CHARLIMIT,
+        }}
+      >
+        {postInput().length}/{CHARLIMIT}
+      </div>
       <form
         id="postForm"
         onsubmit={(e) => {
@@ -55,25 +63,26 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
         <input
           type="text"
           id="textInput"
-          placeholder="64 chars max"
+          placeholder="pico pico"
           required
           autocomplete="off"
           class="mr-2 w-52 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-64"
-          onInput={(e) => (postInput = e.currentTarget.value)}
+          onInput={(e) => setPostInput(e.currentTarget.value)}
           onPaste={(e) => {
             if (graphemeLen(e.clipboardData?.getData("text") ?? "") > CHARLIMIT)
               e.preventDefault();
           }}
           onBeforeInput={(e) => {
-            if (e.data && graphemeLen(postInput) >= CHARLIMIT)
+            if (e.data && graphemeLen(postInput()) >= CHARLIMIT)
               e.preventDefault();
           }}
         />
         <button
           onclick={() => {
-            if (!postInput.length || graphemeLen(postInput) > CHARLIMIT) return;
-            sendPost(postInput);
-            postInput = "";
+            if (!postInput().length || graphemeLen(postInput()) > CHARLIMIT)
+              return;
+            sendPost(postInput());
+            setPostInput("");
           }}
           class="bg-stone-600 px-1 py-1 text-sm font-bold text-white hover:bg-stone-700"
         >
