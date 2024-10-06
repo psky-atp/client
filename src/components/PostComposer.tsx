@@ -48,10 +48,10 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
       <div
         classList={{
           "mr-2 select-none w-14 text-right": true,
-          "text-red-500": postInput().length > CHARLIMIT,
+          "text-red-500": graphemeLen(postInput()) > CHARLIMIT,
         }}
       >
-        {postInput().length}/{CHARLIMIT}
+        {graphemeLen(postInput())}/{CHARLIMIT}
       </div>
       <form
         id="postForm"
