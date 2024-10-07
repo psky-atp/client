@@ -11,6 +11,10 @@ export const [postInput, setPostInput] = createSignal("");
 const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
   setUnreadCount,
 }) => {
+  const sendPostButton = document.getElementById(
+    "sendButton",
+  ) as HTMLButtonElement;
+
   const sendPost = async (text: string) => {
     let facets = await detectFacets(text);
     if (isLoggedIn()) {
@@ -67,16 +71,23 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
           required
           autocomplete="off"
           class="mr-2 w-56 border border-black px-2 py-1 sm:w-96 dark:border-white dark:bg-neutral-700"
-          onInput={(e) => setPostInput(e.currentTarget.value)}
-          onBeforeInput={(e) => {
-            if (e.data && graphemeLen(postInput()) >= CHARLIMIT)
-              e.preventDefault();
+          onInput={(e) => {
+            if (graphemeLen(e.currentTarget.value) > CHARLIMIT)
+              sendPostButton.disabled = true;
+            else sendPostButton.disabled = false;
+            setPostInput(e.currentTarget.value);
           }}
         />
         <button
-          onclick={() => {
-            if (!postInput().length || graphemeLen(postInput()) > CHARLIMIT)
+          id="sendButton"
+          classList={{
+            "bg-stone-800 text-gray-400": sendPostButton.disabled,
+          }}
+          onclick={(e) => {
+            if (!postInput().length || graphemeLen(postInput()) > CHARLIMIT) {
+              e.preventDefault();
               return;
+            }
             sendPost(postInput());
             setPostInput("");
           }}
