@@ -80,7 +80,8 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
         <button
           id="sendButton"
           classList={{
-            "bg-stone-800 text-gray-400": graphemeLen(postInput()) > CHARLIMIT,
+            "bg-stone-300 dark:bg-stone-800 dark:text-gray-400":
+              graphemeLen(postInput()) > CHARLIMIT,
           }}
           onclick={(e) => {
             if (!postInput().length || graphemeLen(postInput()) > CHARLIMIT) {
