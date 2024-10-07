@@ -80,6 +80,8 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
         <button
           id="sendButton"
           classList={{
+            "bg-stone-600 px-1 py-1 text-xs font-bold text-white hover:bg-stone-700":
+              true,
             "bg-stone-200 dark:bg-stone-800 dark:text-gray-400":
               graphemeLen(postInput()) > CHARLIMIT,
           }}
@@ -91,7 +93,6 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
             sendPost(postInput());
             setPostInput("");
           }}
-          class="bg-stone-600 px-1 py-1 text-xs font-bold text-white hover:bg-stone-700"
         >
           pico
         </button>
