@@ -58,6 +58,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
                   "textInput",
                 ) as HTMLInputElement;
                 textInputElem.value = postInput();
+                textInputElem.focus();
               }}
             >
               @{props.record.handle}
