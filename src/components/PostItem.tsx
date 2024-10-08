@@ -44,7 +44,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
             mentionsUser,
         }}
       >
-        <span class="flex w-full items-center justify-between gap-x-2 break-words text-xs text-stone-500 sm:text-sm dark:text-stone-400">
+        <span class="flex w-full items-center justify-between gap-x-2 break-words text-xs text-stone-500 dark:text-stone-400 sm:text-sm">
           <span class="flex w-full min-w-0 grow">
             <a
               classList={{
@@ -74,10 +74,15 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
           </span>
 
           <span class="w-fit shrink-0 text-right font-mono text-xs">
-            {new Date(props.record.indexedAt).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
+            <a
+              href={`https://atproto-browser.vercel.app/at/${props.record.did}/social.psky.feed.post/${props.record.rkey}`}
+              target="_blank"
+            >
+              {new Date(props.record.indexedAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </a>
           </span>
         </span>
 
