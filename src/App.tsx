@@ -23,7 +23,7 @@ const App: Component = () => {
   return (
     <div class="flex flex-col items-center py-4 dark:text-white">
       <div class="relative flex w-80 flex-col items-center sm:w-[32rem]">
-        <div class="absolute left-0 top-0 text-sm">
+        <div class="absolute left-0 top-0 text-xs">
           <button
             onclick={() => {
               localStorage.theme =
