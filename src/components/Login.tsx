@@ -91,7 +91,7 @@ const Login: Component = () => {
   return (
     <div class="mb-3 flex flex-col items-center text-sm">
       <Show when={isLoggedIn() && loginState().handle}>
-        <div class="absolute right-0 top-0 flex flex-col truncate text-right text-xs">
+        <div class="absolute right-0 top-0 flex flex-col truncate text-right text-sm">
           <a href="" class="text-red-500" onclick={() => logout()}>
             Logout
           </a>
