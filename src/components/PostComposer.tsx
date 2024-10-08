@@ -1,6 +1,6 @@
 import { Component, createSignal, Setter } from "solid-js";
-import { isLoggedIn, loginState } from "./Login.jsx";
-import { APP_NAME, CHARLIMIT, SERVER_URL } from "../utils/constants.js";
+import { loginState } from "./Login.jsx";
+import { APP_NAME, CHARLIMIT } from "../utils/constants.js";
 import { graphemeLen } from "../utils/lib.js";
 import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 import { SocialPskyFeedPost } from "@atcute/client/lexicons";
@@ -14,32 +14,20 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
   const sendPost = async (text: string) => {
     let rt = new RichTextAPI({ text });
     await rt.detectFacets();
-    if (isLoggedIn()) {
-      let currLoginState = loginState();
-      await currLoginState
-        .rpc!.call("com.atproto.repo.putRecord", {
-          data: {
-            repo: currLoginState.session!.did,
-            collection: "social.psky.feed.post",
-            rkey: TID.now(),
-            record: {
-              $type: "social.psky.feed.post",
-              text: rt.text,
-              facets: rt.facets,
-            } as SocialPskyFeedPost.Record,
-          },
-        })
-        .catch((err) => console.log(err));
-    } else {
-      await fetch(`https://${SERVER_URL}/post`, {
-        method: "POST",
-        body: JSON.stringify({
-          text: rt.text,
-          facets: rt.facets,
-        }),
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+    await loginState()
+      .rpc!.call("com.atproto.repo.putRecord", {
+        data: {
+          repo: loginState().session!.did,
+          collection: "social.psky.feed.post",
+          rkey: TID.now(),
+          record: {
+            $type: "social.psky.feed.post",
+            text: rt.text,
+            facets: rt.facets,
+          } as SocialPskyFeedPost.Record,
+        },
+      })
+      .catch((err) => console.log(err));
     setUnreadCount(0);
     document.title = APP_NAME;
   };

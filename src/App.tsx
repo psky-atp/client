@@ -1,7 +1,7 @@
-import { createSignal, onMount, type Component } from "solid-js";
+import { createSignal, onMount, Show, type Component } from "solid-js";
 
 import { APP_NAME } from "./utils/constants.js";
-import Login from "./components/Login.jsx";
+import Login, { isLoggedIn } from "./components/Login.jsx";
 import PostComposer from "./components/PostComposer.jsx";
 import PostFeed from "./components/PostFeed.jsx";
 
@@ -46,7 +46,9 @@ const App: Component = () => {
           </a>
         </p>
         <Login />
-        <PostComposer setUnreadCount={setUnreadCount} />
+        <Show when={isLoggedIn()}>
+          <PostComposer setUnreadCount={setUnreadCount} />
+        </Show>
         <PostFeed setUnreadCount={setUnreadCount} unreadCount={unreadCount} />
       </div>
     </div>
