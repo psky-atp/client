@@ -1,7 +1,7 @@
 import { createSignal, onMount, Show, type Component } from "solid-js";
 
 import { APP_NAME } from "./utils/constants.js";
-import Login, { isLoggedIn } from "./components/Login.jsx";
+import Login, { isLoggedIn, logout } from "./components/Login.jsx";
 import PostComposer from "./components/PostComposer.jsx";
 import PostFeed from "./components/PostFeed.jsx";
 
@@ -21,34 +21,47 @@ const App: Component = () => {
   });
 
   return (
-    <div class="flex flex-col items-center py-4 dark:text-white">
-      <div class="relative flex w-80 flex-col items-center sm:w-[32rem]">
-        <div class="absolute left-0 top-0 text-sm">
-          <button
-            onclick={() => {
-              localStorage.theme =
-                localStorage.theme === "light" || !localStorage.theme ?
-                  "dark"
-                : "light";
-              if (localStorage.theme === "dark")
-                document.documentElement.classList.add("dark");
-              else document.documentElement.classList.remove("dark");
-              setTheme(localStorage.theme);
-            }}
-          >
-            {theme() == "dark" ? "light" : "dark"}
-          </button>
+    <div class="flex flex-col items-center dark:text-white">
+      <div class="flex w-full flex-col items-center">
+        <div class="sticky top-0 flex w-full flex-col items-center bg-white dark:bg-zinc-900">
+          <div class="mt-2 flex w-80">
+            <button
+              class="basis-1/3 text-left"
+              onclick={() => {
+                localStorage.theme =
+                  localStorage.theme === "light" || !localStorage.theme ?
+                    "dark"
+                  : "light";
+                if (localStorage.theme === "dark")
+                  document.documentElement.classList.add("dark");
+                else document.documentElement.classList.remove("dark");
+                setTheme(localStorage.theme);
+              }}
+            >
+              {theme() == "dark" ? "light" : "dark"}
+            </button>
+            <div class="flex basis-1/3 flex-col items-center text-sm">
+              <a
+                class="text-sky-500"
+                href="https://bsky.app/profile/psky.social"
+              >
+                @psky.social
+              </a>
+            </div>
+            <div class="flex basis-1/3 flex-col text-right text-sm">
+              <a href="" class="text-red-500" onclick={() => logout()}>
+                Logout
+              </a>
+            </div>
+          </div>
+          <Login />
         </div>
-        <p class="text-sm">
-          <a class="text-sky-500" href="https://bsky.app/profile/psky.social">
-            @psky.social
-          </a>
-        </p>
-        <Login />
+        <div class="w-80 sm:w-[32rem]">
+          <PostFeed setUnreadCount={setUnreadCount} unreadCount={unreadCount} />
+        </div>
         <Show when={isLoggedIn()}>
           <PostComposer setUnreadCount={setUnreadCount} />
         </Show>
-        <PostFeed setUnreadCount={setUnreadCount} unreadCount={unreadCount} />
       </div>
     </div>
   );

@@ -18,6 +18,12 @@ const isLoggedIn = () => {
   const state = loginState();
   return state.session && state.session.sub && state.rpc;
 };
+
+let client: BrowserOAuthClient;
+export const logout = async () => {
+  if (isLoggedIn()) await client.revoke(loginState().session!.sub);
+};
+
 const isLocal = () =>
   window.location.hostname === "localhost" ||
   window.location.hostname === "127.0.0.1" ||
@@ -26,7 +32,6 @@ const Login: Component = () => {
   const [loginInput, setLoginInput] = createSignal("");
   const [nickname, setNickname] = createSignal("");
   const [notice, setNotice] = createSignal("");
-  let client: BrowserOAuthClient;
 
   onMount(async () => {
     setNotice("Loading...");
@@ -67,10 +72,6 @@ const Login: Component = () => {
     }
   };
 
-  const logout = async () => {
-    if (isLoggedIn()) await client.revoke(loginState().session!.sub);
-  };
-
   const updateNickname = async (nickname: string) => {
     await loginState()
       .rpc!.call("com.atproto.repo.putRecord", {
@@ -91,11 +92,6 @@ const Login: Component = () => {
   return (
     <div class="mb-3 flex flex-col items-center text-sm">
       <Show when={isLoggedIn() && loginState().handle}>
-        <div class="absolute right-0 top-0 flex flex-col truncate text-right text-sm">
-          <a href="" class="text-red-500" onclick={() => logout()}>
-            Logout
-          </a>
-        </div>
         <form
           class="mt-2 flex items-center"
           onsubmit={(e) => {

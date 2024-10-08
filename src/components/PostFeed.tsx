@@ -29,13 +29,18 @@ const PostFeed: Component<PostFeedProps> = ({
 
   createEffect(async () => {
     if (loginState().handle) setPosts(await getPosts(false));
+    window.scroll(0, document.body.scrollHeight);
   });
 
   onMount(() => {
     socket.addEventListener("open", async () => {
       setPosts(await getPosts(false));
+      window.scroll(0, document.body.scrollHeight);
     });
     socket.addEventListener("message", (event) => {
+      let toScroll = false;
+      if (window.innerHeight + window.scrollY == document.body.scrollHeight)
+        toScroll = true;
       const data = JSON.parse(event.data) as PostRecord;
       setPosts([data, ...untrack(posts).slice(0, feedSize - 1)]);
       const currUnreadCount = unreadCount();
@@ -43,6 +48,7 @@ const PostFeed: Component<PostFeedProps> = ({
         setUnreadCount(currUnreadCount + 1);
         document.title = `(${currUnreadCount + 1}) ${APP_NAME}`;
       }
+      if (toScroll) window.scroll(0, document.body.scrollHeight);
     });
   });
 
@@ -62,16 +68,6 @@ const PostFeed: Component<PostFeedProps> = ({
 
   return (
     <div class="flex w-full flex-col items-center">
-      <div class="w-full">
-        <For each={posts()}>
-          {(record, idx) => (
-            <PostItem
-              record={record}
-              class={idx() && idx() == unreadCount() ? "last-post-msg" : ""}
-            />
-          )}
-        </For>
-      </div>
       <div>
         <button
           class="mt-3 bg-stone-600 px-1 py-1 font-bold text-white hover:bg-stone-700"
@@ -83,6 +79,16 @@ const PostFeed: Component<PostFeedProps> = ({
         >
           Load More
         </button>
+      </div>
+      <div class="flex w-full flex-col-reverse">
+        <For each={posts()}>
+          {(record, idx) => (
+            <PostItem
+              record={record}
+              class={idx() && idx() == unreadCount() ? "last-post-msg" : ""}
+            />
+          )}
+        </For>
       </div>
     </div>
   );

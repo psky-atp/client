@@ -33,60 +33,62 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
   };
 
   return (
-    <div class="mb-4 flex items-center justify-center">
-      <div
-        classList={{
-          "mr-2 text-sm select-none text-right w-10": true,
-          "text-red-500": graphemeLen(postInput()) > CHARLIMIT,
-        }}
-      >
-        {graphemeLen(postInput())}/{CHARLIMIT}
-      </div>
-      <form
-        id="postForm"
-        onsubmit={(e) => {
-          e.currentTarget.reset();
-          e.preventDefault();
-        }}
-      >
-        <input
-          type="text"
-          id="textInput"
-          placeholder="pico pico"
-          required
-          autocomplete="off"
-          class="mr-2 w-56 border border-black px-2 py-1 sm:w-96 dark:border-white dark:bg-neutral-700"
-          onInput={(e) => {
-            const sendPostButton = document.getElementById(
-              "sendButton",
-            ) as HTMLButtonElement;
-            if (graphemeLen(e.currentTarget.value) > CHARLIMIT)
-              sendPostButton.disabled = true;
-            else sendPostButton.disabled = false;
-            setPostInput(e.currentTarget.value);
-          }}
-        />
-        <button
-          id="sendButton"
+    <div class="sticky bottom-0 flex w-full flex-col items-center bg-white py-4 dark:bg-zinc-900">
+      <div class="flex w-80 items-center">
+        <div
           classList={{
-            "px-1 py-1 text-xs font-bold text-white": true,
-            "bg-stone-600 hover:bg-stone-700":
-              graphemeLen(postInput()) <= CHARLIMIT,
-            "bg-stone-200 dark:bg-stone-800 dark:text-gray-400":
-              graphemeLen(postInput()) > CHARLIMIT,
-          }}
-          onclick={(e) => {
-            if (!postInput().length || graphemeLen(postInput()) > CHARLIMIT) {
-              e.preventDefault();
-              return;
-            }
-            sendPost(postInput());
-            setPostInput("");
+            "mr-2 text-sm select-none text-right w-10": true,
+            "text-red-500": graphemeLen(postInput()) > CHARLIMIT,
           }}
         >
-          pico
-        </button>
-      </form>
+          {graphemeLen(postInput())}/{CHARLIMIT}
+        </div>
+        <form
+          id="postForm"
+          onsubmit={(e) => {
+            e.currentTarget.reset();
+            e.preventDefault();
+          }}
+        >
+          <input
+            type="text"
+            id="textInput"
+            placeholder="pico pico"
+            required
+            autocomplete="off"
+            class="mr-2 w-56 border border-black px-2 py-1 sm:w-96 dark:border-white dark:bg-neutral-700"
+            onInput={(e) => {
+              const sendPostButton = document.getElementById(
+                "sendButton",
+              ) as HTMLButtonElement;
+              if (graphemeLen(e.currentTarget.value) > CHARLIMIT)
+                sendPostButton.disabled = true;
+              else sendPostButton.disabled = false;
+              setPostInput(e.currentTarget.value);
+            }}
+          />
+          <button
+            id="sendButton"
+            classList={{
+              "px-1 py-1 text-xs font-bold text-white": true,
+              "bg-stone-600 hover:bg-stone-700":
+                graphemeLen(postInput()) <= CHARLIMIT,
+              "bg-stone-200 dark:bg-stone-800 dark:text-gray-400":
+                graphemeLen(postInput()) > CHARLIMIT,
+            }}
+            onclick={(e) => {
+              if (!postInput().length || graphemeLen(postInput()) > CHARLIMIT) {
+                e.preventDefault();
+                return;
+              }
+              sendPost(postInput());
+              setPostInput("");
+            }}
+          >
+            pico
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
