@@ -3,7 +3,7 @@ import {
   OAuthSession,
 } from "@atproto/oauth-client-browser";
 import { Component, createSignal, onMount, Show } from "solid-js";
-import { resolveDid } from "../utils/api.js";
+import { resolveDid, resolveHandle } from "../utils/api.js";
 import { CredentialManager, XRPC } from "@atcute/client";
 import { SocialPskyActorProfile } from "@atcute/client/lexicons";
 import { PDS_URL } from "../utils/constants.js";
@@ -11,6 +11,7 @@ import { PDS_URL } from "../utils/constants.js";
 interface LoginState {
   session?: OAuthSession;
   handle?: string;
+  did?: string;
   manager?: CredentialManager;
   rpc?: XRPC;
 }
@@ -70,6 +71,7 @@ const Login: Component = () => {
         manager: manager,
         rpc: new XRPC({ handler: manager }),
         handle: loginInput(),
+        did: await resolveHandle(loginInput()),
       });
       await manager.login({ identifier: loginInput(), password: password() });
     } else {
