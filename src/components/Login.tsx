@@ -92,13 +92,11 @@ const Login: Component = () => {
     <div class="mb-3 flex flex-col items-center text-sm">
       <Show when={isLoggedIn() && loginState().handle}>
         <div class="truncate text-xs">
-          <span>Logged in as @{loginState().handle} </span>
+          <span>@{loginState().handle} </span>
           <span>
-            (
             <a href="" class="text-red-500" onclick={() => logout()}>
               Logout
             </a>
-            )
           </span>
         </div>
         <form
