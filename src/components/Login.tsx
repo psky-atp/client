@@ -123,7 +123,10 @@ const Login: Component = () => {
         </form>
       </Show>
       <Show when={!isLoggedIn() && !notice().includes("Loading")}>
-        <form class="flex items-center" onsubmit={(e) => e.preventDefault()}>
+        <form
+          class="mt-6 flex items-center"
+          onsubmit={(e) => e.preventDefault()}
+        >
           <label for="handle" class="ml-1 mr-2">
             Handle:
           </label>
