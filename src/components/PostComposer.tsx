@@ -87,6 +87,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
                 return;
               }
               sendPost(postInput());
+              window.scroll(0, document.body.scrollHeight);
               setPostInput("");
             }}
           >
