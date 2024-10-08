@@ -5,6 +5,7 @@ import { graphemeLen, isTouchDevice } from "../utils/lib.js";
 import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 import { SocialPskyFeedPost } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
+import { resolveHandle } from "../utils/api.js";
 
 export const [postInput, setPostInput] = createSignal("");
 
@@ -22,7 +23,9 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
     await loginState()
       .rpc!.call("com.atproto.repo.putRecord", {
         data: {
-          repo: loginState().session!.did,
+          repo:
+            loginState().session?.did ??
+            (await resolveHandle(loginState().handle!)),
           collection: "social.psky.feed.post",
           rkey: TID.now(),
           record: {
