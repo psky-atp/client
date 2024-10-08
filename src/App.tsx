@@ -21,7 +21,12 @@ const App: Component = () => {
   });
 
   return (
-    <div class="flex flex-col items-center dark:text-white">
+    <div
+      classList={{
+        "pb-4": isLoggedIn() ? false : true,
+        "flex flex-col items-center dark:text-white": true,
+      }}
+    >
       <div class="flex w-full flex-col items-center">
         <div class="sticky top-0 flex w-full flex-col items-center bg-white dark:bg-zinc-900">
           <div class="mt-2 flex w-80 sm:w-[32rem]">
@@ -48,11 +53,13 @@ const App: Component = () => {
                 @psky.social
               </a>
             </div>
-            <div class="flex basis-1/3 flex-col text-right text-sm">
-              <a href="" class="text-red-500" onclick={() => logout()}>
-                Logout
-              </a>
-            </div>
+            <Show when={isLoggedIn()}>
+              <div class="flex basis-1/3 flex-col text-right text-sm">
+                <a href="" class="text-red-500" onclick={() => logout()}>
+                  Logout
+                </a>
+              </div>
+            </Show>
           </div>
           <Login />
         </div>
