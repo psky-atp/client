@@ -47,7 +47,10 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
         <span class="flex w-full items-center justify-between gap-x-2 break-words text-xs text-stone-500 sm:text-sm dark:text-stone-400">
           <span class="flex w-full min-w-0 grow">
             <a
-              class="truncate font-bold text-black dark:text-white"
+              classList={{
+                "mr-1": props.record.nickname ? true : false,
+                "truncate font-bold text-black dark:text-white": true,
+              }}
               target="_blank"
               href={`https://bsky.app/profile/${props.record.handle}`}
             >
