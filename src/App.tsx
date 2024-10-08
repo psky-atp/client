@@ -24,7 +24,7 @@ const App: Component = () => {
     <div class="flex flex-col items-center dark:text-white">
       <div class="flex w-full flex-col items-center">
         <div class="sticky top-0 flex w-full flex-col items-center bg-white dark:bg-zinc-900">
-          <div class="mt-2 flex w-80">
+          <div class="mt-2 flex w-80 sm:w-[32rem]">
             <button
               class="basis-1/3 text-left"
               onclick={() => {

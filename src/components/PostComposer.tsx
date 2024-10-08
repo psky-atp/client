@@ -34,7 +34,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
 
   return (
     <div class="sticky bottom-0 flex w-full flex-col items-center bg-white py-4 dark:bg-zinc-900">
-      <div class="flex w-80 items-center">
+      <div class="flex w-80 items-center sm:w-[32rem]">
         <div
           classList={{
             "mr-2 text-sm select-none text-right w-10": true,
