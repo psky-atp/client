@@ -13,7 +13,6 @@ import { APP_NAME, MAXPOSTS, SERVER_URL } from "../utils/constants.js";
 import PostItem from "./PostItem.jsx";
 import { WebSocket } from "partysocket";
 import { loginState } from "./Login.jsx";
-import { isTouchDevice } from "../utils/lib.js";
 
 interface PostFeedProps {
   unreadCount: Accessor<number>;
@@ -40,7 +39,11 @@ const PostFeed: Component<PostFeedProps> = ({
     });
     socket.addEventListener("message", (event) => {
       let toScroll = false;
-      if (window.innerHeight + window.scrollY == document.body.scrollHeight)
+      if (
+        (window.visualViewport?.height ?? window.innerHeight) +
+          window.scrollY ===
+        document.body.scrollHeight
+      )
         toScroll = true;
       const data = JSON.parse(event.data) as PostRecord;
       setPosts([data, ...untrack(posts).slice(0, feedSize - 1)]);
@@ -49,8 +52,7 @@ const PostFeed: Component<PostFeedProps> = ({
         setUnreadCount(currUnreadCount + 1);
         document.title = `(${currUnreadCount + 1}) ${APP_NAME}`;
       }
-      if (toScroll || isTouchDevice)
-        window.scroll(0, document.body.scrollHeight);
+      if (toScroll) window.scroll(0, document.body.scrollHeight);
     });
   });
 
@@ -87,7 +89,7 @@ const PostFeed: Component<PostFeedProps> = ({
           {(record, idx) => (
             <PostItem
               record={record}
-              class={idx() && idx() == unreadCount() ? "last-post-msg" : ""}
+              class={idx() && idx() === unreadCount() ? "last-post-msg" : ""}
             />
           )}
         </For>
