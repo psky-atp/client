@@ -23,7 +23,6 @@ const App: Component = () => {
   return (
     <div class="flex flex-col items-center py-4 dark:text-white">
       <div class="relative flex w-80 flex-col items-center sm:w-[32rem]">
-        <h1 class="mb-2 text-xl">picosky</h1>
         <div class="absolute left-0 top-0 text-sm">
           <button
             onclick={() => {
@@ -40,7 +39,7 @@ const App: Component = () => {
             {theme() == "dark" ? "light" : "dark"}
           </button>
         </div>
-        <p class="mb-2 text-xs">
+        <p class="absolute right-0 top-0 text-xs">
           <a class="text-sky-500" href="https://bsky.app/profile/psky.social">
             @psky.social
           </a>
