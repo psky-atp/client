@@ -91,13 +91,10 @@ const Login: Component = () => {
   return (
     <div class="mb-3 flex flex-col items-center text-sm">
       <Show when={isLoggedIn() && loginState().handle}>
-        <div class="truncate text-xs">
-          <span>@{loginState().handle} </span>
-          <span>
-            <a href="" class="text-red-500" onclick={() => logout()}>
-              Logout
-            </a>
-          </span>
+        <div class="absolute right-0 top-0 flex flex-col truncate text-right text-xs">
+          <a href="" class="text-red-500" onclick={() => logout()}>
+            Logout
+          </a>
         </div>
         <form
           class="mt-2 flex items-center"
@@ -124,7 +121,7 @@ const Login: Component = () => {
       </Show>
       <Show when={!isLoggedIn() && !notice().includes("Loading")}>
         <form
-          class="mt-6 flex items-center"
+          class="mt-3 flex items-center"
           onsubmit={(e) => e.preventDefault()}
         >
           <label for="handle" class="ml-1 mr-2">

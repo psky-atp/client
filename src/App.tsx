@@ -39,7 +39,7 @@ const App: Component = () => {
             {theme() == "dark" ? "light" : "dark"}
           </button>
         </div>
-        <p class="absolute right-0 top-0 text-xs">
+        <p class="text-xs">
           <a class="text-sky-500" href="https://bsky.app/profile/psky.social">
             @psky.social
           </a>
