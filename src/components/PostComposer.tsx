@@ -1,7 +1,7 @@
 import { Component, createSignal, Setter } from "solid-js";
 import { loginState } from "./Login.jsx";
 import { APP_NAME, CHARLIMIT } from "../utils/constants.js";
-import { graphemeLen } from "../utils/lib.js";
+import { graphemeLen, isTouchDevice } from "../utils/lib.js";
 import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 import { SocialPskyFeedPost } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
@@ -11,6 +11,11 @@ export const [postInput, setPostInput] = createSignal("");
 const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
   setUnreadCount,
 }) => {
+  document.addEventListener("focus", () => {
+    if (isTouchDevice) window.scroll(0, document.body.scrollHeight);
+    document.getElementById("textInput")?.scroll(0, document.body.scrollHeight);
+  });
+
   const sendPost = async (text: string) => {
     let rt = new RichTextAPI({ text });
     await rt.detectFacets();
