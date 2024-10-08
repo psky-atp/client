@@ -13,6 +13,7 @@ import { APP_NAME, MAXPOSTS, SERVER_URL } from "../utils/constants.js";
 import PostItem from "./PostItem.jsx";
 import { WebSocket } from "partysocket";
 import { loginState } from "./Login.jsx";
+import { isTouchDevice } from "../utils/lib.js";
 
 interface PostFeedProps {
   unreadCount: Accessor<number>;
@@ -52,7 +53,8 @@ const PostFeed: Component<PostFeedProps> = ({
         setUnreadCount(currUnreadCount + 1);
         document.title = `(${currUnreadCount + 1}) ${APP_NAME}`;
       }
-      if (toScroll) window.scroll(0, document.body.scrollHeight);
+      if (toScroll || isTouchDevice)
+        window.scroll(0, document.body.scrollHeight);
     });
   });
 
