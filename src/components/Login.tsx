@@ -64,9 +64,29 @@ const Login: Component = () => {
     setNotice("");
   });
 
+  const fetchService = async (handle: string) => {
+    const did = await resolveHandle(handle);
+    if (!did) return;
+
+    const res = await fetch(
+      did.startsWith("did:web") ?
+        "https://" + did.split(":")[2] + "/.well-known/did.json"
+      : "https://plc.directory/" + did,
+    );
+
+    return await res.json().then((doc) => {
+      for (const service of doc.service) {
+        if (service.id.includes("#atproto_pds")) {
+          return service.serviceEndpoint;
+        }
+      }
+    });
+  };
+
   const login = async (handle: string) => {
     if (password().length) {
-      manager = new CredentialManager({ service: "https://bsky.social" });
+      const service = await fetchService(handle);
+      manager = new CredentialManager({ service: service });
       setLoginState({
         manager: manager,
         rpc: new XRPC({ handler: manager }),
