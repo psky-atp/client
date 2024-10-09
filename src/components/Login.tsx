@@ -74,7 +74,7 @@ const Login: Component = () => {
       : "https://plc.directory/" + did,
     );
 
-    return await res.json().then((doc) => {
+    return res.json().then((doc) => {
       for (const service of doc.service) {
         if (service.id.includes("#atproto_pds")) {
           return service.serviceEndpoint;
