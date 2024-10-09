@@ -38,7 +38,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
   };
 
   return (
-    <div class="sticky bottom-0 flex w-full flex-col items-center bg-white pb-6 pt-4 dark:bg-zinc-900">
+    <div class="sticky bottom-0 z-[2] flex w-full flex-col items-center bg-white pb-6 pt-4 dark:bg-zinc-900">
       <div class="flex w-80 items-center sm:w-[32rem]">
         <div
           classList={{
@@ -61,7 +61,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
             placeholder="pico pico"
             required
             autocomplete="off"
-            class="mr-2 w-52 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-96"
+            class="mr-2 w-52 border border-black px-2 py-1 sm:w-96 dark:border-white dark:bg-neutral-700"
             onInput={(e) => {
               const sendPostButton = document.getElementById(
                 "sendButton",

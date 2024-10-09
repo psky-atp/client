@@ -30,6 +30,8 @@
   visibility: hidden;
   opacity: 0;
   inset-inline-end: 0px;
+  bottom: 100%;
+  top: auto;
 }
 .dropdown>*:focus {
   outline: 2px solid transparent;
