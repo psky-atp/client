@@ -12,7 +12,7 @@ import { RichText } from "./RichText.jsx";
 interface PostItemProps {
   record: PostRecord;
   isSamePoster: boolean;
-  lastSeenPost: number | boolean;
+  lastSeenPost: boolean;
 }
 const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
   let mentionsUser = !!props.record.facets?.find(
@@ -37,8 +37,8 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
     <div
       classList={{
         "flex flex-col items-start gap-x-3 py-0.5 text-sm": true,
-        "last-post-msg": props.lastSeenPost ? true : false,
-        "pt-1 mt-2": !props.isSamePoster,
+        "last-seen": props.lastSeenPost ? true : false,
+        "mt-2": !props.isSamePoster,
       }}
     >
       <div

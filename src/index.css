@@ -2,8 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
-.last-post-msg::after {
-  @apply border-y dark:border-y-neutral-800 py-1 my-1;
+.last-seen {
+  @apply pb-0;
+}
+.last-seen::after {
+  @apply border-y dark:border-y-neutral-800 py-1 mt-3 mb-0.5;
   content: "New messages";
   color: rgb(239, 68, 68);
   text-align: center;
