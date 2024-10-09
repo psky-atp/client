@@ -39,22 +39,33 @@ const PostFeed: Component<PostFeedProps> = ({
       window.scroll(0, document.body.scrollHeight);
     });
     socket.addEventListener("message", (event) => {
-      let toScroll = false;
-      if (
-        (window.visualViewport?.height ?? window.innerHeight) +
-          window.scrollY ===
-        document.body.scrollHeight
-      )
-        toScroll = true;
-      const data = JSON.parse(event.data) as PostRecord;
-      setPosts([data, ...untrack(posts).slice(0, feedSize - 1)]);
-      const currUnreadCount = unreadCount();
-      if (!document.hasFocus() || currUnreadCount) {
-        setUnreadCount(currUnreadCount + 1);
-        document.title = `(${currUnreadCount + 1}) ${APP_NAME}`;
+      // TODO: refactor this into a proper function, move it out of here
+      const data = JSON.parse(event.data);
+      if (data.$type === "social.psky.feed.post#delete") {
+        console.log("delete check");
+        setPosts(
+          untrack(posts).filter(
+            (rec) => rec.did !== data.did || rec.rkey !== data.rkey,
+          ),
+        );
+      } else if (data.$type === "social.psky.feed.post#create") {
+        console.log("create check");
+        let toScroll = false;
+        if (
+          (window.visualViewport?.height ?? window.innerHeight) +
+            window.scrollY ===
+          document.body.scrollHeight
+        )
+          toScroll = true;
+        setPosts([data, ...untrack(posts).slice(0, feedSize - 1)]);
+        const currUnreadCount = unreadCount();
+        if (!document.hasFocus() || currUnreadCount) {
+          setUnreadCount(currUnreadCount + 1);
+          document.title = `(${currUnreadCount + 1}) ${APP_NAME}`;
+        }
+        if (toScroll || isTouchDevice)
+          window.scroll(0, document.body.scrollHeight);
       }
-      if (toScroll || isTouchDevice)
-        window.scroll(0, document.body.scrollHeight);
     });
   });
 
