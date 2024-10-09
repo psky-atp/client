@@ -100,7 +100,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
         </Show>
 
         <div class="flex h-full w-full">
-          <RichText value={richText()} class="flex-1" />
+          <RichText value={richText()} class="flex-1 pr-2" />
           <Dropdown record={props.record} />
         </div>
       </div>

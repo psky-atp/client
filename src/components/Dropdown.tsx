@@ -11,7 +11,11 @@ import { loginState } from "./Login.jsx";
 const Dropdown: Component<{ record: PostRecord }> = ({ record }) => {
   return (
     <div class="dropdown">
-      <div tabindex="0" role="button" class="btn">
+      <div
+        tabindex="0"
+        role="button"
+        class="btn sm:opacity-0 sm:hover:opacity-100"
+      >
         <AiOutlineEllipsis class="text-stone-500 dark:text-stone-400" />
       </div>
       <ul
