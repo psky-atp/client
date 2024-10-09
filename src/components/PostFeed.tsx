@@ -42,14 +42,12 @@ const PostFeed: Component<PostFeedProps> = ({
       // TODO: refactor this into a proper function, move it out of here
       const data = JSON.parse(event.data);
       if (data.$type === "social.psky.feed.post#delete") {
-        console.log("delete check");
         setPosts(
           untrack(posts).filter(
             (rec) => rec.did !== data.did || rec.rkey !== data.rkey,
           ),
         );
       } else if (data.$type === "social.psky.feed.post#create") {
-        console.log("create check");
         let toScroll = false;
         if (
           (window.visualViewport?.height ?? window.innerHeight) +
