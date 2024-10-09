@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .first-unread::before {
-  @apply border-y border-zinc-700 py-1 my-1.5;
+  @apply border-y dark:border-neutral-800 py-1 my-1.5;
   content: "New messages";
   color: rgb(239, 68, 68);
   text-align: center;

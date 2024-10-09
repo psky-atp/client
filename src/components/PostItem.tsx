@@ -39,7 +39,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
       classList={{
         "flex flex-col items-start gap-x-3 text-sm py-1.5": true,
         "mt-[-0.75rem]": props.isSamePoster,
-        "border-t border-zinc-700":
+        "border-t dark:border-neutral-800":
           !props.isSamePoster && configs().lineSeparator,
         "first-unread": props.firstUnread,
         "pt-0 border-t-0 mt-[-0.25rem]":
