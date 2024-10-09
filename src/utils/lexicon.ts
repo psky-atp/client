@@ -17,13 +17,13 @@ declare module "@atcute/client/lexicons" {
   }
 
   namespace SocialPskyFeedPost {
-    /** A Picosky post containing at most 64 graphemes. */
+    /** A Picosky post containing at most 256 graphemes. */
     interface Record {
       $type: "social.psky.feed.post";
       /**
        * Text content. \
-       * Maximum string length: 1000 \
-       * Maximum grapheme length: 64
+       * Maximum string length: 2560 \
+       * Maximum grapheme length: 256
        */
       text: string;
       /** Annotations of text (mentions, URLs, hashtags, etc) */

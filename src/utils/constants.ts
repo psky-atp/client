@@ -1,4 +1,4 @@
-const CHARLIMIT = 64;
+const CHARLIMIT = 256;
 const MAXPOSTS = 100;
 const SERVER_URL = "pico.api.bsky.mom";
 const PDS_URL = "boletus.us-west.host.bsky.network";

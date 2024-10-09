@@ -4,7 +4,7 @@
   "defs": {
     "main": {
       "type": "record",
-      "description": "A Picosky post containing at most 64 graphemes.",
+      "description": "A Picosky post containing at most 256 graphemes.",
       "key": "tid",
       "record": {
         "type": "object",
@@ -14,8 +14,8 @@
         "properties": {
           "text": {
             "type": "string",
-            "maxLength": 1000,
-            "maxGraphemes": 64,
+            "maxLength": 2560,
+            "maxGraphemes": 256,
             "description": "Text content."
           },
           "facets": {

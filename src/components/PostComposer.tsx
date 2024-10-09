@@ -42,7 +42,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
       <div class="flex w-80 items-center sm:w-[32rem]">
         <div
           classList={{
-            "mr-2 text-sm select-none text-right w-10": true,
+            "mr-2 text-sm select-none text-right w-12": true,
             "text-red-500": graphemeLen(postInput()) > CHARLIMIT,
           }}
         >
@@ -61,7 +61,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
             placeholder="pico pico"
             required
             autocomplete="off"
-            class="mr-2 w-56 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-96"
+            class="mr-2 w-52 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-96"
             onInput={(e) => {
               const sendPostButton = document.getElementById(
                 "sendButton",
