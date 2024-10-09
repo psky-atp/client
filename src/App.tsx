@@ -29,7 +29,7 @@ const App: Component = () => {
       }}
     >
       <div class="flex w-full flex-col items-center">
-        <div class="sticky top-0 flex w-full flex-col items-center bg-white dark:bg-zinc-900">
+        <div class="sticky top-0 z-[1] flex w-full flex-col items-center bg-white dark:bg-zinc-900">
           <div class="mt-2 flex w-80 sm:w-[32rem]">
             <div class="flex basis-1/3 items-center gap-2 text-sm">
               <Settings />

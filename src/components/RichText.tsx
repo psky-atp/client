@@ -1,7 +1,11 @@
 import { createMemo } from "solid-js";
 import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 
-export function RichText({ value }: { value: RichTextAPI | string }) {
+interface RichTextProps {
+  class?: string;
+  value: RichTextAPI | string;
+}
+export function RichText({ class: htmlClass, value }: RichTextProps) {
   const richText = createMemo(() =>
     value instanceof RichTextAPI ? value : new RichTextAPI({ text: value }),
   );
@@ -37,7 +41,9 @@ export function RichText({ value }: { value: RichTextAPI | string }) {
   }
 
   return (
-    <span class="h-full w-full overflow-hidden whitespace-pre-wrap break-words">
+    <span
+      class={`h-full w-full overflow-hidden whitespace-pre-wrap break-words ${htmlClass ?? ""}`}
+    >
       {res}
     </span>
   );

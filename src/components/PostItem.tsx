@@ -9,6 +9,7 @@ import { CHARLIMIT } from "../utils/constants.js";
 import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 import { RichText } from "./RichText.jsx";
 import { configs } from "./Settings.jsx";
+import { Dropdown } from "./Dropdown.jsx";
 
 interface PostItemProps {
   record: PostRecord;
@@ -98,7 +99,10 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
           </span>
         </Show>
 
-        <RichText value={richText()} />
+        <div class="flex h-full w-full">
+          <RichText value={richText()} class="flex-1" />
+          <Dropdown record={props.record} />
+        </div>
       </div>
     </div>
   );
