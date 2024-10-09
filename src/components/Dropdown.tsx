@@ -16,7 +16,7 @@ const Dropdown: Component<{ record: PostRecord }> = ({ record }) => {
       </div>
       <ul
         tabindex="0"
-        class="dropdown-content z-[1] flex flex-col gap-y-2 rounded-md p-2 text-stone-500 dark:bg-zinc-800 dark:text-stone-400"
+        class="dropdown-content z-[1] flex flex-col gap-y-2 rounded-md border border-zinc-400 bg-zinc-200 p-2 text-stone-500 dark:bg-zinc-800 dark:text-stone-400"
       >
         <Show when={record.did === loginState().session?.did}>
           <li class="inline-flex w-max items-center justify-center gap-x-2">
