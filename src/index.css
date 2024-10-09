@@ -19,5 +19,4 @@
 	transition-timing-function: cubic-bezier(.4,0,.2,1);
 	transition-timing-function: cubic-bezier(0,0,.2,1);
 	transition-duration: .2s;
-	box-shadow: #00000040 0 25px 50px -12px;
 }
