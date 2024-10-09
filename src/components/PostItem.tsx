@@ -8,11 +8,12 @@ import { graphemeLen } from "../utils/lib.js";
 import { CHARLIMIT } from "../utils/constants.js";
 import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 import { RichText } from "./RichText.jsx";
+import { configs } from "./Settings.jsx";
 
 interface PostItemProps {
   record: PostRecord;
   isSamePoster: boolean;
-  lastSeenPost: number | boolean;
+  firstUnread: boolean;
 }
 const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
   let mentionsUser = !!props.record.facets?.find(
@@ -36,9 +37,13 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
   return (
     <div
       classList={{
-        "flex flex-col items-start gap-x-3 py-0.5 text-sm": true,
-        "last-post-msg": props.lastSeenPost ? true : false,
-        "pt-1 mt-2": !props.isSamePoster,
+        "flex flex-col items-start gap-x-3 text-sm py-1.5": true,
+        "mt-[-0.75rem]": props.isSamePoster,
+        "border-t border-zinc-700":
+          !props.isSamePoster && configs().lineSeparator,
+        "first-unread": props.firstUnread,
+        "pt-0 border-t-0 mt-[-0.25rem]":
+          !props.isSamePoster && props.firstUnread,
       }}
     >
       <div

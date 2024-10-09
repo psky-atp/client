@@ -2,10 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
-.last-post-msg::after {
-  @apply border-y dark:border-y-neutral-800 py-1 my-1;
+.first-unread::before {
+  @apply border-y border-zinc-700 py-1 my-1.5;
   content: "New messages";
   color: rgb(239, 68, 68);
   text-align: center;
   width: 100%;
+}
+
+.modal {
+	transition-duration: .2s;
+	transition-timing-function: cubic-bezier(0,0,.2,1);
+}
+.modal-box {
+	max-height: calc(100vh - 5em);
+	transition-timing-function: cubic-bezier(.4,0,.2,1);
+	transition-timing-function: cubic-bezier(0,0,.2,1);
+	transition-duration: .2s;
+	box-shadow: #00000040 0 25px 50px -12px;
 }
