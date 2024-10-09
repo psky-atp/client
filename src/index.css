@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .last-post-msg::after {
-  @apply border-b dark:border-b-neutral-800 pb-1 mb-1;
+  @apply border-t dark:border-t-neutral-800 pt-1 mt-1;
   content: "New messages";
   color: rgb(239, 68, 68);
   text-align: center;
