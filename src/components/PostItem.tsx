@@ -38,7 +38,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
       classList={{
         "flex flex-col items-start gap-x-3 py-0.5 text-sm": true,
         "last-post-msg": props.lastSeenPost ? true : false,
-        "pt-1 mt-1": !props.isSamePoster,
+        "pt-1 mt-2": !props.isSamePoster,
       }}
     >
       <div
