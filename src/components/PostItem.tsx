@@ -38,14 +38,14 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
       classList={{
         "flex flex-col items-start gap-x-3 py-0.5 text-sm": true,
         "last-post-msg": props.lastSeenPost ? true : false,
-        "pt-1 mt-1 border-t dark:border-t-neutral-800": !props.isSamePoster,
+        "pt-1 mt-1": !props.isSamePoster,
       }}
     >
       <div
         classList={{
-          "flex max-h-40 flex-col items-start": true,
+          "my-0.5 flex max-h-40 flex-col items-start": true,
           "w-full": !mentionsUser,
-          "bg-neutral-200 dark:bg-neutral-800 mx-[-0.5rem] py-0.5 pl-2 pr-1 w-[102.25%] border-y-2 rounded-md border-zinc-400":
+          "bg-neutral-200 dark:bg-neutral-800 mx-[-0.5rem] py-0.5 pl-2 pr-1 w-[102.25%] border-l-2 rounded-md border-zinc-400":
             mentionsUser,
         }}
       >
