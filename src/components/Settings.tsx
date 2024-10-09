@@ -48,7 +48,7 @@ const Settings = () => {
           id="settings_modal"
           class="modal absolute left-0 top-0 z-[2] flex h-screen w-screen items-center justify-center bg-transparent"
         >
-          <div class="modal-box m-4 max-w-lg overflow-y-auto overscroll-contain rounded-md border border-black bg-stone-800 p-4 dark:border-white dark:text-white">
+          <div class="modal-box m-4 max-w-lg overflow-y-auto overscroll-contain rounded-md border border-black bg-stone-200 p-4 dark:border-white dark:bg-stone-800 dark:text-white">
             <h3 class="text-lg font-bold">Settings</h3>
             <div class="mt-2 inline-flex gap-2">
               <input
