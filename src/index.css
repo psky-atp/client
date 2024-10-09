@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-.last-post-msg::before {
+.last-post-msg::after {
   @apply border-b dark:border-b-neutral-800 pb-1 mb-1;
   content: "New messages";
   color: rgb(239, 68, 68);

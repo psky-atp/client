@@ -91,7 +91,12 @@ const PostFeed: Component<PostFeedProps> = ({
           {(record, idx) => (
             <PostItem
               record={record}
-              class={idx() && idx() === unreadCount() ? "last-post-msg" : ""}
+              isSamePoster={
+                idx() < posts().length - 1 &&
+                posts()[idx() + 1].did === record.did &&
+                record.indexedAt - posts()[idx() + 1].indexedAt < 600000
+              }
+              lastSeenPost={idx() && idx() === unreadCount()}
             />
           )}
         </For>
