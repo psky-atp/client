@@ -45,7 +45,7 @@ export const RichText: Component<RichTextProps> = ({
 
   return (
     <span
-      class={`h-full w-full overflow-hidden whitespace-pre-wrap break-words ${htmlClass ?? ""}`}
+      class={`overflow-hidden whitespace-pre-wrap break-words ${htmlClass ?? ""}`}
     >
       {res()}
     </span>

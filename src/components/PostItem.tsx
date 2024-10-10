@@ -1,5 +1,5 @@
 import { Accessor, Component, createMemo, Show } from "solid-js";
-import { CreateEvent } from "../utils/types.js";
+import { PostRecord } from "../utils/types.js";
 import { isMention } from "../utils/rich-text/util.js";
 import { loginState } from "./Login.jsx";
 import { SocialPskyRichtextFacet } from "@atcute/client/lexicons";
@@ -12,7 +12,7 @@ import { PostDropdown } from "./PostDropdown.jsx";
 interface PostItemProps {
   isSamePoster: boolean;
   firstUnread: boolean;
-  record: Accessor<CreateEvent>;
+  record: Accessor<PostRecord>;
 }
 const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
   const richText = createMemo(() => {
@@ -41,7 +41,8 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
   return (
     <div
       classList={{
-        "flex flex-col items-start gap-x-3 text-sm py-1.5": true,
+        "flex flex-col items-start gap-x-3 text-sm py-1.5 hoverable-dropdown":
+          true,
         "mt-[-0.75rem]": props.isSamePoster,
         "border-t dark:border-neutral-800":
           !props.isSamePoster && configs().lineSeparator,
@@ -82,21 +83,22 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
             </span>
 
             <span class="w-fit shrink-0 text-right font-mono text-xs">
-              <a
-                href={`https://atproto-browser.vercel.app/at/${props.record().did}/social.psky.feed.post/${props.record().rkey}`}
-                target="_blank"
-              >
-                {new Date(props.record().indexedAt).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </a>
+              {new Date(props.record().indexedAt).toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
             </span>
           </span>
         </Show>
 
         <div class="flex h-full w-full">
-          <RichText value={richText} class="flex-1 pr-2" />
+          <span class="h-full w-full flex-1 pr-2">
+            <RichText value={richText} />
+            <Show when={!!props.record().updatedAt}>
+              {" "}
+              <span class="text-xs text-zinc-500">(edited)</span>
+            </Show>
+          </span>
           <PostDropdown record={props.record} />
         </div>
       </div>

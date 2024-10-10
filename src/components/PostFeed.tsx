@@ -9,7 +9,7 @@ import {
   Signal,
   untrack,
 } from "solid-js";
-import { CreateEvent, UpdateEvent } from "../utils/types.js";
+import { PostRecord, DeleteEvent, UpdateEvent } from "../utils/types.js";
 import { APP_NAME, MAXPOSTS, SERVER_URL } from "../utils/constants.js";
 import PostItem from "./PostItem.jsx";
 import { WebSocket } from "partysocket";
@@ -24,7 +24,7 @@ const PostFeed: Component<PostFeedProps> = ({
   unreadCount,
   setUnreadCount,
 }) => {
-  const [posts, setPosts] = createSignal<Signal<CreateEvent>[]>([]);
+  const [posts, setPosts] = createSignal<Signal<PostRecord>[]>([]);
   const socket = new WebSocket(`wss://${SERVER_URL}/subscribe`);
   let cursor = 0;
   let feedSize = 100;
@@ -40,7 +40,7 @@ const PostFeed: Component<PostFeedProps> = ({
     // - then when the handle is found, to refresh and highlight mentions
     // this would result in cursor getting updated, fetching older posts
     cursor = (updateCursor ?? true) ? json.cursor.toString() : "0";
-    return json.posts.map((p: CreateEvent) => createSignal<CreateEvent>(p));
+    return json.posts.map((p: PostRecord) => createSignal<PostRecord>(p));
   };
 
   createEffect(async () => {
@@ -70,7 +70,7 @@ const PostFeed: Component<PostFeedProps> = ({
             toScroll = true;
 
           setPosts([
-            createSignal<CreateEvent>(data as CreateEvent),
+            createSignal<PostRecord>(data as PostRecord),
             ...untrack(posts).slice(0, feedSize - 1),
           ]);
 
@@ -99,6 +99,16 @@ const PostFeed: Component<PostFeedProps> = ({
           break;
 
         case "delete":
+          data = data as DeleteEvent;
+          for (const [i, p] of posts().entries()) {
+            let post = p[0]();
+            if (post.did === data.did && post.rkey === data.rkey) {
+              let all = untrack(posts);
+              all.splice(i, 1);
+              setPosts([...all]);
+              break;
+            }
+          }
           break;
       }
     });

@@ -33,6 +33,9 @@
   bottom: 100%;
   top: auto;
 }
+.hoverable-dropdown:hover .dropdown>.btn.trigger {
+  @apply opacity-100;
+}
 .dropdown>*:focus {
   outline: 2px solid transparent;
   outline-offset: 2px

@@ -12,7 +12,7 @@ import { graphemeLen, isTouchDevice } from "../utils/lib.js";
 import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 import { SocialPskyFeedPost } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
-import { PostRecord } from "../utils/types.js";
+import { PostData } from "../utils/types.js";
 
 const [textInput, setTextInput] = createSignal<HTMLInputElement>();
 const [sendButton, setSendButton] = createSignal<HTMLButtonElement>();
@@ -27,8 +27,8 @@ const setPostInput = (text: string) => {
 };
 export { postInput, setPostInput };
 
-const [editRecord, setEditRecord] = createSignal<PostRecord>();
-export const editPico = (record?: PostRecord) => {
+const [editRecord, setEditRecord] = createSignal<PostData>();
+export const editPico = (record?: PostData) => {
   if (record) {
     setPostInput(record.post);
     setEditRecord(record);
@@ -131,9 +131,11 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
               if (rkey) {
                 putPost(postInput(), rkey);
                 editPico(undefined);
-              } else putPost(postInput());
+              } else {
+                putPost(postInput());
+                window.scroll(0, document.body.scrollHeight);
+              }
 
-              window.scroll(0, document.body.scrollHeight);
               setPostInput("");
             }}
           >
