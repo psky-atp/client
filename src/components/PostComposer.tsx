@@ -1,13 +1,6 @@
-import {
-  Component,
-  createSignal,
-  onCleanup,
-  onMount,
-  Setter,
-  Show,
-} from "solid-js";
+import { Component, createSignal, onCleanup, onMount, Show } from "solid-js";
 import { loginState } from "./Login.jsx";
-import { APP_NAME, CHARLIMIT } from "../utils/constants.js";
+import { CHARLIMIT } from "../utils/constants.js";
 import { graphemeLen, isTouchDevice } from "../utils/lib.js";
 import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 import { SocialPskyFeedPost } from "@atcute/client/lexicons";
@@ -87,7 +80,7 @@ const PostComposer: Component<{
   return (
     <form
       id="postForm"
-      class="sticky bottom-0 z-[2] flex w-full w-screen max-w-80 items-center justify-center gap-2 bg-white px-2 pb-6 pt-4 sm:max-w-[32rem] dark:bg-zinc-900"
+      class="sticky bottom-0 z-[2] flex w-screen max-w-80 items-center justify-center gap-2 bg-white px-2 pb-6 pt-4 sm:max-w-[32rem] dark:bg-zinc-900"
       onsubmit={(e) => {
         e.currentTarget.reset();
         e.preventDefault();
@@ -99,7 +92,7 @@ const PostComposer: Component<{
           "text-red-500": graphemeLen(postInput()) > CHARLIMIT,
         }}
       >
-        {graphemeLen(postInput())}/{CHARLIMIT}
+        {CHARLIMIT - graphemeLen(postInput())}
       </div>
       <input
         type="text"
