@@ -15,11 +15,13 @@ const PostDropdown: Component<{
   record: Accessor<PostData>;
   markAsUnread: () => void;
 }> = ({ record, markAsUnread }) => {
+  const sessDid = () => loginState().session?.did ?? loginState().did!;
+
   const deletePico = async (rkey: string) => {
     await loginState()
       .rpc!.call("com.atproto.repo.deleteRecord", {
         data: {
-          repo: loginState().session?.did ?? loginState().did!,
+          repo: sessDid(),
           collection: "social.psky.feed.post",
           rkey,
         },
@@ -43,7 +45,7 @@ const PostDropdown: Component<{
         tabindex="0"
         class="dropdown-content z-[1] flex flex-col gap-y-2 rounded-md border border-zinc-400 bg-zinc-100 p-2 text-stone-500 dark:bg-zinc-800 dark:text-stone-400"
       >
-        <Show when={record().did === loginState().session?.did}>
+        <Show when={record().did === sessDid()}>
           <li
             class="inline-flex w-max cursor-pointer items-center justify-center gap-x-2 text-red-400"
             onClick={() => deletePico(record().rkey)}
@@ -52,7 +54,7 @@ const PostDropdown: Component<{
             <span class="mt-0.5">Delete</span>
           </li>
         </Show>
-        <Show when={record().did === loginState().session?.did}>
+        <Show when={record().did === sessDid()}>
           <li
             class="inline-flex w-max cursor-pointer items-center justify-center gap-x-2"
             onClick={() => editPico(record())}
