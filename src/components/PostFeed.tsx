@@ -138,7 +138,7 @@ const PostFeed: Component<PostFeedProps> = ({
                 record[0]().indexedAt - posts()[idx() + 1][0]().indexedAt <
                   600000
               }
-              firstUnread={idx() + 1 === unreadState().count}
+              firstUnread={() => idx() + 1 === unreadState().count}
               record={record[0]}
               markAsUnread={() =>
                 setUnreadState({ count: idx() + 1, ignoreOnce: true })

@@ -3,6 +3,7 @@ import { VsGear } from "./SVGs.jsx";
 
 interface Configs {
   lineSeparator?: boolean;
+  compactMode?: boolean;
 }
 const [configs, setConfigs] = createSignal<Configs>(
   (() => {
@@ -62,6 +63,20 @@ const Settings = () => {
               />
               <label for="lineSeparator" class="text-sm">
                 Add a line separator between messages
+              </label>
+            </div>
+            <div class="mt-2 inline-flex gap-2">
+              <input
+                type="checkbox"
+                id="compactMode"
+                checked={!!configs().compactMode}
+                class="accent-stone-600"
+                onChange={(e) => {
+                  updateConfigs({ compactMode: e.currentTarget.checked });
+                }}
+              />
+              <label for="compactMode" class="text-sm">
+                Turn on compact mode (hide profile pictures)
               </label>
             </div>
           </div>
