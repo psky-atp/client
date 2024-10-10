@@ -43,11 +43,11 @@ const PostDropdown: Component<{
       </div>
       <ul
         tabindex="0"
-        class="dropdown-content z-[1] flex flex-col gap-y-2 rounded-md border border-zinc-400 bg-zinc-100 p-2 text-stone-500 dark:bg-zinc-800 dark:text-stone-400"
+        class="dropdown-content z-[1] flex flex-col rounded-md border border-zinc-400 bg-zinc-100 p-2 text-stone-500 dark:bg-zinc-800 dark:text-stone-400"
       >
         <Show when={record().did === sessDid()}>
           <li
-            class="inline-flex w-max cursor-pointer items-center justify-center gap-x-2 text-red-400"
+            class="text-red-500 hover:!bg-red-200 dark:hover:!bg-red-950"
             onClick={(e) => {
               deletePico(record().rkey);
               e.currentTarget.parentElement!.blur();
@@ -58,10 +58,7 @@ const PostDropdown: Component<{
           </li>
         </Show>
         <Show when={record().did === sessDid()}>
-          <li
-            class="inline-flex w-max cursor-pointer items-center justify-center gap-x-2"
-            onClick={() => editPico(record())}
-          >
+          <li onClick={() => editPico(record())}>
             <span class="h-4 w-4">
               <FaSolidPencil class="m-auto ml-0.5 h-3 w-3" />
             </span>
@@ -69,7 +66,6 @@ const PostDropdown: Component<{
           </li>
         </Show>
         <li
-          class="inline-flex w-max cursor-pointer items-center justify-center gap-x-2"
           onClick={(e) => {
             markAsUnread();
             e.currentTarget.parentElement!.blur();
@@ -78,7 +74,7 @@ const PostDropdown: Component<{
           <IoMailUnreadOutline class="h-4 w-4" />
           <span>Mark as unread</span>
         </li>
-        <li class="inline-flex w-max">
+        <li>
           <a
             href={`https://atproto-browser.vercel.app/at/${record().did}/social.psky.feed.post/${record().rkey}`}
             class="inline-flex w-max cursor-pointer items-center justify-center gap-x-2"
