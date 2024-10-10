@@ -7,14 +7,19 @@ import {
 } from "./SVGs.jsx";
 import { PostRecord } from "../utils/types.js";
 import { loginState } from "./Login.jsx";
+import { isTouchDevice } from "../utils/lib.js";
+import { editPico } from "./PostComposer.jsx";
 
-const Dropdown: Component<{ record: PostRecord }> = ({ record }) => {
+const PostDropdown: Component<{ record: PostRecord }> = ({ record }) => {
   return (
     <div class="dropdown">
       <div
         tabindex="0"
         role="button"
-        class="btn sm:opacity-0 sm:hover:opacity-100"
+        classList={{
+          btn: true,
+          // "opacity-0 hover:opacity-100": !isTouchDevice,
+        }}
       >
         <AiOutlineEllipsis class="text-stone-500 dark:text-stone-400" />
       </div>
@@ -29,7 +34,10 @@ const Dropdown: Component<{ record: PostRecord }> = ({ record }) => {
           </li>
         </Show>
         <Show when={record.did === loginState().session?.did}>
-          <li class="inline-flex w-max items-center justify-center gap-x-2">
+          <li
+            class="inline-flex w-max cursor-pointer items-center justify-center gap-x-2"
+            onClick={() => editPico(record)}
+          >
             <span class="h-4 w-4">
               <FaSolidPencil class="m-auto ml-0.5" />
             </span>
@@ -45,4 +53,4 @@ const Dropdown: Component<{ record: PostRecord }> = ({ record }) => {
   );
 };
 
-export { Dropdown };
+export { PostDropdown };

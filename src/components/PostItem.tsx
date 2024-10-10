@@ -9,7 +9,7 @@ import { CHARLIMIT } from "../utils/constants.js";
 import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 import { RichText } from "./RichText.jsx";
 import { configs } from "./Settings.jsx";
-import { Dropdown } from "./Dropdown.jsx";
+import { PostDropdown } from "./PostDropdown.jsx";
 
 interface PostItemProps {
   record: PostRecord;
@@ -70,16 +70,9 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
               </a>
               <span
                 class="w-fit max-w-full shrink-0 cursor-pointer truncate text-zinc-600 dark:text-zinc-400"
-                onclick={() => {
-                  const newInput = `${postInput()}@${props.record.handle} `;
-                  if (graphemeLen(newInput) > CHARLIMIT) return;
-                  setPostInput(newInput);
-                  const textInputElem = document.getElementById(
-                    "textInput",
-                  ) as HTMLInputElement;
-                  textInputElem.value = postInput();
-                  textInputElem.focus();
-                }}
+                onclick={() =>
+                  setPostInput(`${postInput()}@${props.record.handle} `)
+                }
               >
                 @{props.record.handle}
               </span>
@@ -101,7 +94,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
 
         <div class="flex h-full w-full">
           <RichText value={richText()} class="flex-1 pr-2" />
-          <Dropdown record={props.record} />
+          <PostDropdown record={props.record} />
         </div>
       </div>
     </div>
