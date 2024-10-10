@@ -97,7 +97,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
             <RichText value={richText} />
             <Show when={!!props.record().updatedAt}>
               {" "}
-              <span class="text-xs text-zinc-500">(edited)</span>
+              <span class="select-none text-xs text-zinc-500">(edited)</span>
             </Show>
           </span>
           <PostDropdown
