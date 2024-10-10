@@ -88,7 +88,7 @@ const PostComposer: Component<{
     >
       <div
         classList={{
-          "text-sm select-none w-fit": true,
+          "text-sm select-none min-w-7 w-fit": true,
           "text-red-500": graphemeLen(postInput()) > CHARLIMIT,
         }}
       >
