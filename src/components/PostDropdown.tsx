@@ -15,10 +15,11 @@ const PostDropdown: Component<{
   record: Accessor<PostData>;
   markAsUnread: () => void;
 }> = ({ record, markAsUnread }) => {
-  const sessDid = () => loginState().session?.did ?? loginState().did!;
+  const sessDid = () => loginState.get().session?.did ?? loginState.get().did!;
 
   const deletePico = async (rkey: string) => {
-    await loginState()
+    await loginState
+      .get()
       .rpc!.call("com.atproto.repo.deleteRecord", {
         data: {
           repo: sessDid(),
@@ -58,7 +59,7 @@ const PostDropdown: Component<{
           </li>
         </Show>
         <Show when={record().did === sessDid()}>
-          <li onClick={() => editPico(record())}>
+          <li onClick={() => editPico.set(record())}>
             <span class="h-4 w-4">
               <FaSolidPencil class="m-auto ml-0.5 h-3 w-3" />
             </span>

@@ -6,38 +6,39 @@ import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 import { SocialPskyFeedPost } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
 import { PostData } from "../utils/types.js";
-import { UnreadState } from "../App.jsx";
+import { unreadState } from "../App.jsx";
+import createProp from "../utils/createProp.js";
 
 const [textInput, setTextInput] = createSignal<HTMLInputElement>();
 const [sendButton, setSendButton] = createSignal<HTMLButtonElement>();
 
-const [postInput, setPostInputInternal] = createSignal("");
-const setPostInput = (text: string) => {
+export const postInput = createProp("", function (text: string) {
   const sendPostButton = sendButton();
-  if (!sendPostButton) return;
+  if (!sendPostButton) {
+    return this[0]();
+  }
+
   if (graphemeLen(text) > CHARLIMIT) sendPostButton.disabled = true;
   else sendPostButton.disabled = false;
-  setPostInputInternal(text);
-};
-export { postInput, setPostInput };
 
-const [editRecord, setEditRecord] = createSignal<PostData>();
-export const editPico = (record?: PostData) => {
+  return this[1](text);
+});
+
+export const editPico = createProp(undefined, function (record?: PostData) {
   if (record) {
-    setPostInput(record.post);
-    setEditRecord(record);
+    postInput.set(record.post);
+    this[1](record);
     textInput()?.focus();
   } else {
-    if (editRecord()) {
-      setPostInput("");
+    if (this[0]()) {
+      postInput.set("");
     }
-    setEditRecord(record);
+    this[1](record);
   }
-};
+  return record;
+});
 
-const PostComposer: Component<{
-  setUnreadState: (state: UnreadState) => void;
-}> = ({ setUnreadState }) => {
+const PostComposer: Component = () => {
   document.addEventListener("focus", () => {
     if (isTouchDevice) window.scroll(0, document.body.scrollHeight);
     textInput()?.scroll(0, document.body.scrollHeight);
@@ -46,10 +47,11 @@ const PostComposer: Component<{
   const putPost = async (text: string, rkey?: string) => {
     let rt = new RichTextAPI({ text });
     await rt.detectFacets();
-    await loginState()
+    await loginState
+      .get()
       .rpc!.call("com.atproto.repo.putRecord", {
         data: {
-          repo: loginState().session?.did ?? loginState().did!,
+          repo: loginState.get().session?.did ?? loginState.get().did!,
           collection: "social.psky.feed.post",
           rkey: rkey ?? TID.now(),
           record: {
@@ -60,14 +62,14 @@ const PostComposer: Component<{
         },
       })
       .catch((err) => console.log(err));
-    setUnreadState({ count: 0 });
+    unreadState.set({ count: 0 });
   };
 
   let keyEvent = (event: KeyboardEvent) => {
     const input = textInput();
     if (input && event.key == "Escape") {
       input.blur();
-      editPico(undefined);
+      editPico.set(undefined);
     }
   };
   onMount(() => {
@@ -90,53 +92,56 @@ const PostComposer: Component<{
         <div
           classList={{
             "text-sm select-none min-w-7 w-fit": true,
-            "text-red-500": graphemeLen(postInput()) > CHARLIMIT,
+            "text-red-500": graphemeLen(postInput.get()) > CHARLIMIT,
           }}
         >
-          {CHARLIMIT - graphemeLen(postInput())}
+          {CHARLIMIT - graphemeLen(postInput.get())}
         </div>
         <input
           type="text"
           ref={setTextInput}
-          placeholder={!!editRecord() ? "edit pico" : "pico pico"}
-          value={postInput() ?? ""}
+          placeholder={!!editPico.get() ? "edit pico" : "pico pico"}
+          value={postInput.get() ?? ""}
           autocomplete="off"
           class="min-w-0 flex-1 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700"
-          onInput={(e) => setPostInput(e.currentTarget.value)}
+          onInput={(e) => postInput.set(e.currentTarget.value)}
         />
         <button
           ref={setSendButton}
           classList={{
             "px-1 py-1 text-xs font-bold text-white": true,
             "bg-stone-600 hover:bg-stone-700":
-              graphemeLen(postInput()) <= CHARLIMIT,
+              graphemeLen(postInput.get()) <= CHARLIMIT,
             "bg-stone-200 dark:bg-stone-800 dark:text-gray-400":
-              graphemeLen(postInput()) > CHARLIMIT,
+              graphemeLen(postInput.get()) > CHARLIMIT,
           }}
           onclick={(e) => {
-            if (!postInput().length || graphemeLen(postInput()) > CHARLIMIT) {
+            if (
+              !postInput.get().length ||
+              graphemeLen(postInput.get()) > CHARLIMIT
+            ) {
               e.preventDefault();
               return;
             }
 
-            let rkey = editRecord()?.rkey;
+            let rkey = editPico.get()?.rkey;
             if (rkey) {
-              putPost(postInput(), rkey);
-              editPico(undefined);
+              putPost(postInput.get(), rkey);
+              editPico.set(undefined);
             } else {
-              putPost(postInput());
+              putPost(postInput.get());
               window.scroll(0, document.body.scrollHeight);
             }
 
-            setPostInput("");
+            postInput.set("");
           }}
         >
-          {!!editRecord() ? "edit" : "pico"}
+          {!!editPico.get() ? "edit" : "pico"}
         </button>
-        <Show when={!!editRecord()}>
+        <Show when={!!editPico.get()}>
           <button
             class="bg-stone-600 px-1 py-1 text-xs font-bold text-white hover:bg-stone-700"
-            onclick={() => editPico(undefined)}
+            onclick={() => editPico.set(undefined)}
           >
             cancel
           </button>

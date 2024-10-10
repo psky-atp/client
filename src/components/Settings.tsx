@@ -1,21 +1,22 @@
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
 import { VsGear } from "./SVGs.jsx";
+import createProp from "../utils/createProp.js";
 
 interface Configs {
   lineSeparator?: boolean;
 }
-const [configs, setConfigs] = createSignal<Configs>(
+export const configs = createProp(
   (() => {
     let stored = localStorage.configs;
     return !!stored ? JSON.parse(stored) : {};
-  })() as Configs,
+  })(),
+  function (newConfigs: Configs) {
+    newConfigs = { ...this[0](), ...newConfigs };
+    this[1](newConfigs);
+    localStorage.configs = JSON.stringify(newConfigs);
+    return newConfigs;
+  },
 );
-const updateConfigs = (newConfigs: Configs) => {
-  newConfigs = { ...configs(), ...newConfigs };
-  setConfigs(newConfigs);
-  localStorage.configs = JSON.stringify(newConfigs);
-  return newConfigs;
-};
 
 const Settings = () => {
   const [open, setOpen] = createSignal(false);
@@ -54,10 +55,10 @@ const Settings = () => {
               <input
                 type="checkbox"
                 id="lineSeparator"
-                checked={!!configs().lineSeparator}
+                checked={!!configs.get().lineSeparator}
                 class="accent-stone-600"
                 onChange={(e) => {
-                  updateConfigs({ lineSeparator: e.currentTarget.checked });
+                  configs.set({ lineSeparator: e.currentTarget.checked });
                 }}
               />
               <label for="lineSeparator" class="text-sm">
@@ -72,4 +73,3 @@ const Settings = () => {
 };
 
 export default Settings;
-export { configs };

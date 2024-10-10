@@ -1,5 +1,4 @@
 import {
-  Accessor,
   Component,
   createEffect,
   createSignal,
@@ -12,16 +11,9 @@ import { PostRecord, DeleteEvent, UpdateEvent } from "../utils/types.js";
 import { MAXPOSTS, SERVER_URL } from "../utils/constants.js";
 import PostItem from "./PostItem.jsx";
 import { loginState } from "./Login.jsx";
-import { socket, UnreadState } from "../App.jsx";
+import { socket, unreadState } from "../App.jsx";
 
-interface PostFeedProps {
-  unreadState: Accessor<UnreadState>;
-  setUnreadState: (state: UnreadState) => void;
-}
-const PostFeed: Component<PostFeedProps> = ({
-  unreadState,
-  setUnreadState,
-}) => {
+const PostFeed: Component = () => {
   const [posts, setPosts] = createSignal<Signal<PostRecord>[]>([]);
   let cursor = 0;
   let feedSize = 100;
@@ -41,7 +33,7 @@ const PostFeed: Component<PostFeedProps> = ({
   };
 
   createEffect(async () => {
-    if (loginState().handle) setPosts(await getPosts(false));
+    if (loginState.get().handle) setPosts(await getPosts(false));
     window.scroll(0, document.body.scrollHeight);
   });
 
@@ -70,9 +62,9 @@ const PostFeed: Component<PostFeedProps> = ({
             ...untrack(posts).slice(0, feedSize - 1),
           ]);
 
-          const currUnreadState = unreadState();
+          const currUnreadState = unreadState.get();
           if (!document.hasFocus() || currUnreadState.count) {
-            setUnreadState({
+            unreadState.set({
               ...currUnreadState,
               count: currUnreadState.count + 1,
             });
@@ -135,10 +127,10 @@ const PostFeed: Component<PostFeedProps> = ({
                 record[0]().indexedAt - posts()[idx() + 1][0]().indexedAt <
                   600000
               }
-              firstUnread={idx() + 1 === unreadState().count}
+              firstUnread={() => idx() + 1 === unreadState.get().count}
               record={record[0]}
               markAsUnread={() =>
-                setUnreadState({ count: idx() + 1, ignoreOnce: true })
+                unreadState.set({ count: idx() + 1, ignoreOnce: true })
               }
             />
           )}
@@ -149,4 +141,3 @@ const PostFeed: Component<PostFeedProps> = ({
 };
 
 export default PostFeed;
-export type { PostFeedProps };

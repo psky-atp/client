@@ -7,7 +7,10 @@ import { resolveDid, resolveHandle } from "../utils/api.js";
 import { CredentialManager, XRPC } from "@atcute/client";
 import { SocialPskyActorProfile } from "@atcute/client/lexicons";
 import { PDS_URL } from "../utils/constants.js";
+import createProp from "../utils/createProp.js";
 
+const stateIsLoggedIn = (state: LoginState) =>
+  ((state.session && state.session.sub) || state.manager) && state.rpc;
 interface LoginState {
   session?: OAuthSession;
   handle?: string;
@@ -15,18 +18,29 @@ interface LoginState {
   manager?: CredentialManager;
   rpc?: XRPC;
 }
-const [loginState, setLoginState] = createSignal<LoginState>({});
-const isLoggedIn = () => {
-  const state = loginState();
-  return ((state.session && state.session.sub) || state.manager) && state.rpc;
-};
+export const loginState = createProp<LoginState>(
+  {},
+  function (newState: LoginState) {
+    const curr = this[0]();
+
+    // If is logged in through OAuth
+    if (
+      !Object.keys(newState).length &&
+      stateIsLoggedIn(curr) &&
+      curr.session
+    ) {
+      client.revoke(curr.session.sub);
+    }
+
+    this[1](newState);
+    return newState;
+  },
+);
+
+export const isLoggedIn = () => stateIsLoggedIn(loginState.get());
 
 let manager: CredentialManager;
 let client: BrowserOAuthClient;
-export const logout = async () => {
-  if (isLoggedIn()) await client.revoke(loginState().session!.sub);
-};
-
 const isLocal = () =>
   window.location.hostname === "localhost" ||
   window.location.hostname === "127.0.0.1" ||
@@ -47,7 +61,7 @@ const Login: Component = () => {
       handleResolver: `https://${PDS_URL}`,
     });
     client.addEventListener("deleted", () => {
-      setLoginState({});
+      loginState.set({});
     });
 
     const result = await client.init().catch(() => {});
@@ -59,7 +73,7 @@ const Login: Component = () => {
           handler: { handle: result.session.fetchHandler.bind(result.session) },
         }),
       };
-      setLoginState(state);
+      loginState.set(state);
     }
     setNotice("");
   });
@@ -87,7 +101,7 @@ const Login: Component = () => {
     if (password().length) {
       const service = await fetchService(handle);
       manager = new CredentialManager({ service: service });
-      setLoginState({
+      loginState.set({
         manager: manager,
         rpc: new XRPC({ handler: manager }),
         handle: loginInput(),
@@ -95,7 +109,7 @@ const Login: Component = () => {
       });
       await manager.login({ identifier: loginInput(), password: password() });
     } else {
-      await loginState().manager?.login({
+      await loginState.get().manager?.login({
         identifier: loginInput(),
         password: password(),
       });
@@ -112,10 +126,11 @@ const Login: Component = () => {
   };
 
   const updateNickname = async (nickname: string) => {
-    await loginState()
+    await loginState
+      .get()
       .rpc!.call("com.atproto.repo.putRecord", {
         data: {
-          repo: loginState().session!.did,
+          repo: loginState.get().session!.did,
           collection: "social.psky.actor.profile",
           rkey: "self",
           record: {
@@ -130,7 +145,7 @@ const Login: Component = () => {
 
   return (
     <div class="mb-3 flex flex-col items-center text-sm">
-      <Show when={isLoggedIn() && loginState().handle}>
+      <Show when={isLoggedIn() && loginState.get().handle}>
         <form
           class="mt-2 flex items-center"
           onsubmit={(e) => {
@@ -201,4 +216,3 @@ const Login: Component = () => {
 };
 
 export default Login;
-export { loginState, isLoggedIn };
