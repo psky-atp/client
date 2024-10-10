@@ -62,8 +62,7 @@ const PostFeed: Component<PostFeedProps> = ({
         case "create":
           let toScroll = false;
           if (
-            (window.visualViewport?.height ?? window.innerHeight) +
-              window.scrollY >=
+            window.innerHeight + window.scrollY + 100 >=
             document.body.scrollHeight
           )
             toScroll = true;
