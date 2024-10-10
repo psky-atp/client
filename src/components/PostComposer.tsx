@@ -13,6 +13,7 @@ import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 import { SocialPskyFeedPost } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
 import { PostData } from "../utils/types.js";
+import { UnreadState } from "../App.jsx";
 
 const [textInput, setTextInput] = createSignal<HTMLInputElement>();
 const [sendButton, setSendButton] = createSignal<HTMLButtonElement>();
@@ -41,9 +42,9 @@ export const editPico = (record?: PostData) => {
   }
 };
 
-const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
-  setUnreadCount,
-}) => {
+const PostComposer: Component<{
+  setUnreadState: (state: UnreadState) => void;
+}> = ({ setUnreadState }) => {
   document.addEventListener("focus", () => {
     if (isTouchDevice) window.scroll(0, document.body.scrollHeight);
     textInput()?.scroll(0, document.body.scrollHeight);
@@ -66,8 +67,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
         },
       })
       .catch((err) => console.log(err));
-    setUnreadCount(0);
-    document.title = APP_NAME;
+    setUnreadState({ count: 0 });
   };
 
   let keyEvent = (event: KeyboardEvent) => {

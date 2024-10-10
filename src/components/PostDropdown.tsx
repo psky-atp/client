@@ -1,18 +1,20 @@
-import { Accessor, Component, Show } from "solid-js";
+import { Accessor, Component, Setter, Show } from "solid-js";
 import {
   AiOutlineEllipsis,
   AiOutlineFileText,
   FaSolidPencil,
   FiTrash2,
+  IoMailUnreadOutline,
 } from "./SVGs.jsx";
 import { PostData } from "../utils/types.js";
 import { loginState } from "./Login.jsx";
 import { editPico } from "./PostComposer.jsx";
 import { isTouchDevice } from "../utils/lib.js";
 
-const PostDropdown: Component<{ record: Accessor<PostData> }> = ({
-  record,
-}) => {
+const PostDropdown: Component<{
+  record: Accessor<PostData>;
+  markAsUnread: () => void;
+}> = ({ record, markAsUnread }) => {
   const deletePico = async (rkey: string) => {
     await loginState()
       .rpc!.call("com.atproto.repo.deleteRecord", {
@@ -61,6 +63,13 @@ const PostDropdown: Component<{ record: Accessor<PostData> }> = ({
             <span>Edit</span>
           </li>
         </Show>
+        <li
+          class="inline-flex w-max cursor-pointer items-center justify-center gap-x-2"
+          onClick={markAsUnread}
+        >
+          <IoMailUnreadOutline class="h-4 w-4" />
+          <span>Mark as unread</span>
+        </li>
         <li class="inline-flex w-max" onClick={() => editPico(record())}>
           <a
             href={`https://atproto-browser.vercel.app/at/${record().did}/social.psky.feed.post/${record().rkey}`}

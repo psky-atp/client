@@ -6,19 +6,35 @@ import PostComposer from "./components/PostComposer.jsx";
 import PostFeed from "./components/PostFeed.jsx";
 import Settings from "./components/Settings.jsx";
 
+export interface UnreadState {
+  count: number;
+  ignoreOnce?: boolean;
+}
+
 const App: Component = () => {
   const [theme, setTheme] = createSignal("");
-  const [unreadCount, setUnreadCount] = createSignal(0);
+  const [unreadState, setUnreadStateInternal] = createSignal<UnreadState>({
+    count: 0,
+  });
+  const setUnreadState = (state: UnreadState) => {
+    document.title = state.count ? `(${state.count}) ${APP_NAME}` : APP_NAME;
+    setUnreadStateInternal(state);
+  };
 
-  const resetUnreadCount = () => {
-    setUnreadCount(0);
-    document.title = APP_NAME;
+  const resetUnreadOnBlur = () => {
+    const state = unreadState();
+    if (state.ignoreOnce) {
+      setUnreadState({ ...state, ignoreOnce: false });
+      return;
+    }
+
+    setUnreadState({ count: 0 });
   };
 
   onMount(() => {
     if (localStorage.theme !== undefined) setTheme(localStorage.theme);
     else setTheme("light");
-    window.addEventListener("blur", resetUnreadCount);
+    window.addEventListener("blur", resetUnreadOnBlur);
   });
 
   return (
@@ -68,10 +84,10 @@ const App: Component = () => {
           <Login />
         </div>
         <div class="w-80 sm:w-[32rem]">
-          <PostFeed setUnreadCount={setUnreadCount} unreadCount={unreadCount} />
+          <PostFeed setUnreadState={setUnreadState} unreadState={unreadState} />
         </div>
         <Show when={isLoggedIn()}>
-          <PostComposer setUnreadCount={setUnreadCount} />
+          <PostComposer setUnreadState={setUnreadState} />
         </Show>
       </div>
     </div>

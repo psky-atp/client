@@ -15,14 +15,15 @@ import PostItem from "./PostItem.jsx";
 import { WebSocket } from "partysocket";
 import { loginState } from "./Login.jsx";
 import { isTouchDevice } from "../utils/lib.js";
+import { UnreadState } from "../App.jsx";
 
 interface PostFeedProps {
-  unreadCount: Accessor<number>;
-  setUnreadCount: Setter<number>;
+  unreadState: Accessor<UnreadState>;
+  setUnreadState: (state: UnreadState) => void;
 }
 const PostFeed: Component<PostFeedProps> = ({
-  unreadCount,
-  setUnreadCount,
+  unreadState,
+  setUnreadState,
 }) => {
   const [posts, setPosts] = createSignal<Signal<PostRecord>[]>([]);
   const socket = new WebSocket(`wss://${SERVER_URL}/subscribe`);
@@ -74,10 +75,12 @@ const PostFeed: Component<PostFeedProps> = ({
             ...untrack(posts).slice(0, feedSize - 1),
           ]);
 
-          const currUnreadCount = unreadCount();
-          if (!document.hasFocus() || currUnreadCount) {
-            setUnreadCount(currUnreadCount + 1);
-            document.title = `(${currUnreadCount + 1}) ${APP_NAME}`;
+          const currUnreadState = unreadState();
+          if (!document.hasFocus() || currUnreadState.count) {
+            setUnreadState({
+              ...currUnreadState,
+              count: currUnreadState.count + 1,
+            });
           }
 
           if (toScroll || isTouchDevice)
@@ -138,8 +141,11 @@ const PostFeed: Component<PostFeedProps> = ({
                 record[0]().indexedAt - posts()[idx() + 1][0]().indexedAt <
                   600000
               }
-              firstUnread={idx() + 1 === unreadCount()}
+              firstUnread={idx() + 1 === unreadState().count}
               record={record[0]}
+              markAsUnread={() =>
+                setUnreadState({ count: idx() + 1, ignoreOnce: true })
+              }
             />
           )}
         </For>

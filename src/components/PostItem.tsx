@@ -1,4 +1,4 @@
-import { Accessor, Component, createMemo, Show } from "solid-js";
+import { Accessor, Component, createMemo, Setter, Show } from "solid-js";
 import { PostRecord } from "../utils/types.js";
 import { isMention } from "../utils/rich-text/util.js";
 import { loginState } from "./Login.jsx";
@@ -13,6 +13,7 @@ interface PostItemProps {
   isSamePoster: boolean;
   firstUnread: boolean;
   record: Accessor<PostRecord>;
+  markAsUnread: () => void;
 }
 const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
   const richText = createMemo(() => {
@@ -99,7 +100,10 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
               <span class="text-xs text-zinc-500">(edited)</span>
             </Show>
           </span>
-          <PostDropdown record={props.record} />
+          <PostDropdown
+            record={props.record}
+            markAsUnread={props.markAsUnread}
+          />
         </div>
       </div>
     </div>
