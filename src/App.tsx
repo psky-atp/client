@@ -1,18 +1,22 @@
 import { createSignal, onMount, Show, type Component } from "solid-js";
 
-import { APP_NAME } from "./utils/constants.js";
+import { APP_NAME, SERVER_URL } from "./utils/constants.js";
 import Login, { isLoggedIn, logout } from "./components/Login.jsx";
 import PostComposer from "./components/PostComposer.jsx";
 import PostFeed from "./components/PostFeed.jsx";
 import Settings from "./components/Settings.jsx";
+import { WebSocket } from "partysocket";
 
 export interface UnreadState {
   count: number;
   ignoreOnce?: boolean;
 }
 
+export const socket = new WebSocket(`wss://${SERVER_URL}/subscribe`);
+
 const App: Component = () => {
   const [theme, setTheme] = createSignal("");
+  const [sessionCount, setSessionCount] = createSignal(0);
   const [unreadState, setUnreadStateInternal] = createSignal<UnreadState>({
     count: 0,
   });
@@ -35,6 +39,10 @@ const App: Component = () => {
     if (localStorage.theme !== undefined) setTheme(localStorage.theme);
     else setTheme("light");
     window.addEventListener("blur", resetUnreadOnBlur);
+    socket.addEventListener("message", (event) => {
+      let data = JSON.parse(event.data);
+      if (data.$type === "serverState") setSessionCount(data.sessionCount);
+    });
   });
 
   return (
@@ -65,16 +73,17 @@ const App: Component = () => {
                 {theme() == "dark" ? "light" : "dark"}
               </button>
             </div>
-            <div class="flex basis-1/3 flex-col items-center text-sm">
+            <div class="flex basis-1/3 flex-col text-center text-xs">
               <a
                 class="text-sky-500"
                 href="https://bsky.app/profile/psky.social"
               >
-                @psky.social
+                psky.social
               </a>
+              <span>{sessionCount()} online</span>
             </div>
             <Show when={isLoggedIn()}>
-              <div class="flex basis-1/3 flex-col text-right text-sm">
+              <div class="basis-1/3 text-right text-sm">
                 <a href="" class="text-red-500" onclick={() => logout()}>
                   Logout
                 </a>

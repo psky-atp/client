@@ -11,9 +11,8 @@ import {
 import { PostRecord, DeleteEvent, UpdateEvent } from "../utils/types.js";
 import { MAXPOSTS, SERVER_URL } from "../utils/constants.js";
 import PostItem from "./PostItem.jsx";
-import { WebSocket } from "partysocket";
 import { loginState } from "./Login.jsx";
-import { UnreadState } from "../App.jsx";
+import { socket, UnreadState } from "../App.jsx";
 
 interface PostFeedProps {
   unreadState: Accessor<UnreadState>;
@@ -24,7 +23,6 @@ const PostFeed: Component<PostFeedProps> = ({
   setUnreadState,
 }) => {
   const [posts, setPosts] = createSignal<Signal<PostRecord>[]>([]);
-  const socket = new WebSocket(`wss://${SERVER_URL}/subscribe`);
   let cursor = 0;
   let feedSize = 100;
 
