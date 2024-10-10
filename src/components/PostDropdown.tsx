@@ -70,7 +70,7 @@ const PostDropdown: Component<{
           <IoMailUnreadOutline class="h-4 w-4" />
           <span>Mark as unread</span>
         </li>
-        <li class="inline-flex w-max" onClick={() => editPico(record())}>
+        <li class="inline-flex w-max">
           <a
             href={`https://atproto-browser.vercel.app/at/${record().did}/social.psky.feed.post/${record().rkey}`}
             class="inline-flex w-max cursor-pointer items-center justify-center gap-x-2"
