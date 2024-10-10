@@ -5,9 +5,16 @@ interface PostRecord {
   rkey: string;
   post: string;
   facets?: SocialPskyRichtextFacet.Main[];
+}
+
+interface CreateEvent extends PostRecord {
   handle: string;
   nickname?: string;
   indexedAt: number;
 }
 
-export type { PostRecord };
+interface UpdateEvent extends PostRecord {
+  updatedAt: number;
+}
+
+export type { PostRecord, CreateEvent, UpdateEvent };
