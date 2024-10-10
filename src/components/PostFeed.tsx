@@ -13,7 +13,6 @@ import { MAXPOSTS, SERVER_URL } from "../utils/constants.js";
 import PostItem from "./PostItem.jsx";
 import { WebSocket } from "partysocket";
 import { loginState } from "./Login.jsx";
-import { isTouchDevice } from "../utils/lib.js";
 import { UnreadState } from "../App.jsx";
 
 interface PostFeedProps {
@@ -64,7 +63,7 @@ const PostFeed: Component<PostFeedProps> = ({
           let toScroll = false;
           if (
             (window.visualViewport?.height ?? window.innerHeight) +
-              window.scrollY ===
+              window.scrollY >=
             document.body.scrollHeight
           )
             toScroll = true;
@@ -82,8 +81,7 @@ const PostFeed: Component<PostFeedProps> = ({
             });
           }
 
-          if (toScroll || isTouchDevice)
-            window.scroll(0, document.body.scrollHeight);
+          if (toScroll) window.scroll(0, document.body.scrollHeight);
           break;
 
         case "update":
