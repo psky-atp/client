@@ -6,66 +6,29 @@ import {
   For,
   onMount,
   Setter,
+  Signal,
   untrack,
 } from "solid-js";
-import { PostRecord } from "../utils/types.js";
+import { PostRecord, DeleteEvent, UpdateEvent } from "../utils/types.js";
 import { APP_NAME, MAXPOSTS, SERVER_URL } from "../utils/constants.js";
 import PostItem from "./PostItem.jsx";
 import { WebSocket } from "partysocket";
 import { loginState } from "./Login.jsx";
 import { isTouchDevice } from "../utils/lib.js";
+import { UnreadState } from "../App.jsx";
 
 interface PostFeedProps {
-  unreadCount: Accessor<number>;
-  setUnreadCount: Setter<number>;
+  unreadState: Accessor<UnreadState>;
+  setUnreadState: (state: UnreadState) => void;
 }
 const PostFeed: Component<PostFeedProps> = ({
-  unreadCount,
-  setUnreadCount,
+  unreadState,
+  setUnreadState,
 }) => {
-  const [posts, setPosts] = createSignal<PostRecord[]>([]);
+  const [posts, setPosts] = createSignal<Signal<PostRecord>[]>([]);
   const socket = new WebSocket(`wss://${SERVER_URL}/subscribe`);
   let cursor = 0;
   let feedSize = 100;
-
-  createEffect(async () => {
-    if (loginState().handle) setPosts(await getPosts(false));
-    window.scroll(0, document.body.scrollHeight);
-  });
-
-  onMount(() => {
-    socket.addEventListener("open", async () => {
-      setPosts(await getPosts(false));
-      window.scroll(0, document.body.scrollHeight);
-    });
-    socket.addEventListener("message", (event) => {
-      // TODO: refactor this into a proper function, move it out of here
-      const data = JSON.parse(event.data);
-      if (data.$type === "social.psky.feed.post#delete") {
-        setPosts(
-          untrack(posts).filter(
-            (rec) => rec.did !== data.did || rec.rkey !== data.rkey,
-          ),
-        );
-      } else if (data.$type === "social.psky.feed.post#create") {
-        let toScroll = false;
-        if (
-          (window.visualViewport?.height ?? window.innerHeight) +
-            window.scrollY ===
-          document.body.scrollHeight
-        )
-          toScroll = true;
-        setPosts([data, ...untrack(posts).slice(0, feedSize - 1)]);
-        const currUnreadCount = unreadCount();
-        if (!document.hasFocus() || currUnreadCount) {
-          setUnreadCount(currUnreadCount + 1);
-          document.title = `(${currUnreadCount + 1}) ${APP_NAME}`;
-        }
-        if (toScroll || isTouchDevice)
-          window.scroll(0, document.body.scrollHeight);
-      }
-    });
-  });
 
   const getPosts = async (updateCursor?: boolean) => {
     const res = await fetch(
@@ -78,8 +41,81 @@ const PostFeed: Component<PostFeedProps> = ({
     // - then when the handle is found, to refresh and highlight mentions
     // this would result in cursor getting updated, fetching older posts
     cursor = (updateCursor ?? true) ? json.cursor.toString() : "0";
-    return json.posts;
+    return json.posts.map((p: PostRecord) => createSignal<PostRecord>(p));
   };
+
+  createEffect(async () => {
+    if (loginState().handle) setPosts(await getPosts(false));
+    window.scroll(0, document.body.scrollHeight);
+  });
+
+  onMount(() => {
+    socket.addEventListener("open", async () => {
+      setPosts(await getPosts(false));
+      window.scroll(0, document.body.scrollHeight);
+    });
+    socket.addEventListener("message", (event) => {
+      let data = JSON.parse(event.data);
+      const [nsid, t] = data.$type.split("#");
+      if (nsid !== "social.psky.feed.post") return;
+
+      // TODO: Try to refactor this into proper functions
+      switch (t) {
+        case "create":
+          let toScroll = false;
+          if (
+            (window.visualViewport?.height ?? window.innerHeight) +
+              window.scrollY ===
+            document.body.scrollHeight
+          )
+            toScroll = true;
+
+          setPosts([
+            createSignal<PostRecord>(data as PostRecord),
+            ...untrack(posts).slice(0, feedSize - 1),
+          ]);
+
+          const currUnreadState = unreadState();
+          if (!document.hasFocus() || currUnreadState.count) {
+            setUnreadState({
+              ...currUnreadState,
+              count: currUnreadState.count + 1,
+            });
+          }
+
+          if (toScroll || isTouchDevice)
+            window.scroll(0, document.body.scrollHeight);
+          break;
+
+        case "update":
+          data = data as UpdateEvent;
+          for (const p of posts()) {
+            let post = p[0]();
+            if (post.did === data.did && post.rkey === data.rkey) {
+              data.handle = post.handle;
+              data.indexedAt = post.indexedAt;
+              data.nickname = post.nickname;
+              p[1](data);
+              break;
+            }
+          }
+          break;
+
+        case "delete":
+          data = data as DeleteEvent;
+          for (const [i, p] of posts().entries()) {
+            let post = p[0]();
+            if (post.did === data.did && post.rkey === data.rkey) {
+              let all = untrack(posts);
+              all.splice(i, 1);
+              setPosts([...all]);
+              break;
+            }
+          }
+          break;
+      }
+    });
+  });
 
   return (
     <div class="flex w-full flex-col items-center">
@@ -99,13 +135,17 @@ const PostFeed: Component<PostFeedProps> = ({
         <For each={posts()}>
           {(record, idx) => (
             <PostItem
-              record={record}
               isSamePoster={
                 idx() < posts().length - 1 &&
-                posts()[idx() + 1].did === record.did &&
-                record.indexedAt - posts()[idx() + 1].indexedAt < 600000
+                posts()[idx() + 1][0]().did === record[0]().did &&
+                record[0]().indexedAt - posts()[idx() + 1][0]().indexedAt <
+                  600000
               }
-              firstUnread={idx() + 1 === unreadCount()}
+              firstUnread={idx() + 1 === unreadState().count}
+              record={record[0]}
+              markAsUnread={() =>
+                setUnreadState({ count: idx() + 1, ignoreOnce: true })
+              }
             />
           )}
         </For>

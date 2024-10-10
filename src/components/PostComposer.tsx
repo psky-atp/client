@@ -1,22 +1,56 @@
-import { Component, createSignal, Setter } from "solid-js";
+import {
+  Component,
+  createSignal,
+  onCleanup,
+  onMount,
+  Setter,
+  Show,
+} from "solid-js";
 import { loginState } from "./Login.jsx";
 import { APP_NAME, CHARLIMIT } from "../utils/constants.js";
 import { graphemeLen, isTouchDevice } from "../utils/lib.js";
 import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 import { SocialPskyFeedPost } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
+import { PostData } from "../utils/types.js";
+import { UnreadState } from "../App.jsx";
 
-export const [postInput, setPostInput] = createSignal("");
+const [textInput, setTextInput] = createSignal<HTMLInputElement>();
+const [sendButton, setSendButton] = createSignal<HTMLButtonElement>();
 
-const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
-  setUnreadCount,
-}) => {
+const [postInput, setPostInputInternal] = createSignal("");
+const setPostInput = (text: string) => {
+  const sendPostButton = sendButton();
+  if (!sendPostButton) return;
+  if (graphemeLen(text) > CHARLIMIT) sendPostButton.disabled = true;
+  else sendPostButton.disabled = false;
+  setPostInputInternal(text);
+};
+export { postInput, setPostInput };
+
+const [editRecord, setEditRecord] = createSignal<PostData>();
+export const editPico = (record?: PostData) => {
+  if (record) {
+    setPostInput(record.post);
+    setEditRecord(record);
+    textInput()?.focus();
+  } else {
+    if (editRecord()) {
+      setPostInput("");
+    }
+    setEditRecord(record);
+  }
+};
+
+const PostComposer: Component<{
+  setUnreadState: (state: UnreadState) => void;
+}> = ({ setUnreadState }) => {
   document.addEventListener("focus", () => {
     if (isTouchDevice) window.scroll(0, document.body.scrollHeight);
-    document.getElementById("textInput")?.scroll(0, document.body.scrollHeight);
+    textInput()?.scroll(0, document.body.scrollHeight);
   });
 
-  const sendPost = async (text: string) => {
+  const putPost = async (text: string, rkey?: string) => {
     let rt = new RichTextAPI({ text });
     await rt.detectFacets();
     await loginState()
@@ -24,7 +58,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
         data: {
           repo: loginState().session?.did ?? loginState().did!,
           collection: "social.psky.feed.post",
-          rkey: TID.now(),
+          rkey: rkey ?? TID.now(),
           record: {
             $type: "social.psky.feed.post",
             text: rt.text,
@@ -33,16 +67,29 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
         },
       })
       .catch((err) => console.log(err));
-    setUnreadCount(0);
-    document.title = APP_NAME;
+    setUnreadState({ count: 0 });
   };
 
+  let keyEvent = (event: KeyboardEvent) => {
+    const input = textInput();
+    if (input && event.key == "Escape") {
+      input.blur();
+      editPico(undefined);
+    }
+  };
+  onMount(() => {
+    window.addEventListener("keydown", keyEvent);
+  });
+  onCleanup(() => {
+    window.removeEventListener("keydown", keyEvent);
+  });
+
   return (
-    <div class="sticky bottom-0 flex w-full flex-col items-center bg-white pb-6 pt-4 dark:bg-zinc-900">
-      <div class="flex w-80 items-center sm:w-[32rem]">
+    <div class="sticky bottom-0 z-[2] flex w-full flex-col items-center bg-white pb-6 pt-4 dark:bg-zinc-900">
+      <div class="flex w-80 items-center gap-2 sm:w-[32rem]">
         <div
           classList={{
-            "mr-2 text-sm select-none text-right w-12": true,
+            "text-sm select-none text-right w-12": true,
             "text-red-500": graphemeLen(postInput()) > CHARLIMIT,
           }}
         >
@@ -50,6 +97,7 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
         </div>
         <form
           id="postForm"
+          class="flex w-full items-center gap-2 px-2"
           onsubmit={(e) => {
             e.currentTarget.reset();
             e.preventDefault();
@@ -57,23 +105,15 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
         >
           <input
             type="text"
-            id="textInput"
-            placeholder="pico pico"
-            required
+            ref={setTextInput}
+            placeholder={!!editRecord() ? "edit pico" : "pico pico"}
+            value={postInput() ?? ""}
             autocomplete="off"
-            class="mr-2 w-52 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700 sm:w-96"
-            onInput={(e) => {
-              const sendPostButton = document.getElementById(
-                "sendButton",
-              ) as HTMLButtonElement;
-              if (graphemeLen(e.currentTarget.value) > CHARLIMIT)
-                sendPostButton.disabled = true;
-              else sendPostButton.disabled = false;
-              setPostInput(e.currentTarget.value);
-            }}
+            class="flex-1 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700"
+            onInput={(e) => setPostInput(e.currentTarget.value)}
           />
           <button
-            id="sendButton"
+            ref={setSendButton}
             classList={{
               "px-1 py-1 text-xs font-bold text-white": true,
               "bg-stone-600 hover:bg-stone-700":
@@ -86,13 +126,30 @@ const PostComposer: Component<{ setUnreadCount: Setter<number> }> = ({
                 e.preventDefault();
                 return;
               }
-              sendPost(postInput());
-              window.scroll(0, document.body.scrollHeight);
+
+              let rkey = editRecord()?.rkey;
+              if (rkey) {
+                putPost(postInput(), rkey);
+                editPico(undefined);
+              } else {
+                putPost(postInput());
+                window.scroll(0, document.body.scrollHeight);
+              }
+
               setPostInput("");
             }}
           >
-            pico
+            {!!editRecord() ? "edit" : "pico"}
           </button>
+          <Show when={!!editRecord()}>
+            <button
+              ref={setSendButton}
+              class="bg-stone-600 px-1 py-1 text-xs font-bold text-white hover:bg-stone-700"
+              onclick={() => editPico(undefined)}
+            >
+              cancel
+            </button>
+          </Show>
         </form>
       </div>
     </div>
