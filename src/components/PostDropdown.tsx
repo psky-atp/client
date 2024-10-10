@@ -48,7 +48,10 @@ const PostDropdown: Component<{
         <Show when={record().did === sessDid()}>
           <li
             class="inline-flex w-max cursor-pointer items-center justify-center gap-x-2 text-red-400"
-            onClick={() => deletePico(record().rkey)}
+            onClick={(e) => {
+              deletePico(record().rkey);
+              e.currentTarget.parentElement!.blur();
+            }}
           >
             <FiTrash2 class="h-4 w-4" />
             <span class="mt-0.5">Delete</span>
@@ -67,7 +70,10 @@ const PostDropdown: Component<{
         </Show>
         <li
           class="inline-flex w-max cursor-pointer items-center justify-center gap-x-2"
-          onClick={markAsUnread}
+          onClick={(e) => {
+            markAsUnread();
+            e.currentTarget.parentElement!.blur();
+          }}
         >
           <IoMailUnreadOutline class="h-4 w-4" />
           <span>Mark as unread</span>
