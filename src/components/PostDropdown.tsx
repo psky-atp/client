@@ -30,7 +30,7 @@ const PostDropdown: Component<{
   };
 
   return (
-    <div class="dropdown">
+    <div class="dropdown min-w-fit">
       <div
         tabindex="0"
         role="button"

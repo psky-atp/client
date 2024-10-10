@@ -93,7 +93,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
         </Show>
 
         <div class="flex h-full w-full">
-          <span class="h-full w-full flex-1 pr-2">
+          <span class="h-full w-full min-w-0 flex-1 pr-2">
             <RichText value={richText} />
             <Show when={!!props.record().updatedAt}>
               <span class="select-none text-xs text-zinc-500"> (edited)</span>
