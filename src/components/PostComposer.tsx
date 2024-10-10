@@ -78,69 +78,71 @@ const PostComposer: Component<{
   });
 
   return (
-    <form
-      id="postForm"
-      class="sticky bottom-0 z-[2] flex w-screen max-w-80 items-center justify-center gap-2 bg-white px-2 pb-6 pt-4 sm:max-w-[32rem] dark:bg-zinc-900"
-      onsubmit={(e) => {
-        e.currentTarget.reset();
-        e.preventDefault();
-      }}
-    >
-      <div
-        classList={{
-          "text-sm select-none min-w-7 w-fit": true,
-          "text-red-500": graphemeLen(postInput()) > CHARLIMIT,
+    <div class="sticky bottom-0 flex w-full flex-col items-center bg-white dark:bg-zinc-900">
+      <form
+        id="postForm"
+        class="flex w-screen max-w-80 items-center gap-2 px-2 pb-6 pt-4 sm:max-w-[32rem]"
+        onsubmit={(e) => {
+          e.currentTarget.reset();
+          e.preventDefault();
         }}
       >
-        {CHARLIMIT - graphemeLen(postInput())}
-      </div>
-      <input
-        type="text"
-        ref={setTextInput}
-        placeholder={!!editRecord() ? "edit pico" : "pico pico"}
-        value={postInput() ?? ""}
-        autocomplete="off"
-        class="min-w-0 flex-1 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700"
-        onInput={(e) => setPostInput(e.currentTarget.value)}
-      />
-      <button
-        ref={setSendButton}
-        classList={{
-          "px-1 py-1 text-xs font-bold text-white": true,
-          "bg-stone-600 hover:bg-stone-700":
-            graphemeLen(postInput()) <= CHARLIMIT,
-          "bg-stone-200 dark:bg-stone-800 dark:text-gray-400":
-            graphemeLen(postInput()) > CHARLIMIT,
-        }}
-        onclick={(e) => {
-          if (!postInput().length || graphemeLen(postInput()) > CHARLIMIT) {
-            e.preventDefault();
-            return;
-          }
-
-          let rkey = editRecord()?.rkey;
-          if (rkey) {
-            putPost(postInput(), rkey);
-            editPico(undefined);
-          } else {
-            putPost(postInput());
-            window.scroll(0, document.body.scrollHeight);
-          }
-
-          setPostInput("");
-        }}
-      >
-        {!!editRecord() ? "edit" : "pico"}
-      </button>
-      <Show when={!!editRecord()}>
-        <button
-          class="bg-stone-600 px-1 py-1 text-xs font-bold text-white hover:bg-stone-700"
-          onclick={() => editPico(undefined)}
+        <div
+          classList={{
+            "text-sm select-none min-w-7 w-fit": true,
+            "text-red-500": graphemeLen(postInput()) > CHARLIMIT,
+          }}
         >
-          cancel
+          {CHARLIMIT - graphemeLen(postInput())}
+        </div>
+        <input
+          type="text"
+          ref={setTextInput}
+          placeholder={!!editRecord() ? "edit pico" : "pico pico"}
+          value={postInput() ?? ""}
+          autocomplete="off"
+          class="min-w-0 flex-1 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700"
+          onInput={(e) => setPostInput(e.currentTarget.value)}
+        />
+        <button
+          ref={setSendButton}
+          classList={{
+            "px-1 py-1 text-xs font-bold text-white": true,
+            "bg-stone-600 hover:bg-stone-700":
+              graphemeLen(postInput()) <= CHARLIMIT,
+            "bg-stone-200 dark:bg-stone-800 dark:text-gray-400":
+              graphemeLen(postInput()) > CHARLIMIT,
+          }}
+          onclick={(e) => {
+            if (!postInput().length || graphemeLen(postInput()) > CHARLIMIT) {
+              e.preventDefault();
+              return;
+            }
+
+            let rkey = editRecord()?.rkey;
+            if (rkey) {
+              putPost(postInput(), rkey);
+              editPico(undefined);
+            } else {
+              putPost(postInput());
+              window.scroll(0, document.body.scrollHeight);
+            }
+
+            setPostInput("");
+          }}
+        >
+          {!!editRecord() ? "edit" : "pico"}
         </button>
-      </Show>
-    </form>
+        <Show when={!!editRecord()}>
+          <button
+            class="bg-stone-600 px-1 py-1 text-xs font-bold text-white hover:bg-stone-700"
+            onclick={() => editPico(undefined)}
+          >
+            cancel
+          </button>
+        </Show>
+      </form>
+    </div>
   );
 };
 
