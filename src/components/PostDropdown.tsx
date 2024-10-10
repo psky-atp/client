@@ -39,11 +39,11 @@ const PostDropdown: Component<{ record: Accessor<PostData> }> = ({
       </div>
       <ul
         tabindex="0"
-        class="dropdown-content z-[1] flex flex-col gap-y-2 rounded-md border border-zinc-400 bg-zinc-200 p-2 text-stone-500 dark:bg-zinc-800 dark:text-stone-400"
+        class="dropdown-content z-[1] flex flex-col gap-y-2 rounded-md border border-zinc-400 bg-zinc-100 p-2 text-stone-500 dark:bg-zinc-800 dark:text-stone-400"
       >
         <Show when={record().did === loginState().session?.did}>
           <li
-            class="inline-flex w-max cursor-pointer items-center justify-center gap-x-2"
+            class="inline-flex w-max cursor-pointer items-center justify-center gap-x-2 text-red-400"
             onClick={() => deletePico(record().rkey)}
           >
             <FiTrash2 class="h-4 w-4" />
