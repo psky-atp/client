@@ -5,12 +5,11 @@ import {
   createSignal,
   For,
   onMount,
-  Setter,
   Signal,
   untrack,
 } from "solid-js";
 import { PostRecord, DeleteEvent, UpdateEvent } from "../utils/types.js";
-import { APP_NAME, MAXPOSTS, SERVER_URL } from "../utils/constants.js";
+import { MAXPOSTS, SERVER_URL } from "../utils/constants.js";
 import PostItem from "./PostItem.jsx";
 import { WebSocket } from "partysocket";
 import { loginState } from "./Login.jsx";

@@ -28,6 +28,7 @@ declare module "@atcute/client/lexicons" {
       text: string;
       /** Annotations of text (mentions, URLs, hashtags, etc) */
       facets?: SocialPskyRichtextFacet.Main[];
+      reply?: ComAtprotoRepoStrongRef.Main;
     }
   }
 

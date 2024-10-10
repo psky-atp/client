@@ -21,7 +21,14 @@
           "facets": {
             "type": "array",
             "description": "Annotations of text (mentions, URLs, hashtags, etc)",
-            "items": { "type": "ref", "ref": "social.psky.richtext.facet" }
+            "items": {
+              "type": "ref",
+              "ref": "social.psky.richtext.facet"
+            }
+          },
+          "reply": {
+            "type": "ref",
+            "ref": "com.atproto.repo.strongRef"
           }
         }
       }

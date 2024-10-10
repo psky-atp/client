@@ -1,4 +1,4 @@
-import { Accessor, Component, Setter, Show } from "solid-js";
+import { Accessor, Component, Show } from "solid-js";
 import {
   AiOutlineEllipsis,
   AiOutlineFileText,

@@ -1,4 +1,4 @@
-import { Accessor, Component, createMemo, Setter, Show } from "solid-js";
+import { Accessor, Component, createMemo, Show } from "solid-js";
 import { PostRecord } from "../utils/types.js";
 import { isMention } from "../utils/rich-text/util.js";
 import { loginState } from "./Login.jsx";
