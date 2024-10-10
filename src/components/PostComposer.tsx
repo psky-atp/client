@@ -134,7 +134,6 @@ const PostComposer: Component<{
       </button>
       <Show when={!!editRecord()}>
         <button
-          ref={setSendButton}
           class="bg-stone-600 px-1 py-1 text-xs font-bold text-white hover:bg-stone-700"
           onclick={() => editPico(undefined)}
         >
