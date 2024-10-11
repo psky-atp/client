@@ -97,10 +97,13 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
           </Show>
 
           <div class="flex min-h-0 w-full flex-1">
-            <span class="inline-flex min-w-0 flex-1 pr-2">
+            <span class="inline-flex min-w-0 flex-1 gap-x-1 pr-2">
               <RichText value={richText} />
               <Show when={!!props.record().updatedAt}>
-                <span class="select-none text-xs text-zinc-500"> (edited)</span>
+                <span class="mt-auto select-none text-xs text-zinc-500">
+                  {" "}
+                  (edited)
+                </span>
               </Show>
             </span>
             <PostDropdown

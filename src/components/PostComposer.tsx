@@ -2,7 +2,7 @@ import { Component, createSignal, onCleanup, onMount, Show } from "solid-js";
 import { getSessionDid, loginState } from "./Login.jsx";
 import { feed, posts } from "./PostFeed.jsx";
 import { CHARLIMIT } from "../utils/constants.js";
-import { graphemeLen, isTouchDevice } from "../utils/lib.js";
+import { graphemeLen } from "../utils/lib.js";
 import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 import { SocialPskyFeedPost } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
@@ -78,7 +78,7 @@ const PostComposer: Component = () => {
     }
 
     if (input && event.key === "ArrowUp" && !composerInputValue.get().length) {
-      let allPosts = posts().sort(
+      let allPosts = posts().toSorted(
         (a, b) => a[0]().indexedAt - b[0]().indexedAt,
       );
       let post: PostRecord | undefined = undefined;
