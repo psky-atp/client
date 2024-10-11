@@ -8,21 +8,16 @@
   <meta property="og:title" content="picosky" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://psky.social/" />
-  <meta property="og:image"
-    content="https://raw.githubusercontent.com/notjuliet/pico-client/refs/heads/main/src/assets/icon.png" />
+  <meta property="og:image" content="/src/assets/icon.png" />
   <meta property="og:description" content="an AtProto chatting app" />
   <link rel="shortcut icon" type="image/ico" href="/src/assets/favicon.ico" />
   <title>picosky</title>
   <script>
-    if (
-      localStorage.theme === "dark" ||
-      (!("theme" in localStorage) &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches)
-    ) {
+    if (localStorage.theme === "dark" || (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches))
       document.documentElement.classList.add("dark");
-    } else {
+    else
       document.documentElement.classList.remove("dark");
-    }
   </script>
   <script src="/src/index.tsx" type="module"></script>
 </head>
