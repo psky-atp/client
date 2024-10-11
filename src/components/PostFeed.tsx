@@ -17,9 +17,9 @@ import { loginState } from "./Login.jsx";
 import { unreadState } from "../App.jsx";
 import { registerCallback, unregisterCallback } from "../utils/socket.js";
 
+export const [posts, setPosts] = createSignal<Signal<PostRecord>[]>([]);
 const PostFeed: Component = () => {
   const [self, setSelf] = createSignal<HTMLDivElement>();
-  const [posts, setPosts] = createSignal<Signal<PostRecord>[]>([]);
 
   let cursor = "0";
   const getPosts = async () => {

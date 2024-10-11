@@ -5,9 +5,10 @@ import { graphemeLen, isTouchDevice } from "../utils/lib.js";
 import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 import { SocialPskyFeedPost } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
-import { PostData } from "../utils/types.js";
+import { PostData, PostRecord } from "../utils/types.js";
 import { unreadState } from "../App.jsx";
 import createProp from "../utils/createProp.js";
+import { posts } from "./PostFeed.jsx";
 
 const [textInput, setTextInput] = createSignal<HTMLInputElement>();
 const [sendButton, setSendButton] = createSignal<HTMLButtonElement>();
@@ -26,9 +27,11 @@ export const postInput = createProp("", function (text: string) {
 
 export const editPico = createProp(undefined, function (record?: PostData) {
   if (record) {
+    let input: HTMLInputElement | undefined = textInput();
     postInput.set(record.post);
+    input?.focus();
+    input?.setSelectionRange(record.post.length, record.post.length);
     this[1](record);
-    textInput()?.focus();
   } else {
     if (this[0]()) {
       postInput.set("");
@@ -67,9 +70,37 @@ const PostComposer: Component = () => {
 
   const keyEvent = (event: KeyboardEvent) => {
     const input = textInput();
+
     if (input && event.key == "Escape") {
       input.blur();
       editPico.set(undefined);
+    }
+
+    if (input && event.key == "ArrowUp" && postInput.get().length == 0) {
+      let postToEdit: PostRecord | null = null;
+
+      /*
+        try to get the most recent post from the currently-logged-in user
+      */
+      postToEdit = posts()
+        .map((sig) => {
+          return sig[0]();
+        })
+        .filter((recd) => {
+          return recd.did == loginState.get().did;
+        })
+        .sort((a, b) => {
+          return a.indexedAt - b.indexedAt;
+        })
+        .reverse()[0];
+
+      /*
+       if we don't do this, default text box behaviour will kick in and send the cursor to the beginning
+       this would cancel out setting the cursor pos to the end of the message
+      */
+      event.preventDefault();
+
+      if (postToEdit != null) editPico.set(postToEdit);
     }
   };
   onMount(() => {
