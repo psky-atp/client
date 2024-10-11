@@ -9,6 +9,7 @@ import * as TID from "@atcute/tid";
 import { PostData, PostRecord } from "../utils/types.js";
 import { unreadState } from "../App.jsx";
 import createProp from "../utils/createProp.js";
+import { deletePico } from "../utils/api.js";
 
 const [sendButton, setSendButton] = createSignal<HTMLButtonElement>();
 const [composerInput, setComposerInput] = createSignal<HTMLInputElement>();
@@ -149,20 +150,23 @@ const PostComposer: Component = () => {
             graphemeLen(composerInputValue.get()) > CHARLIMIT,
         }}
         onclick={(e) => {
-          if (
-            !composerInputValue.get().length ||
-            graphemeLen(composerInputValue.get()) > CHARLIMIT
-          ) {
+          let input = composerInputValue.get();
+          let editRkey = editPico.get()?.rkey;
+          if (!input && !!editRkey) {
+            deletePico(editRkey);
+            return;
+          }
+
+          if (!input.length || graphemeLen(input) > CHARLIMIT) {
             e.preventDefault();
             return;
           }
 
-          let rkey = editPico.get()?.rkey;
-          if (rkey) {
-            putPost(composerInputValue.get(), rkey);
+          if (editRkey) {
+            putPost(input, editRkey);
             editPico.set(undefined);
           } else {
-            putPost(composerInputValue.get());
+            putPost(input);
           }
 
           composerInputValue.set("");

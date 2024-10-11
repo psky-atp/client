@@ -7,27 +7,15 @@ import {
   IoMailUnreadOutline,
 } from "./SVGs.jsx";
 import { PostData } from "../utils/types.js";
-import { getSessionDid, loginState } from "./Login.jsx";
+import { getSessionDid } from "./Login.jsx";
 import { editPico } from "./PostComposer.jsx";
 import { isTouchDevice } from "../utils/lib.js";
+import { deletePico } from "../utils/api.js";
 
 const PostDropdown: Component<{
   record: Accessor<PostData>;
   markAsUnread: () => void;
 }> = ({ record, markAsUnread }) => {
-  const deletePico = async (rkey: string) => {
-    await loginState
-      .get()
-      .rpc!.call("com.atproto.repo.deleteRecord", {
-        data: {
-          repo: getSessionDid(),
-          collection: "social.psky.feed.post",
-          rkey,
-        },
-      })
-      .catch((err) => console.log(err));
-  };
-
   return (
     <div class="dropdown min-w-fit">
       <div

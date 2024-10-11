@@ -66,7 +66,7 @@ html {
 }
 
 .editing {
-  animation: blink-mention 5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: edit-blink 5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   /* Border */
   @apply rounded-md;
   /* Padding */
@@ -82,7 +82,7 @@ html {
   }
   --background-color: rgb(219 219 219);
 }
-@keyframes blink-mention {
+@keyframes edit-blink {
   0%, 100% {
     background-color: rgb(0 0 0 / 0);
   }

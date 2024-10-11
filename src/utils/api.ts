@@ -1,3 +1,4 @@
+import { getSessionDid, loginState } from "../components/Login.jsx";
 import { BSKY_PUB_API_URL } from "./constants.js";
 
 const resolveDid = async (did: string) => {
@@ -25,4 +26,17 @@ const resolveHandle = async (handle: string) => {
   return res.json().then((json) => json.did);
 };
 
-export { resolveDid, resolveHandle };
+const deletePico = async (rkey: string) => {
+  await loginState
+    .get()
+    .rpc!.call("com.atproto.repo.deleteRecord", {
+      data: {
+        repo: getSessionDid(),
+        collection: "social.psky.feed.post",
+        rkey,
+      },
+    })
+    .catch((err) => console.log(err));
+};
+
+export { resolveDid, resolveHandle, deletePico };
