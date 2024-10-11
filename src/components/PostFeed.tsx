@@ -31,6 +31,11 @@ const PostFeed: Component = () => {
     return json.posts.map((p: PostRecord) => createSignal<PostRecord>(p));
   };
 
+  const scrollToBottom = () => {
+    const parent = self()!.parentElement!;
+    parent.scrollTop = parent.scrollHeight;
+  };
+
   let previousHandle: string | undefined = "";
   createEffect(async () => {
     let currState = loginState.get();
@@ -40,8 +45,7 @@ const PostFeed: Component = () => {
       previousHandle = currState.handle;
       setPosts(await getPosts());
     }
-    const parent = self()!.parentElement!;
-    parent.scrollTop = parent.scrollHeight;
+    scrollToBottom();
   });
 
   const postCreateCallback = (data: PostRecord) =>
@@ -77,7 +81,7 @@ const PostFeed: Component = () => {
         <For each={posts()}>
           {(record, idx) => (
             <PostItem
-              isSamePoster={
+              isSamePoster={() =>
                 idx() < posts().length - 1 &&
                 posts()[idx() + 1][0]().did === record[0]().did &&
                 record[0]().indexedAt - posts()[idx() + 1][0]().indexedAt <

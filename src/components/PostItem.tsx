@@ -10,7 +10,7 @@ import { configs } from "./Settings.jsx";
 import { PostDropdown } from "./PostDropdown.jsx";
 
 interface PostItemProps {
-  isSamePoster: boolean;
+  isSamePoster: () => boolean;
   firstUnread: () => boolean;
   record: Accessor<PostRecord>;
   markAsUnread: () => void;
@@ -56,11 +56,11 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
         {/* Post Content */}
         <div
           classList={{
-            "flex-1 text-sm my-0.5 flex min-w-0 max-h-40 flex-col items-start hoverable-dropdown":
+            "flex-1 text-sm my-0.5 flex min-w-0 max-h-48 flex-col items-start hoverable-dropdown":
               true,
           }}
         >
-          <Show when={!props.isSamePoster}>
+          <Show when={!props.isSamePoster()}>
             <span class="mb-1 flex w-full items-center justify-between gap-x-2 break-words text-sm text-stone-500 dark:text-stone-400">
               <span class="flex w-full min-w-0 grow">
                 <a
@@ -94,8 +94,8 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
             </span>
           </Show>
 
-          <div class="flex h-full w-full">
-            <span class="h-full w-full min-w-0 flex-1 pr-2">
+          <div class="flex min-h-0 w-full flex-1">
+            <span class="inline-flex min-w-0 flex-1 pr-2">
               <RichText value={richText} />
               <Show when={!!props.record().updatedAt}>
                 <span class="select-none text-xs text-zinc-500"> (edited)</span>
@@ -114,9 +114,9 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
 
 interface NewMessagesIndicatorProps {
   children?: JSX.Element;
-  isSamePoster?: boolean;
-  mentionsUser?: () => boolean;
-  firstUnread?: () => boolean;
+  isSamePoster: () => boolean;
+  mentionsUser: () => boolean;
+  firstUnread: () => boolean;
 }
 const NewMessagesIndicator: Component<NewMessagesIndicatorProps> = ({
   children,
@@ -128,12 +128,12 @@ const NewMessagesIndicator: Component<NewMessagesIndicatorProps> = ({
     <div
       classList={{
         "flex flex-col py-1.5": true,
-        "mt-[-0.75rem]": isSamePoster,
-        "first-unread": firstUnread?.(),
-        "pt-0 border-t-0 mt-[-0.25rem]": !isSamePoster && firstUnread?.(),
-        "!mt-[-0.625rem]": isSamePoster && !firstUnread?.() && mentionsUser?.(),
+        "mt-[-0.75rem]": isSamePoster(),
+        "first-unread": firstUnread(),
+        "pt-0 border-t-0 mt-[-0.25rem]": !isSamePoster() && firstUnread(),
+        "!mt-[-0.625rem]": isSamePoster() && !firstUnread() && mentionsUser(),
         "border-t dark:border-neutral-800":
-          !isSamePoster && configs.get().lineSeparator,
+          !isSamePoster() && configs.get().lineSeparator,
       }}
       children={children}
     />

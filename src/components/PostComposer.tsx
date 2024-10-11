@@ -82,7 +82,7 @@ const PostComposer: Component = () => {
   return (
     <form
       id="postForm"
-      class="flex w-screen max-w-80 items-center gap-2 px-2 pb-6 pt-4 sm:max-w-[32rem]"
+      class="flex w-full max-w-80 items-center gap-2 px-2 pb-6 pt-4 sm:max-w-[32rem]"
       onsubmit={(e) => {
         e.currentTarget.reset();
         e.preventDefault();

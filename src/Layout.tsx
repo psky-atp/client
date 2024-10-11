@@ -14,7 +14,7 @@ const Layout: Component = () => {
   return (
     <div
       classList={{
-        "flex flex-col items-center w-screen h-screen dark:text-white bg-white dark:bg-zinc-900":
+        "flex flex-col items-center w-dvh h-dvh dark:text-white bg-white dark:bg-zinc-900":
           true,
         "pb-4": isLoggedIn() ? false : true,
       }}
