@@ -57,7 +57,8 @@ const Login: Component = () => {
     tryFor(
       15000, // Try for 15 seconds
       1000, // Update UI every second
-      (timeLeft) => setNotice(`Loading... (${Math.ceil(timeLeft / 1000)}s)`),
+      (timeLeft) =>
+        setNotice(`Loading... (max. ${Math.ceil(timeLeft / 1000)}s)`),
       async () => {
         client = await BrowserOAuthClient.load({
           clientId:

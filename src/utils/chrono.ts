@@ -28,12 +28,16 @@ async function tryFor<T>(
       if (finished) return;
       intervalCallback(msDuration - diff);
     }
-    throw new Error("Timed out.");
+    return Promise.reject("Timed out.");
   };
 
-  return await Promise.race([tryBlock(), countdown()]).then(
-    () => (finished = true),
-  );
+  return await Promise.race([
+    tryBlock().catch((e) => {
+      finished = true;
+      return Promise.reject(e);
+    }),
+    countdown(),
+  ]).then(() => (finished = true));
 }
 
 export { chrono, tryFor };
