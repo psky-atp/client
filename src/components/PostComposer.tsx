@@ -32,7 +32,7 @@ export const editPico = createProp(undefined, function (record?: PostData) {
     let input: HTMLInputElement | undefined = composerInput();
     composerInputValue.set(record.post);
     input?.focus();
-    input?.setSelectionRange(0, record.post.length);
+    input?.setSelectionRange(record.post.length, record.post.length);
   } else if (this[0]()) {
     let scrollBox = feed()?.parentElement!;
     if (lastScrollTop && scrollBox) {
