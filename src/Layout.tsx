@@ -23,7 +23,7 @@ const Layout: Component = () => {
         <Header />
         <Login />
       </div>
-      <div class="flex min-h-0 flex-1 justify-center">
+      <div class="hide-scroll flex min-h-0 flex-1 justify-center overflow-auto px-2">
         <PostFeed />
       </div>
       <Show when={isLoggedIn()}>

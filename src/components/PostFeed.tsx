@@ -18,6 +18,7 @@ const PostFeed: Component = () => {
   const [posts, setPosts] = createSignal<Signal<PostRecord>[]>([]);
   let feedSize = 100;
   let cursor = "0";
+  let previousHandle: string | undefined = "";
 
   const getPosts = async () => {
     const res = await fetch(
@@ -29,12 +30,15 @@ const PostFeed: Component = () => {
   };
 
   createEffect(async () => {
-    if (loginState.get().handle) {
+    let currState = loginState.get();
+    if (currState.pendingManagerInit) return;
+    if (previousHandle !== currState.handle) {
       cursor = "0";
+      previousHandle = currState.handle;
       setPosts(await getPosts());
     }
-    const thisObj = self()!;
-    thisObj.scrollTop = thisObj.scrollHeight;
+    const parent = self()!.parentElement!;
+    parent.scrollTop = parent.scrollHeight;
   });
 
   onMount(() => {
@@ -47,8 +51,8 @@ const PostFeed: Component = () => {
       switch (t) {
         case "create":
           let toScroll = false;
-          const thisObj = self()!;
-          if (thisObj.scrollTop + 1000 >= thisObj.scrollHeight) toScroll = true;
+          const parent = self()!.parentElement!;
+          if (parent.scrollTop + 1000 >= parent.scrollHeight) toScroll = true;
 
           setPosts([
             createSignal<PostRecord>(data as PostRecord),
@@ -63,7 +67,7 @@ const PostFeed: Component = () => {
             });
           }
 
-          if (toScroll) thisObj.scrollTop = thisObj.scrollHeight;
+          if (toScroll) parent.scrollTop = parent.scrollHeight;
           break;
 
         case "update":
@@ -99,7 +103,7 @@ const PostFeed: Component = () => {
   return (
     <div
       ref={setSelf}
-      class="hide-scroll flex max-h-full w-80 flex-col items-center overflow-auto sm:w-[32rem]"
+      class="flex h-fit w-80 flex-col items-center sm:w-[32rem]"
     >
       <div>
         <button
