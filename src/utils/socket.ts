@@ -1,4 +1,5 @@
 import { SERVER_URL } from "./constants.js";
+import { WebSocket } from "partysocket";
 
 type SocketMessageKind =
   | "serverState"
