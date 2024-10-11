@@ -67,3 +67,13 @@
   visibility: visible;
   opacity: 1
 }
+
+/* Add this in a CSS file */
+.hide-scroll::-webkit-scrollbar {
+  display: none; /* Hides the scrollbar for Chrome, Safari, and Opera */
+}
+
+.hide-scroll {
+  -ms-overflow-style: none; /* Hides the scrollbar for IE and Edge */
+  scrollbar-width: none; /* Hides the scrollbar for Firefox */
+}

@@ -14,34 +14,30 @@ import { loginState } from "./Login.jsx";
 import { socket, unreadState } from "../App.jsx";
 
 const PostFeed: Component = () => {
+  const [self, setSelf] = createSignal<HTMLDivElement>();
   const [posts, setPosts] = createSignal<Signal<PostRecord>[]>([]);
-  let cursor = 0;
   let feedSize = 100;
+  let cursor = "0";
 
-  const getPosts = async (updateCursor?: boolean) => {
+  const getPosts = async () => {
     const res = await fetch(
       `https://${SERVER_URL}/posts?limit=${MAXPOSTS}&cursor=${cursor}`,
     );
     const json = await res.json();
-    // HACK: force the cursor to only be updated after a first click
-    // getPosts can be triggered twice in a row:
-    // - when connecting to the websocket
-    // - then when the handle is found, to refresh and highlight mentions
-    // this would result in cursor getting updated, fetching older posts
-    cursor = (updateCursor ?? true) ? json.cursor.toString() : "0";
+    cursor = json.cursor.toString();
     return json.posts.map((p: PostRecord) => createSignal<PostRecord>(p));
   };
 
   createEffect(async () => {
-    if (loginState.get().handle) setPosts(await getPosts(false));
-    window.scroll(0, document.body.scrollHeight);
+    if (loginState.get().handle) {
+      cursor = "0";
+      setPosts(await getPosts());
+    }
+    const thisObj = self()!;
+    thisObj.scrollTop = thisObj.scrollHeight;
   });
 
   onMount(() => {
-    socket.addEventListener("open", async () => {
-      setPosts(await getPosts(false));
-      window.scroll(0, document.body.scrollHeight);
-    });
     socket.addEventListener("message", (event) => {
       let data = JSON.parse(event.data);
       const [nsid, t] = data.$type.split("#");
@@ -51,11 +47,8 @@ const PostFeed: Component = () => {
       switch (t) {
         case "create":
           let toScroll = false;
-          if (
-            window.innerHeight + window.scrollY + 100 >=
-            document.body.scrollHeight
-          )
-            toScroll = true;
+          const thisObj = self()!;
+          if (thisObj.scrollTop + 1000 >= thisObj.scrollHeight) toScroll = true;
 
           setPosts([
             createSignal<PostRecord>(data as PostRecord),
@@ -70,7 +63,7 @@ const PostFeed: Component = () => {
             });
           }
 
-          if (toScroll) window.scroll(0, document.body.scrollHeight);
+          if (toScroll) thisObj.scrollTop = thisObj.scrollHeight;
           break;
 
         case "update":
@@ -104,12 +97,14 @@ const PostFeed: Component = () => {
   });
 
   return (
-    <div class="flex w-full flex-col items-center">
+    <div
+      ref={setSelf}
+      class="hide-scroll flex max-h-full w-80 flex-col items-center overflow-auto sm:w-[32rem]"
+    >
       <div>
         <button
           class="mt-3 bg-stone-600 px-1 py-1 font-bold text-white hover:bg-stone-700"
           onclick={async () => {
-            cursor = cursor == 0 ? 100 : cursor;
             setPosts(posts().concat(await getPosts()));
             feedSize += MAXPOSTS;
           }}

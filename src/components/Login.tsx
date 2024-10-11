@@ -8,10 +8,12 @@ import { CredentialManager, XRPC } from "@atcute/client";
 import { SocialPskyActorProfile } from "@atcute/client/lexicons";
 import { PDS_URL } from "../utils/constants.js";
 import createProp from "../utils/createProp.js";
+import { tryFor } from "../utils/chrono.js";
 
 const stateIsLoggedIn = (state: LoginState) =>
   ((state.session && state.session.sub) || state.manager) && state.rpc;
 interface LoginState {
+  pendingManagerInit?: boolean;
   session?: OAuthSession;
   handle?: string;
   did?: string;
@@ -19,7 +21,7 @@ interface LoginState {
   rpc?: XRPC;
 }
 export const loginState = createProp<LoginState>(
-  {},
+  { pendingManagerInit: true },
   function (newState: LoginState) {
     const curr = this[0]();
 
@@ -51,32 +53,44 @@ const Login: Component = () => {
   const [nickname, setNickname] = createSignal("");
   const [notice, setNotice] = createSignal("");
 
-  onMount(async () => {
-    setNotice("Loading...");
-    client = await BrowserOAuthClient.load({
-      clientId:
-        isLocal() ?
-          "http://localhost?redirect_uri=http%3A%2F%2F127.0.0.1%3A1313%2F&scope=atproto+transition%3Ageneric"
-        : "https://psky.social/client-metadata.json",
-      handleResolver: `https://${PDS_URL}`,
-    });
-    client.addEventListener("deleted", () => {
-      loginState.set({});
-    });
+  onMount(() =>
+    tryFor(
+      15000, // Try for 15 seconds
+      1000, // Update UI every second
+      (timeLeft) => setNotice(`Loading... (${Math.ceil(timeLeft / 1000)}s)`),
+      async () => {
+        client = await BrowserOAuthClient.load({
+          clientId:
+            isLocal() ?
+              "http://localhost?redirect_uri=http%3A%2F%2F127.0.0.1%3A1313%2F&scope=atproto+transition%3Ageneric"
+            : "https://psky.social/client-metadata.json",
+          handleResolver: `https://${PDS_URL}`,
+        });
+        client.addEventListener("deleted", () => loginState.set({}));
 
-    const result = await client.init().catch(() => {});
-    if (result) {
-      const state = {
-        session: result.session,
-        handle: await resolveDid(result.session.did),
-        rpc: new XRPC({
-          handler: { handle: result.session.fetchHandler.bind(result.session) },
-        }),
-      };
-      loginState.set(state);
-    }
-    setNotice("");
-  });
+        const result = await client.init().catch(() => {});
+        loginState.set(
+          result ?
+            {
+              session: result.session,
+              handle: await resolveDid(result.session.did),
+              rpc: new XRPC({
+                handler: {
+                  handle: result.session.fetchHandler.bind(result.session),
+                },
+              }),
+            }
+          : {},
+        );
+
+        setNotice("");
+      },
+    ).catch((e) => {
+      console.log(e);
+      loginState.set({});
+      setNotice("Failed to initialize.");
+    }),
+  );
 
   const fetchService = async (handle: string) => {
     const did = await resolveHandle(handle);
