@@ -10,29 +10,34 @@ import { PostData, PostRecord } from "../utils/types.js";
 import { unreadState } from "../App.jsx";
 import createProp from "../utils/createProp.js";
 import { deletePico } from "../utils/api.js";
+import RichTextInput from "./RichTextInput.jsx";
 
 const [sendButton, setSendButton] = createSignal<HTMLButtonElement>();
-const [composerInput, setComposerInput] = createSignal<HTMLInputElement>();
-export const composerInputValue = createProp("", function (text: string) {
+const composerInputSignal = createSignal<HTMLDivElement>();
+const [composerInput] = composerInputSignal;
+
+const composerValueSignal = createSignal<string>("");
+const composerValue = createProp(composerValueSignal, function (text: string) {
   const sendPostButton = sendButton();
-  if (!sendPostButton) {
-    return this[0]();
+  if (sendPostButton) {
+    if (graphemeLen(text) > CHARLIMIT) sendPostButton.disabled = true;
+    else sendPostButton.disabled = false;
   }
 
-  if (graphemeLen(text) > CHARLIMIT) sendPostButton.disabled = true;
-  else sendPostButton.disabled = false;
-
+  const input = composerInput();
+  if (input) input.textContent = text;
   return this[1](text);
 });
-export { composerInput };
+
+export { composerInput, composerValue };
 
 let lastScrollTop: number | undefined = undefined;
 export const editPico = createProp(undefined, function (record?: PostData) {
   if (record) {
-    let input: HTMLInputElement | undefined = composerInput();
-    composerInputValue.set(record.post);
+    let input: HTMLDivElement | undefined = composerInput();
+    composerValue.set(record.post);
     input?.focus();
-    input?.setSelectionRange(record.post.length, record.post.length);
+    // input?.setSelectionRange(record.post.length, record.post.length);
   } else if (this[0]()) {
     let scrollBox = feed()?.parentElement!;
     if (lastScrollTop && scrollBox) {
@@ -44,7 +49,7 @@ export const editPico = createProp(undefined, function (record?: PostData) {
       elem.classList.remove("editing");
     }
 
-    composerInputValue.set("");
+    composerValue.set("");
   }
   return this[1](record);
 });
@@ -75,11 +80,11 @@ const PostComposer: Component = () => {
     const input = composerInput();
 
     if (input && event.key == "Escape") {
-      input.blur();
-      editPico.set(undefined);
+      if (!!editPico.get()) editPico.set(undefined);
+      else input.blur();
     }
 
-    if (input && event.key === "ArrowUp" && !composerInputValue.get().length) {
+    if (input && event.key === "ArrowUp" && !composerValue.get().length) {
       let allPosts = posts().toSorted(
         (a, b) => a[0]().indexedAt - b[0]().indexedAt,
       );
@@ -127,34 +132,35 @@ const PostComposer: Component = () => {
       <div
         classList={{
           "text-sm select-none min-w-7 w-fit": true,
-          "text-red-500": graphemeLen(composerInputValue.get()) > CHARLIMIT,
+          "text-red-500": graphemeLen(composerValue.get()) > CHARLIMIT,
         }}
       >
-        {CHARLIMIT - graphemeLen(composerInputValue.get())}
+        {CHARLIMIT - graphemeLen(composerValue.get())}
       </div>
-      <input
+      <RichTextInput
         type="text"
-        ref={setComposerInput}
+        ref={composerInputSignal}
+        valueRef={composerValueSignal}
         placeholder={!!editPico.get() ? "edit pico" : "pico pico"}
-        value={composerInputValue.get() ?? ""}
-        autocomplete="off"
-        class="min-w-0 flex-1 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700"
-        onInput={(e) => composerInputValue.set(e.currentTarget.value)}
+        autocomplete="list"
+        class="flex min-w-0 flex-1 border border-black dark:border-white dark:bg-neutral-700"
       />
       <button
         ref={setSendButton}
+        type="submit"
         classList={{
           "px-1 py-1 text-xs font-bold text-white": true,
           "bg-stone-600 hover:bg-stone-700":
-            graphemeLen(composerInputValue.get()) <= CHARLIMIT,
+            graphemeLen(composerValue.get()) <= CHARLIMIT,
           "bg-stone-200 dark:bg-stone-800 dark:text-gray-400":
-            graphemeLen(composerInputValue.get()) > CHARLIMIT,
+            graphemeLen(composerValue.get()) > CHARLIMIT,
         }}
         onclick={(e) => {
-          let input = composerInputValue.get();
+          let input = composerValue.get();
           let editRkey = editPico.get()?.rkey;
           if (!input && !!editRkey) {
             deletePico(editRkey);
+            editPico.set(undefined);
             return;
           }
 
@@ -170,7 +176,7 @@ const PostComposer: Component = () => {
             putPost(input);
           }
 
-          composerInputValue.set("");
+          composerValue.set("");
         }}
       >
         {!!editPico.get() ? "edit" : "pico"}
