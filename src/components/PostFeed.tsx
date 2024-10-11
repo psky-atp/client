@@ -18,9 +18,9 @@ import { unreadState } from "../App.jsx";
 import { registerCallback, unregisterCallback } from "../utils/socket.js";
 
 export const [posts, setPosts] = createSignal<Signal<PostRecord>[]>([]);
-const PostFeed: Component = () => {
-  const [self, setSelf] = createSignal<HTMLDivElement>();
+export const [feed, setFeed] = createSignal<HTMLDivElement>();
 
+const PostFeed: Component = () => {
   let cursor = "0";
   const getPosts = async () => {
     const res = await fetch(
@@ -32,7 +32,7 @@ const PostFeed: Component = () => {
   };
 
   const scrollToBottom = () => {
-    const parent = self()!.parentElement!;
+    const parent = feed()!.parentElement!;
     parent.scrollTop = parent.scrollHeight;
   };
 
@@ -49,7 +49,7 @@ const PostFeed: Component = () => {
   });
 
   const postCreateCallback = (data: PostRecord) =>
-    onPostCreation(self()!.parentElement!, untrack(posts), data, setPosts);
+    onPostCreation(feed()!.parentElement!, untrack(posts), data, setPosts);
   const postUpdateCallback = (data: UpdateEvent) => onPostUpdate(posts(), data);
   const postDeleteCallback = (data: DeleteEvent) =>
     onPostDelete(posts, data, setPosts);
@@ -66,7 +66,7 @@ const PostFeed: Component = () => {
 
   return (
     <div
-      ref={setSelf}
+      ref={setFeed}
       class="flex h-fit w-80 flex-col items-center sm:w-[32rem]"
     >
       <div>
@@ -81,6 +81,7 @@ const PostFeed: Component = () => {
         <For each={posts()}>
           {(record, idx) => (
             <PostItem
+              id={`${record[0]().did}_${record[0]().rkey}`}
               isSamePoster={() =>
                 idx() < posts().length - 1 &&
                 posts()[idx() + 1][0]().did === record[0]().did &&
