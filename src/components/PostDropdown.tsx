@@ -7,7 +7,7 @@ import {
   IoMailUnreadOutline,
 } from "./SVGs.jsx";
 import { PostData } from "../utils/types.js";
-import { loginState } from "./Login.jsx";
+import { getSessionDid, loginState } from "./Login.jsx";
 import { editPico } from "./PostComposer.jsx";
 import { isTouchDevice } from "../utils/lib.js";
 
@@ -15,14 +15,12 @@ const PostDropdown: Component<{
   record: Accessor<PostData>;
   markAsUnread: () => void;
 }> = ({ record, markAsUnread }) => {
-  const sessDid = () => loginState.get().session?.did ?? loginState.get().did!;
-
   const deletePico = async (rkey: string) => {
     await loginState
       .get()
       .rpc!.call("com.atproto.repo.deleteRecord", {
         data: {
-          repo: sessDid(),
+          repo: getSessionDid(),
           collection: "social.psky.feed.post",
           rkey,
         },
@@ -46,7 +44,7 @@ const PostDropdown: Component<{
         tabindex="0"
         class="dropdown-content z-[1] flex flex-col rounded-md border border-zinc-400 bg-zinc-100 p-2 text-stone-500 dark:bg-zinc-800 dark:text-stone-400"
       >
-        <Show when={record().did === sessDid()}>
+        <Show when={record().did === getSessionDid()}>
           <li
             class="text-red-500 hover:!bg-red-200 dark:hover:!bg-red-950"
             onClick={(e) => {
@@ -58,7 +56,7 @@ const PostDropdown: Component<{
             <span class="mt-0.5">Delete</span>
           </li>
         </Show>
-        <Show when={record().did === sessDid()}>
+        <Show when={record().did === getSessionDid()}>
           <li onClick={() => editPico.set(record())}>
             <span class="h-4 w-4">
               <FaSolidPencil class="m-auto ml-0.5 h-3 w-3" />

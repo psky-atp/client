@@ -40,6 +40,8 @@ export const loginState = createProp<LoginState>(
 );
 
 export const isLoggedIn = () => stateIsLoggedIn(loginState.get());
+export const getSessionDid = () =>
+  loginState.get().session?.did ?? loginState.get().did!;
 
 let manager: CredentialManager;
 let client: BrowserOAuthClient;

@@ -3,13 +3,14 @@ import { PostRecord } from "../utils/types.js";
 import { isMention } from "../utils/rich-text/util.js";
 import { loginState } from "./Login.jsx";
 import { SocialPskyRichtextFacet } from "@atcute/client/lexicons";
-import { postInput } from "./PostComposer.jsx";
+import { composerInputValue } from "./PostComposer.jsx";
 import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 import { RichText } from "./RichText.jsx";
 import { configs } from "./Settings.jsx";
 import { PostDropdown } from "./PostDropdown.jsx";
 
 interface PostItemProps {
+  id: string;
   isSamePoster: () => boolean;
   firstUnread: () => boolean;
   record: Accessor<PostRecord>;
@@ -52,6 +53,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
           "mentions-user": mentionsUser(),
           "!py-1": mentionsUser() && !props.isSamePoster,
         }}
+        id={props.id}
       >
         {/* Post Content */}
         <div
@@ -76,8 +78,8 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
                 <span
                   class="w-fit max-w-full shrink-0 cursor-pointer truncate text-zinc-600 dark:text-zinc-400"
                   onclick={() =>
-                    postInput.set(
-                      `${postInput.get()}@${props.record().handle} `,
+                    composerInputValue.set(
+                      `${composerInputValue.get()}@${props.record().handle} `,
                     )
                   }
                 >
