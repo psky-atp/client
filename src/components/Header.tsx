@@ -1,15 +1,16 @@
 import { Component, createSignal, onMount, Show } from "solid-js";
 import { isLoggedIn, loginState } from "./Login.jsx";
-import { socket, theme } from "../App.jsx";
+import { registerCallback } from "../utils/socket.js";
+import { ServerState } from "../utils/types.js";
+import { theme } from "../App.jsx";
 import Settings from "./Settings.jsx";
 
 const Header: Component = () => {
   const [sessionCount, setSessionCount] = createSignal(0);
   onMount(() => {
-    socket.addEventListener("message", (event) => {
-      let data = JSON.parse(event.data);
-      if (data.$type === "serverState") setSessionCount(data.sessionCount);
-    });
+    registerCallback("serverState", (data: ServerState) =>
+      setSessionCount(data.sessionCount),
+    );
   });
 
   return (

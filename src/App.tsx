@@ -1,8 +1,7 @@
 import { onMount, type Component } from "solid-js";
-import { APP_NAME, SERVER_URL } from "./utils/constants.js";
+import { APP_NAME } from "./utils/constants.js";
 import createProp from "./utils/createProp.js";
 import Layout from "./Layout.jsx";
-import { WebSocket } from "partysocket";
 
 type Theme = "light" | "dark";
 export const theme = createProp<Theme>(
@@ -30,8 +29,6 @@ export const unreadState = createProp(
     return newState;
   },
 );
-
-export const socket = new WebSocket(`wss://${SERVER_URL}/subscribe`);
 
 export const App: Component = () => {
   const resetUnreadOnBlur = () => {
