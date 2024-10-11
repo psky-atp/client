@@ -21,6 +21,22 @@
 	transition-duration: .2s;
 }
 
+.mentions-user {
+  /* Background Colour */
+  @apply bg-neutral-200 dark:bg-neutral-800;
+  /* Border */
+  --border-left-width: 2px;
+  border-left-width: var(--border-left-width);
+  @apply rounded-md border-zinc-400;
+  /* Padding */
+  --padding: 1.125%;
+  padding: 0 var(--padding);
+  /* Width */
+  width: calc(100% + var(--border-left-width) + var(--padding) * 2);
+  margin-right: calc(-1 * var(--padding));
+  margin-left: calc(-1 * (var(--padding) + var(--border-left-width)));
+}
+
 .dropdown {
   position: relative;
   display: inline-block;

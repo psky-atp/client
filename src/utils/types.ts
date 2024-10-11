@@ -28,4 +28,8 @@ interface UpdateEvent extends PostData {
 
 interface DeleteEvent extends PostIdentifier {}
 
-export type { PostData, PostRecord, UpdateEvent, DeleteEvent };
+interface ServerState {
+  sessionCount: number;
+}
+
+export type { PostData, PostRecord, UpdateEvent, DeleteEvent, ServerState };

@@ -1,32 +1,32 @@
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
 import { VsGear } from "./SVGs.jsx";
+import createProp from "../utils/createProp.js";
 
 interface Configs {
   lineSeparator?: boolean;
 }
-const [configs, setConfigs] = createSignal<Configs>(
+export const configs = createProp(
   (() => {
     let stored = localStorage.configs;
     return !!stored ? JSON.parse(stored) : {};
-  })() as Configs,
+  })(),
+  function (newConfigs: Configs) {
+    newConfigs = { ...this[0](), ...newConfigs };
+    this[1](newConfigs);
+    localStorage.configs = JSON.stringify(newConfigs);
+    return newConfigs;
+  },
 );
-const updateConfigs = (newConfigs: Configs) => {
-  newConfigs = { ...configs(), ...newConfigs };
-  setConfigs(newConfigs);
-  localStorage.configs = JSON.stringify(newConfigs);
-  return newConfigs;
-};
 
 const Settings = () => {
+  const [modal, setModal] = createSignal<HTMLDialogElement>();
   const [open, setOpen] = createSignal(false);
 
   let clickEvent = (event: MouseEvent) => {
-    const modal = document.getElementById("settings_modal");
-    if (modal && event.target == modal) setOpen(false);
+    if (modal() && event.target == modal()) setOpen(false);
   };
   let keyEvent = (event: KeyboardEvent) => {
-    const modal = document.getElementById("settings_modal");
-    if (modal && event.key == "Escape") setOpen(false);
+    if (modal() && event.key == "Escape") setOpen(false);
   };
 
   onMount(() => {
@@ -45,7 +45,7 @@ const Settings = () => {
       </button>
       <Show when={open()}>
         <dialog
-          id="settings_modal"
+          ref={setModal}
           class="modal absolute left-0 top-0 z-[2] flex h-screen w-screen items-center justify-center bg-transparent"
         >
           <div class="modal-box m-4 max-w-lg overflow-y-auto overscroll-contain rounded-md border border-black bg-stone-200 p-4 dark:border-white dark:bg-stone-800 dark:text-white">
@@ -54,10 +54,10 @@ const Settings = () => {
               <input
                 type="checkbox"
                 id="lineSeparator"
-                checked={!!configs().lineSeparator}
+                checked={!!configs.get().lineSeparator}
                 class="accent-stone-600"
                 onChange={(e) => {
-                  updateConfigs({ lineSeparator: e.currentTarget.checked });
+                  configs.set({ lineSeparator: e.currentTarget.checked });
                 }}
               />
               <label for="lineSeparator" class="text-sm">
@@ -72,4 +72,3 @@ const Settings = () => {
 };
 
 export default Settings;
-export { configs };
