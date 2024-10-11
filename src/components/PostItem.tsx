@@ -51,7 +51,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
           "flex items-start": true,
           "w-full": !mentionsUser(),
           "mentions-user": mentionsUser(),
-          "!py-1": mentionsUser() && !props.isSamePoster,
+          "!py-1": mentionsUser() && !props.isSamePoster(),
         }}
         id={props.id}
       >
