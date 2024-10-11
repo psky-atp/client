@@ -138,7 +138,11 @@ function onPostCreation(
   setter: Setter<Signal<PostRecord>[]>,
 ) {
   let toScroll = false;
-  if (scrollBox.scrollTop + 1000 >= scrollBox.scrollHeight) toScroll = true;
+  if (
+    scrollBox.scrollTop + scrollBox.clientHeight + 400 >=
+    scrollBox.scrollHeight
+  )
+    toScroll = true;
 
   setter([
     createSignal<PostRecord>(newPost as PostRecord),
