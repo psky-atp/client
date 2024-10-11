@@ -3,7 +3,7 @@ import { PostRecord } from "../utils/types.js";
 import { isMention } from "../utils/rich-text/util.js";
 import { loginState } from "./Login.jsx";
 import { SocialPskyRichtextFacet } from "@atcute/client/lexicons";
-import { composerInputValue } from "./PostComposer.jsx";
+import { composerInput, composerInputValue } from "./PostComposer.jsx";
 import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 import { RichText } from "./RichText.jsx";
 import { configs } from "./Settings.jsx";
@@ -77,11 +77,12 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
                 </a>
                 <span
                   class="w-fit max-w-full shrink-0 cursor-pointer truncate text-zinc-600 dark:text-zinc-400"
-                  onclick={() =>
+                  onclick={() => {
                     composerInputValue.set(
                       `${composerInputValue.get()}@${props.record().handle} `,
-                    )
-                  }
+                    );
+                    composerInput()?.focus();
+                  }}
                 >
                   @{props.record().handle}
                 </span>

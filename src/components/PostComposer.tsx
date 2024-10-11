@@ -24,6 +24,7 @@ export const composerInputValue = createProp("", function (text: string) {
 
   return this[1](text);
 });
+export { composerInput };
 
 let lastScrollTop: number | undefined = undefined;
 export const editPico = createProp(undefined, function (record?: PostData) {
