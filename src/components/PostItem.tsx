@@ -35,7 +35,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
               (feat) =>
                 isMention(feat) &&
                 (feat as SocialPskyRichtextFacet.Mention).did ===
-                  loginState.get().session?.did,
+                  loginState.get().session?.sub,
             ),
         ),
   );

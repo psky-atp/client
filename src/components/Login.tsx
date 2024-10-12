@@ -1,20 +1,31 @@
-import {
-  BrowserOAuthClient,
-  OAuthSession,
-} from "@atproto/oauth-client-browser";
 import { Component, createSignal, onMount, Show } from "solid-js";
 import { resolveDid, resolveHandle } from "../utils/api.js";
 import { CredentialManager, XRPC } from "@atcute/client";
-import { SocialPskyActorProfile } from "@atcute/client/lexicons";
-import { PDS_URL } from "../utils/constants.js";
+import { At, SocialPskyActorProfile } from "@atcute/client/lexicons";
+import {
+  configureOAuth,
+  createAuthorizationUrl,
+  finalizeAuthorization,
+  getSession,
+  OAuthUserAgent,
+  resolveFromIdentity,
+  type Session,
+} from "@atcute/oauth-browser-client";
 import createProp from "../utils/createProp.js";
 import { tryFor } from "../utils/chrono.js";
+
+configureOAuth({
+  metadata: {
+    client_id: import.meta.env.VITE_OAUTH_CLIENT_ID,
+    redirect_uri: import.meta.env.VITE_OAUTH_REDIRECT_URL,
+  },
+});
 
 const stateIsLoggedIn = (state: LoginState) =>
   ((state.session && state.session.sub) || state.manager) && state.rpc;
 interface LoginState {
   pendingManagerInit?: boolean;
-  session?: OAuthSession;
+  session?: OAuthUserAgent;
   handle?: string;
   did?: string;
   manager?: CredentialManager;
@@ -31,7 +42,7 @@ export const loginState = createProp<LoginState>(
       stateIsLoggedIn(curr) &&
       curr.session
     ) {
-      client.revoke(curr.session.sub);
+      curr.session.signOut();
     }
 
     this[1](newState);
@@ -41,14 +52,9 @@ export const loginState = createProp<LoginState>(
 
 export const isLoggedIn = () => stateIsLoggedIn(loginState.get());
 export const getSessionDid = () =>
-  loginState.get().session?.did ?? loginState.get().did!;
+  loginState.get().session?.sub ?? loginState.get().did!;
 
 let manager: CredentialManager;
-let client: BrowserOAuthClient;
-const isLocal = () =>
-  window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1" ||
-  window.location.hostname === "0.0.0.0";
 const Login: Component = () => {
   const [loginInput, setLoginInput] = createSignal("");
   const [password, setPassword] = createSignal("");
@@ -62,30 +68,44 @@ const Login: Component = () => {
       (timeLeft) =>
         setNotice(`Loading... (max. ${Math.ceil(timeLeft / 1000)}s)`),
       async () => {
-        client = await BrowserOAuthClient.load({
-          clientId:
-            isLocal() ?
-              "http://localhost?redirect_uri=http%3A%2F%2F127.0.0.1%3A1313%2F&scope=atproto+transition%3Ageneric"
-            : "https://psky.social/client-metadata.json",
-          handleResolver: `https://${PDS_URL}`,
-        });
-        client.addEventListener("deleted", () => loginState.set({}));
+        const init = async (): Promise<Session | undefined> => {
+          const params = new URLSearchParams(location.hash.slice(1));
 
-        const result = await client.init().catch(() => {});
-        loginState.set(
-          result ?
-            {
-              session: result.session,
-              handle: await resolveDid(result.session.did),
-              rpc: new XRPC({
-                handler: {
-                  handle: result.session.fetchHandler.bind(result.session),
-                },
-              }),
+          if (
+            params.has("state") &&
+            (params.has("code") || params.has("error"))
+          ) {
+            history.replaceState(null, "", location.pathname + location.search);
+
+            const session = await finalizeAuthorization(params);
+            const did = session.info.sub;
+
+            localStorage.setItem("lastSignedIn", did);
+            return session;
+          } else {
+            const lastSignedIn = localStorage.getItem("lastSignedIn");
+
+            if (lastSignedIn) {
+              try {
+                const session = await getSession(lastSignedIn as At.DID);
+                return session;
+              } catch (err) {
+                localStorage.removeItem("lastSignedIn");
+                throw err;
+              }
             }
-          : {},
-        );
+          }
+        };
 
+        const session = await init().catch(() => {});
+        if (session) {
+          const agent = new OAuthUserAgent(session);
+          loginState.set({
+            session: new OAuthUserAgent(session),
+            handle: await resolveDid(session.info.sub),
+            rpc: new XRPC({ handler: agent }),
+          });
+        }
         setNotice("");
       },
     ).catch((e) => {
@@ -126,18 +146,22 @@ const Login: Component = () => {
       });
       await manager.login({ identifier: loginInput(), password: password() });
     } else {
-      await loginState.get().manager?.login({
-        identifier: loginInput(),
-        password: password(),
-      });
-      setNotice("Redirecting...");
       try {
-        await client.signIn(handle, {
-          scope: "atproto transition:generic",
-          signal: new AbortController().signal,
+        setNotice(`Resolving your identity...`);
+        const resolved = await resolveFromIdentity(handle);
+
+        setNotice(`Contacting your data server...`);
+        const authUrl = await createAuthorizationUrl({
+          scope: import.meta.env.VITE_OAUTH_SCOPE,
+          ...resolved,
         });
+
+        setNotice(`Redirecting...`);
+        await new Promise((resolve) => setTimeout(resolve, 250));
+
+        location.assign(authUrl);
       } catch (err) {
-        setNotice("Error during OAuth redirection");
+        setNotice("Error during OAuth login");
       }
     }
   };
@@ -147,7 +171,7 @@ const Login: Component = () => {
       .get()
       .rpc!.call("com.atproto.repo.putRecord", {
         data: {
-          repo: loginState.get().session!.did,
+          repo: loginState.get().session!.sub,
           collection: "social.psky.actor.profile",
           rkey: "self",
           record: {
