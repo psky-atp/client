@@ -105,6 +105,8 @@ const Login: Component = () => {
             handle: await resolveDid(session.info.sub),
             rpc: new XRPC({ handler: agent }),
           });
+        } else {
+          loginState.set({});
         }
         setNotice("");
       },
