@@ -7,11 +7,21 @@ interface Prop<T> {
   set: Setter<T>;
 }
 const createProp = <T>(
-  initial: T,
+  initial: T | Signal<T>,
   setterOverrider?: (this: Signal<T>, value: T) => T,
   accessorOverrider?: (accessor: Accessor<T>) => Accessor<T>,
 ): Prop<T> => {
-  const signal = createSignal<T>(initial);
+  // Type guard to check if initial is Signal<T>
+  function isSignal<T>(value: any): value is Signal<T> {
+    return (
+      Array.isArray(value) &&
+      value.length === 2 &&
+      typeof value[0] === "function" &&
+      typeof value[1] === "function"
+    );
+  }
+  const signal =
+    isSignal(initial) ? (initial as Signal<T>) : createSignal<T>(initial as T);
 
   let setter: Setter<T>;
   if (setterOverrider) {
