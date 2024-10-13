@@ -24,7 +24,7 @@ configureOAuth({
 const stateIsLoggedIn = (state: LoginState) =>
   ((state.session && state.session.sub) || state.manager) && state.rpc;
 interface LoginState {
-  pendingManagerInit?: boolean;
+  pendingInit?: boolean;
   session?: OAuthUserAgent;
   handle?: string;
   did?: string;
@@ -32,7 +32,7 @@ interface LoginState {
   rpc?: XRPC;
 }
 export const loginState = createProp<LoginState>(
-  { pendingManagerInit: true },
+  { pendingInit: true },
   function (newState: LoginState) {
     const curr = this[0]();
 

@@ -15,13 +15,13 @@ import { PostRecord } from "../../utils/types.js";
 import { isMention } from "../../utils/rich-text/util.js";
 import { loginState } from "../Login.js";
 import { SocialPskyRichtextFacet } from "@atcute/client/lexicons";
-import { composerInput, composerValue } from "../PostComposer.js";
+import { composerValue } from "../PostComposer.js";
 import { RichText as RichTextAPI } from "../../utils/rich-text/lib.js";
 import { RichText } from "../RichText/text.jsx";
 import { configs } from "../Settings.js";
 import { PostDropdown } from "../PostDropdown.js";
 import { render } from "solid-js/web";
-import isOverflowing from "../../utils/isOverflowing.js";
+import { isOverflowing } from "../../utils/lib.js";
 
 interface PostItemProps {
   id: string;
@@ -91,12 +91,11 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
                 </a>
                 <span
                   class="w-fit max-w-full shrink-0 cursor-pointer truncate text-zinc-600 dark:text-zinc-400"
-                  onclick={() => {
+                  onclick={() =>
                     composerValue.set(
                       `${composerValue.get()}@${props.record().handle} `,
-                    );
-                    composerInput()?.focus();
-                  }}
+                    )
+                  }
                 >
                   @{props.record().handle}
                 </span>

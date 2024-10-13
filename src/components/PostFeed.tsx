@@ -39,7 +39,7 @@ const PostFeed: Component = () => {
   let previousHandle: string | undefined = "";
   createEffect(async () => {
     let currState = loginState.get();
-    if (currState.pendingManagerInit) return;
+    if (currState.pendingInit) return;
     if (previousHandle !== currState.handle) {
       cursor = "0";
       previousHandle = currState.handle;

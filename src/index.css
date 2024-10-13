@@ -54,7 +54,7 @@ html {
   border-left-width: var(--border-left-width);
   @apply rounded-md border-zinc-400;
   /* Padding */
-  --padding: 1.125%;
+  --padding: 1.5%;
   padding: 0 var(--padding);
   /* Width */
   width: calc(100% + var(--border-left-width) + var(--padding) * 2);

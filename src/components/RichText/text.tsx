@@ -1,6 +1,6 @@
 import { Accessor, Component, createMemo } from "solid-js";
 import { RichText as RichTextAPI } from "../../utils/rich-text/lib.js";
-import ensureMultilineValid from "../../utils/ensureMultilineValid.js";
+import { ensureMultilineValid } from "../../utils/lib.js";
 
 interface RichTextProps {
   class?: string;

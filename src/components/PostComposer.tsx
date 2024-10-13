@@ -28,7 +28,12 @@ const composerValue = createProp(composerValueSignal, function (text: string) {
   }
 
   const input = composerInput();
-  if (input) input.textContent = text;
+  if (input) {
+    input.textContent = text;
+    input.focus();
+    // input.setSelectionRange(record.post.length, record.post.length);
+  }
+
   return this[1](text);
 });
 
@@ -37,10 +42,7 @@ export { composerInput, composerValue };
 let lastScrollTop: number | undefined = undefined;
 export const editPico = createProp(undefined, function (record?: PostData) {
   if (record) {
-    let input: HTMLDivElement | undefined = composerInput();
     composerValue.set(record.post);
-    input?.focus();
-    // input?.setSelectionRange(record.post.length, record.post.length);
   } else if (this[0]()) {
     let scrollBox = feed()?.parentElement!;
     if (lastScrollTop && scrollBox) {
@@ -63,8 +65,7 @@ const EmojiPicker: Component = () => {
 
   const keyEvent = (e: KeyboardEvent) => (shiftHeld = e.shiftKey);
   const emojiEvent = (emoji: Emoji) => {
-    composerValue.set(composerValue.get() + emoji.native);
-    composerInput()?.focus();
+    composerValue.set(`${composerValue.get()}${emoji.native} `);
     if (!shiftHeld) setShowPicker(false);
   };
 
@@ -153,12 +154,8 @@ const PostComposer: Component = () => {
       }
     }
   };
-  onMount(() => {
-    composerInput()?.addEventListener("keydown", keyEvent);
-  });
-  onCleanup(() => {
-    composerInput()?.removeEventListener("keydown", keyEvent);
-  });
+  onMount(() => composerInput()?.addEventListener("keydown", keyEvent));
+  onCleanup(() => composerInput()?.removeEventListener("keydown", keyEvent));
 
   return (
     <form
@@ -182,11 +179,11 @@ const PostComposer: Component = () => {
           class="rounded p-1 hover:bg-neutral-300 hover:dark:bg-neutral-700"
           onclick={() => setShowPicker((v) => !v)}
         >
-          <IconEmojiSmile></IconEmojiSmile>
+          <IconEmojiSmile />
         </button>
       </Show>
       <Show when={showPicker()}>
-        <EmojiPicker></EmojiPicker>
+        <EmojiPicker />
       </Show>
       <RichInput
         type="text"
