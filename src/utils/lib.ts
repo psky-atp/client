@@ -25,7 +25,7 @@ const isOverflowing = (element?: Element | null) => {
 /// HACK:
 /// This function is used to convert a string CSS size to a number size in pixels
 /// -prf (joking, Elaina <3)
-function convertToPx(parent: HTMLElement, size: string) {
+const convertToPx = (parent: HTMLElement, size: string) => {
   const tempElement = document.createElement("div");
   // Set to absolute so it doesn't get affected by the layout
   tempElement.style.position = "absolute";
@@ -36,12 +36,27 @@ function convertToPx(parent: HTMLElement, size: string) {
   parent.removeChild(tempElement);
 
   return parseFloat(computedWidth);
-}
+};
+
+const isInView = (el: Element) => {
+  const rect = el.getBoundingClientRect();
+  const windowHeight =
+    window.innerHeight || document.documentElement.clientHeight;
+  const windowWidth = window.innerWidth || document.documentElement.clientWidth;
+
+  return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <= windowHeight &&
+    rect.right <= windowWidth
+  );
+};
 
 export {
   graphemeLen,
   ensureMultilineValid,
   isOverflowing,
   convertToPx,
+  isInView,
   isTouchDevice,
 };

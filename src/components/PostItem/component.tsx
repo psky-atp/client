@@ -15,11 +15,11 @@ import { PostRecord } from "../../utils/types.js";
 import { isMention } from "../../utils/rich-text/util.js";
 import { loginState } from "../Login.js";
 import { SocialPskyRichtextFacet } from "@atcute/client/lexicons";
-import { composerValue } from "../PostComposer.js";
+import { composerValue } from "../PostComposer/component.jsx";
 import { RichText as RichTextAPI } from "../../utils/rich-text/lib.js";
 import { RichText } from "../RichText/text.jsx";
-import { configs } from "../Settings.js";
-import { PostDropdown } from "../PostDropdown.js";
+import { configs } from "../Settings/component.jsx";
+import { PostDropdown } from "../PostDropdown/component.jsx";
 import { render } from "solid-js/web";
 import { isOverflowing } from "../../utils/lib.js";
 

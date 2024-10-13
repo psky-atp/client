@@ -1,18 +1,20 @@
+import "./styles.css";
+
 import { Component, createSignal, onCleanup, onMount, Show } from "solid-js";
-import { getSessionDid, loginState } from "./Login.jsx";
-import { feed, posts } from "./PostFeed.jsx";
-import { CHARLIMIT } from "../utils/constants.js";
-import { graphemeLen, isTouchDevice } from "../utils/lib.js";
-import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
+import { getSessionDid, loginState } from "./../Login.jsx";
+import { feed, posts } from "./../PostFeed.jsx";
+import { CHARLIMIT } from "../../utils/constants.js";
+import { graphemeLen, isInView, isTouchDevice } from "../../utils/lib.js";
+import { RichText as RichTextAPI } from "../../utils/rich-text/lib.js";
 import { SocialPskyFeedPost } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
-import { Emoji, PostData, PostRecord } from "../utils/types.js";
-import { theme, unreadState } from "../App.jsx";
-import createProp from "../utils/createProp.js";
-import { deletePico } from "../utils/api.js";
-import RichInput from "./RichText/input.jsx";
-import { IconEmojiSmile } from "./SVGs.jsx";
+import { Emoji, PostData, PostRecord } from "../../utils/types.js";
+import { theme, unreadState } from "../../App.jsx";
+import createProp from "../../utils/createProp.js";
+import { deletePico } from "../../utils/api.js";
 import { Picker } from "emoji-mart";
+import { IconEmojiSmile } from "../SVGs.jsx";
+import RichInput from "./../RichText/input.jsx";
 
 const [sendButton, setSendButton] = createSignal<HTMLButtonElement>();
 const composerInputSignal = createSignal<HTMLDivElement>();
@@ -43,6 +45,14 @@ let lastScrollTop: number | undefined = undefined;
 export const editPico = createProp(undefined, function (record?: PostData) {
   if (record) {
     composerValue.set(record.post);
+    const postDiv = document.getElementById(`${record.did}_${record.rkey}`);
+    if (postDiv) {
+      postDiv.classList.add("editing");
+      if (!isInView(postDiv)) {
+        lastScrollTop = feed()?.parentElement!.scrollTop;
+        postDiv.scrollIntoView();
+      }
+    }
   } else if (this[0]()) {
     let scrollBox = feed()?.parentElement!;
     if (lastScrollTop && scrollBox) {
@@ -76,7 +86,7 @@ const EmojiPicker: Component = () => {
       autoFocus: true,
       theme: theme.get() === "dark" ? "dark" : "light",
       data: async () => {
-        return (await import("../assets/emoji-picker-data.json")).default;
+        return (await import("../../assets/emoji-picker-data.json")).default;
       },
     });
     // NOTE: emoji-mart doesnt have proper typescript support
@@ -143,15 +153,7 @@ const PostComposer: Component = () => {
         this would cancel out setting the cursor pos to the end of the message
       */
       event.preventDefault();
-      if (post) {
-        editPico.set(post);
-        const postDiv = document.getElementById(`${post.did}_${post.rkey}`);
-        if (postDiv) {
-          lastScrollTop = feed()!.parentElement!.scrollTop;
-          postDiv.scrollIntoView();
-          postDiv.classList.add("editing");
-        }
-      }
+      if (post) editPico.set(post);
     }
   };
   onMount(() => composerInput()?.addEventListener("keydown", keyEvent));

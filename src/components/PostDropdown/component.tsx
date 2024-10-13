@@ -1,3 +1,5 @@
+import "./styles.css";
+
 import { Accessor, Component, Show } from "solid-js";
 import {
   AiOutlineEllipsis,
@@ -5,12 +7,12 @@ import {
   FaSolidPencil,
   FiTrash2,
   IoMailUnreadOutline,
-} from "./SVGs.jsx";
-import { PostData } from "../utils/types.js";
-import { getSessionDid } from "./Login.jsx";
-import { editPico } from "./PostComposer.jsx";
-import { isTouchDevice } from "../utils/lib.js";
-import { deletePico } from "../utils/api.js";
+} from "../SVGs.jsx";
+import { PostData } from "../../utils/types.js";
+import { getSessionDid } from "../Login.jsx";
+import { editPico } from "../PostComposer/component.jsx";
+import { isTouchDevice } from "../../utils/lib.js";
+import { deletePico } from "../../utils/api.js";
 
 const PostDropdown: Component<{
   record: Accessor<PostData>;

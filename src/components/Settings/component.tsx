@@ -1,6 +1,8 @@
+import "./styles.css";
+
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
-import { VsGear } from "./SVGs.jsx";
-import createProp from "../utils/createProp.js";
+import { VsGear } from "../SVGs.js";
+import createProp from "../../utils/createProp.js";
 
 interface Configs {
   lineSeparator?: boolean;

@@ -1,0 +1,86 @@
+.sidebar-toggle {
+  position: fixed;
+  height: 0px;
+  width: 0px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  opacity: 0;
+}
+.sidebar-expand-btn {
+  cursor: pointer;
+  transition: 0.3s;
+}
+.sidebar-expand-btn svg {
+  @apply text-2xl;
+  transform: rotate(360deg);
+}
+.sidebar-toggle:checked ~ * .sidebar-expand-btn svg {
+  transform: rotate(180deg);
+}
+
+.sidebar-mobile {
+  position: fixed;
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  overscroll-behavior: contain;
+  pointer-events: none;
+  z-index: 3;
+}
+.sidebar-mobile > .sidebar-mobile-overlay {
+  position: fixed;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+.sidebar-mobile > :not(.sidebar-mobile-overlay) {
+  height: 100vh;
+  height: 100dvh;
+	transition-property: transform;
+	transition-timing-function: cubic-bezier(.4,0,.2,1);
+	transition-timing-function: cubic-bezier(0,0,.2,1);
+	transition-duration: .3s;
+	will-change: transform;
+	transform: translate(-100%);
+}
+.sidebar-toggle:checked ~ .sidebar-mobile {
+  pointer-events: auto;
+  visibility: visible;
+  overflow-y: auto;
+}
+.sidebar-toggle:checked ~ .sidebar-mobile > .sidebar-mobile-overlay {
+  @apply backdrop-filter backdrop-blur-sm backdrop-brightness-[.9];
+  background-color: transparent;
+}
+.sidebar-toggle:checked ~ .sidebar-mobile > *:not(.sidebar-mobile-overlay) {
+  transform: translate(0);
+  width: fit-content;
+}
+
+.sidebar {
+  --sidebar-size: 20rem;
+  width: 100vw;
+  width: 100dvw;
+  height: 100vh;
+  height: 100dvh;
+  position: relative;
+  display: flex;
+}
+
+.sidebar-desktop {
+  height: 100vh;
+  height: 100dvh;
+  width: 0;
+  margin: 0;
+  padding: 0;
+  transition: all 0.5s ease-in-out;
+  overflow: hidden;
+}
+.sidebar-toggle:checked ~ .sidebar-desktop {
+  width: var(--sidebar-size);
+  max-width: fit-content;
+}

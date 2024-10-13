@@ -1,0 +1,10 @@
+.modal {
+  transition-duration: .2s;
+  transition-timing-function: cubic-bezier(0,0,.2,1);
+}
+.modal-box {
+  max-height: calc(100vh - 5em);
+  transition-timing-function: cubic-bezier(.4,0,.2,1);
+  transition-timing-function: cubic-bezier(0,0,.2,1);
+  transition-duration: .2s;
+}

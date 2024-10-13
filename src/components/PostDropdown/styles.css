@@ -1,0 +1,30 @@
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown .dropdown-content {
+  position: absolute;
+  visibility: hidden;
+  opacity: 0;
+  inset-inline-end: 0px;
+  bottom: 100%;
+  top: auto;
+
+  > * {
+    @apply inline-flex w-full min-w-max cursor-pointer items-center gap-x-2 py-1 px-2 rounded-md;
+    &:hover {
+      @apply bg-neutral-400 dark:bg-neutral-700;
+    }
+  }
+}
+.hoverable-dropdown:hover .dropdown>.btn.trigger {
+  @apply opacity-100;
+}
+.dropdown>*:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px
+}
+.dropdown:focus-within .dropdown-content {
+  visibility: visible;
+  opacity: 1
+}
