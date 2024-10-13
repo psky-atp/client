@@ -2,19 +2,22 @@ import { Component, createSignal, onCleanup, onMount, Show } from "solid-js";
 import { getSessionDid, loginState } from "./Login.jsx";
 import { feed, posts } from "./PostFeed.jsx";
 import { CHARLIMIT } from "../utils/constants.js";
-import { graphemeLen } from "../utils/lib.js";
+import { graphemeLen, isTouchDevice } from "../utils/lib.js";
 import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 import { SocialPskyFeedPost } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
-import { PostData, PostRecord } from "../utils/types.js";
-import { unreadState } from "../App.jsx";
+import { Emoji, PostData, PostRecord } from "../utils/types.js";
+import { theme, unreadState } from "../App.jsx";
 import createProp from "../utils/createProp.js";
 import { deletePico } from "../utils/api.js";
 import RichInput from "./RichText/input.jsx";
+import { IconEmojiSmile } from "./SVGs.jsx";
+import { Picker } from "emoji-mart";
 
 const [sendButton, setSendButton] = createSignal<HTMLButtonElement>();
 const composerInputSignal = createSignal<HTMLDivElement>();
 const [composerInput] = composerInputSignal;
+const [showPicker, setShowPicker] = createSignal(false);
 
 const composerValueSignal = createSignal<string>("");
 const composerValue = createProp(composerValueSignal, function (text: string) {
@@ -53,6 +56,43 @@ export const editPico = createProp(undefined, function (record?: PostData) {
   }
   return this[1](record);
 });
+
+const EmojiPicker: Component = () => {
+  let pickerDiv: HTMLDivElement | undefined;
+  let shiftHeld = false;
+
+  const keyEvent = (e: KeyboardEvent) => (shiftHeld = e.shiftKey);
+  const emojiEvent = (emoji: Emoji) => {
+    composerValue.set(composerValue.get() + emoji.native);
+    composerInput()?.focus();
+    if (!shiftHeld) setShowPicker(false);
+  };
+
+  onMount(() => {
+    const picker = new Picker({
+      onEmojiSelect: emojiEvent,
+      onClickOutside: () => setShowPicker(false),
+      autoFocus: true,
+      theme: theme.get() === "dark" ? "dark" : "light",
+      data: async () => {
+        return (await import("../assets/emoji-picker-data.json")).default;
+      },
+    });
+    // NOTE: emoji-mart doesnt have proper typescript support
+    // https://github.com/missive/emoji-mart/issues/576
+    // ignore LSP type errors
+    pickerDiv?.appendChild(picker);
+    window.addEventListener("keyup", keyEvent, true);
+    window.addEventListener("keydown", keyEvent, true);
+  });
+
+  onCleanup(() => {
+    window.removeEventListener("keydown", keyEvent, true);
+    window.removeEventListener("keyup", keyEvent, true);
+  });
+
+  return <div class="absolute bottom-20" ref={pickerDiv}></div>;
+};
 
 const PostComposer: Component = () => {
   const putPost = async (text: string, rkey?: string) => {
@@ -137,6 +177,17 @@ const PostComposer: Component = () => {
       >
         {CHARLIMIT - graphemeLen(composerValue.get())}
       </div>
+      <Show when={!isTouchDevice}>
+        <button
+          class="rounded p-1 hover:bg-neutral-300 hover:dark:bg-neutral-700"
+          onclick={() => setShowPicker((v) => !v)}
+        >
+          <IconEmojiSmile></IconEmojiSmile>
+        </button>
+      </Show>
+      <Show when={showPicker()}>
+        <EmojiPicker></EmojiPicker>
+      </Show>
       <RichInput
         type="text"
         ref={composerInputSignal}

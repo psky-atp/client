@@ -15,23 +15,20 @@ html {
   scrollbar-width: thin;
   scroll-behavior: smooth;
 }
-*::-webkit-scrollbar
-{
-	width: 5px;
-	background-color: var(--scroll-track);
+*::-webkit-scrollbar {
+  width: 5px;
+  background-color: var(--scroll-track);
 }
-*::-webkit-scrollbar-track
-{
-	border: 1px solid var(--scroll-border);
-	background-color: var(--scroll-track);
+*::-webkit-scrollbar-track {
+  border: 1px solid var(--scroll-border);
+  background-color: var(--scroll-track);
 }
-*::-webkit-scrollbar-thumb
-{
-	background-color: var(--scroll-thumb);
+*::-webkit-scrollbar-thumb {
+  background-color: var(--scroll-thumb);
 }
 
 .first-unread::before {
-  @apply border-y dark:border-neutral-800 py-1 my-1.5;
+  @apply my-1.5 border-y py-1 dark:border-neutral-800;
   content: "New messages";
   color: rgb(239, 68, 68);
   text-align: center;
@@ -39,14 +36,14 @@ html {
 }
 
 .modal {
-	transition-duration: .2s;
-	transition-timing-function: cubic-bezier(0,0,.2,1);
+  transition-duration: 0.2s;
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
 .modal-box {
-	max-height: calc(100vh - 5em);
-	transition-timing-function: cubic-bezier(.4,0,.2,1);
-	transition-timing-function: cubic-bezier(0,0,.2,1);
-	transition-duration: .2s;
+  max-height: calc(100vh - 5em);
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  transition-duration: 0.2s;
 }
 
 .mentions-user {
@@ -83,7 +80,8 @@ html {
   --background-color: rgb(219 219 219);
 }
 @keyframes edit-blink {
-  0%, 100% {
+  0%,
+  100% {
     background-color: rgb(0 0 0 / 0);
   }
   50% {
@@ -104,22 +102,22 @@ html {
   top: auto;
 
   > * {
-    @apply inline-flex w-full min-w-max cursor-pointer items-center gap-x-2 py-1 px-2 rounded-md;
+    @apply inline-flex w-full min-w-max cursor-pointer items-center gap-x-2 rounded-md px-2 py-1;
     &:hover {
       @apply bg-neutral-400 dark:bg-neutral-700;
     }
   }
 }
-.hoverable-dropdown:hover .dropdown>.btn.trigger {
+.hoverable-dropdown:hover .dropdown > .btn.trigger {
   @apply opacity-100;
 }
-.dropdown>*:focus {
+.dropdown > *:focus {
   outline: 2px solid transparent;
-  outline-offset: 2px
+  outline-offset: 2px;
 }
 .dropdown:focus-within .dropdown-content {
   visibility: visible;
-  opacity: 1
+  opacity: 1;
 }
 
 .hide {

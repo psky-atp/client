@@ -3,6 +3,17 @@ import {
   SocialPskyRichtextFacet,
 } from "@atcute/client/lexicons";
 
+interface Emoji {
+  aliases?: string[];
+  emoticons: string[];
+  id: string;
+  keywords: string[];
+  name: string;
+  native: string;
+  shortcodes?: string;
+  unified: string;
+}
+
 interface PostIdentifier {
   did: string;
   rkey: string;
@@ -32,4 +43,11 @@ interface ServerState {
   sessionCount: number;
 }
 
-export type { PostData, PostRecord, UpdateEvent, DeleteEvent, ServerState };
+export type {
+  Emoji,
+  PostData,
+  PostRecord,
+  UpdateEvent,
+  DeleteEvent,
+  ServerState,
+};
