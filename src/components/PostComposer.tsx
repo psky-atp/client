@@ -10,7 +10,7 @@ import { PostData, PostRecord } from "../utils/types.js";
 import { unreadState } from "../App.jsx";
 import createProp from "../utils/createProp.js";
 import { deletePico } from "../utils/api.js";
-import RichTextInput from "./RichTextInput.jsx";
+import RichInput from "./RichText/input.jsx";
 import { Picker } from "emoji-picker-element";
 
 const [sendButton, setSendButton] = createSignal<HTMLButtonElement>();
@@ -163,7 +163,7 @@ const PostComposer: Component = () => {
       <Show when={showPicker()}>
         <EmojiPicker></EmojiPicker>
       </Show>
-      <RichTextInput
+      <RichInput
         type="text"
         ref={composerInputSignal}
         valueRef={composerValueSignal}

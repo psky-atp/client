@@ -1,5 +1,6 @@
 import { Accessor, Component, createMemo } from "solid-js";
-import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
+import { RichText as RichTextAPI } from "../../utils/rich-text/lib.js";
+import ensureMultilineValid from "../../utils/ensureMultilineValid.js";
 
 interface RichTextProps {
   class?: string;
@@ -34,18 +35,18 @@ export const RichText: Component<RichTextProps> = ({
             </span>,
           );
         } else {
-          seg.push(<>{segment.text}</>);
+          seg.push(<>{ensureMultilineValid(segment.text)}</>);
         }
       }
       return seg;
     }
 
-    return text;
+    return ensureMultilineValid(text);
   });
 
   return (
     <span
-      class={`overflow-hidden whitespace-pre-wrap break-words ${htmlClass ?? ""}`}
+      class={`overflow-hidden text-ellipsis whitespace-pre-wrap break-words ${htmlClass ?? ""}`}
     >
       {res()}
     </span>

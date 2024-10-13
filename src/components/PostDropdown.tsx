@@ -17,7 +17,7 @@ const PostDropdown: Component<{
   markAsUnread: () => void;
 }> = ({ record, markAsUnread }) => {
   return (
-    <div class="dropdown min-w-fit">
+    <div class="dropdown min-w-fit pl-2">
       <div
         tabindex="0"
         role="button"

@@ -10,7 +10,7 @@ interface RichTextInputProps {
   maxLength?: number;
   onInput?: JSX.InputEventHandlerUnion<HTMLDivElement, InputEvent>;
 }
-const RichTextInput = (props: RichTextInputProps) => {
+const RichInput = (props: RichTextInputProps) => {
   const { ref, valueRef, autocomplete, class: htmlClass, placeholder } = props;
   const [self, setSelf] = ref ?? createSignal<HTMLDivElement>();
   const [value, setValue] = valueRef ?? createSignal<string>("");
@@ -54,4 +54,4 @@ const RichTextInput = (props: RichTextInputProps) => {
   );
 };
 
-export default RichTextInput;
+export default RichInput;
