@@ -80,8 +80,8 @@ const EmojiPicker: Component = () => {
     });
     // NOTE: emoji-mart doesnt have proper typescript support
     // https://github.com/missive/emoji-mart/issues/576
-    // ignore LSP type errors
-    pickerDiv?.appendChild(picker);
+    // hence why casting to any
+    pickerDiv?.appendChild(picker as any);
     window.addEventListener("keyup", keyEvent, true);
     window.addEventListener("keydown", keyEvent, true);
   });
