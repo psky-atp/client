@@ -1,13 +1,27 @@
-import { Accessor, Component, createMemo, JSX, Show } from "solid-js";
-import { PostRecord } from "../utils/types.js";
-import { isMention } from "../utils/rich-text/util.js";
-import { loginState } from "./Login.jsx";
+import "./styles.css";
+
+import {
+  Accessor,
+  Component,
+  createEffect,
+  createMemo,
+  createSignal,
+  JSX,
+  on,
+  Setter,
+  Show,
+} from "solid-js";
+import { PostRecord } from "../../utils/types.js";
+import { isMention } from "../../utils/rich-text/util.js";
+import { loginState } from "../Login.js";
 import { SocialPskyRichtextFacet } from "@atcute/client/lexicons";
-import { composerInput, composerValue } from "./PostComposer.jsx";
-import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
-import { RichText } from "./RichText.jsx";
-import { configs } from "./Settings.jsx";
-import { PostDropdown } from "./PostDropdown.jsx";
+import { composerInput, composerValue } from "../PostComposer.js";
+import { RichText as RichTextAPI } from "../../utils/rich-text/lib.js";
+import { RichText } from "../RichText/text.jsx";
+import { configs } from "../Settings.js";
+import { PostDropdown } from "../PostDropdown.js";
+import { render } from "solid-js/web";
+import isOverflowing from "../../utils/isOverflowing.js";
 
 interface PostItemProps {
   id: string;
@@ -58,7 +72,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
         {/* Post Content */}
         <div
           classList={{
-            "flex-1 text-sm my-0.5 flex min-w-0 max-h-48 flex-col items-start hoverable-dropdown":
+            "flex-1 text-sm my-0.5 flex min-w-0 flex-col items-start hoverable-dropdown":
               true,
           }}
         >
@@ -98,12 +112,10 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
           </Show>
 
           <div class="flex min-h-0 w-full flex-1">
-            <span class="min-w-0 flex-1 pr-2">
-              <RichText value={richText} />
-              <Show when={!!props.record().updatedAt}>
-                <span class="select-none text-xs text-zinc-500"> (edited)</span>
-              </Show>
-            </span>
+            <TextContent
+              richText={richText}
+              updatedAt={() => props.record().updatedAt}
+            />
             <PostDropdown
               record={props.record}
               markAsUnread={props.markAsUnread}
@@ -140,6 +152,94 @@ const NewMessagesIndicator: Component<NewMessagesIndicatorProps> = ({
       }}
       children={children}
     />
+  );
+};
+
+interface TextContentProps {
+  richText: Accessor<RichTextAPI>;
+  updatedAt: () => number | undefined;
+}
+const TextContent: Component<TextContentProps> = ({
+  richText,
+  updatedAt,
+}: TextContentProps) => {
+  const [self, setSelf] = createSignal<HTMLDivElement>();
+  const [edited, setEdited] = createSignal<HTMLSpanElement>();
+  const [showMoreOrLess, setShowMoreOrLess] = createSignal<HTMLDivElement>();
+  createEffect(
+    on([self, edited, richText], ([currSelf, edited, _]) => {
+      if (!currSelf) return;
+      const undo = () => {
+        const button = showMoreOrLess();
+        if (!button) return;
+        edited && currSelf.appendChild(edited);
+        button.remove();
+      };
+
+      // Undoes if was already done before (not first iteration)
+      undo();
+      if (isOverflowing(currSelf)) {
+        const grandparent = currSelf.parentElement?.parentElement;
+        if (!grandparent) return;
+
+        const newDiv = <ShowMoreOrLess ref={setShowMoreOrLess} affect={self} />;
+        render(() => newDiv, grandparent);
+
+        // If edited, ensure it's still overflowing after moving edited tag
+        // or else there's no reason to show the "Show more" button
+        const button = showMoreOrLess();
+        if (edited && button) {
+          button.appendChild(edited);
+          if (!isOverflowing(currSelf)) {
+            button.firstElementChild!.remove();
+          }
+        }
+      }
+    }),
+  );
+  return (
+    <div ref={setSelf} class="post-content min-w-0 max-w-full flex-1">
+      <RichText value={richText} />
+      <Show when={!!updatedAt()}>
+        <span ref={setEdited} class="select-none text-xs text-zinc-500">
+          {" "}
+          (edited)
+        </span>
+      </Show>
+    </div>
+  );
+};
+
+interface ShowMoreOrLess {
+  ref: Setter<HTMLDivElement | undefined>;
+  affect: Accessor<HTMLDivElement | undefined>;
+}
+const ShowMoreOrLess: Component<ShowMoreOrLess> = ({
+  ref,
+  affect,
+}: ShowMoreOrLess) => {
+  const [isShowing, setIsShowing] = createSignal(false);
+  return (
+    <span ref={ref}>
+      <a
+        onClick={() => {
+          let div = affect();
+          if (!div) return;
+          if (!isShowing()) {
+            div.style.maxHeight = "none";
+            div.style.display = "block";
+            setIsShowing(true);
+          } else {
+            div.style.removeProperty("max-height");
+            div.style.removeProperty("display");
+            setIsShowing(false);
+          }
+        }}
+        class="text-sky-500"
+      >
+        Show {isShowing() ? "less" : "more"}
+      </a>
+    </span>
   );
 };
 

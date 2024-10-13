@@ -1,0 +1,13 @@
+.post-content {
+  --line-height: 1.333rem;
+  --max-lines: 9;
+  max-height: calc(var(--line-height)*var(--max-lines));
+  line-height: var(--line-height);
+  overflow: hidden;
+  position: relative;
+  /* Limits number of lines */
+  display: -webkit-inline-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--max-lines);
+  line-clamp: var(--max-lines);
+}

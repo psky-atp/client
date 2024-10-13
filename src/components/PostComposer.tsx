@@ -10,7 +10,7 @@ import { PostData, PostRecord } from "../utils/types.js";
 import { unreadState } from "../App.jsx";
 import createProp from "../utils/createProp.js";
 import { deletePico } from "../utils/api.js";
-import RichTextInput from "./RichTextInput.jsx";
+import RichInput from "./RichText/input.jsx";
 
 const [sendButton, setSendButton] = createSignal<HTMLButtonElement>();
 const composerInputSignal = createSignal<HTMLDivElement>();
@@ -137,7 +137,7 @@ const PostComposer: Component = () => {
       >
         {CHARLIMIT - graphemeLen(composerValue.get())}
       </div>
-      <RichTextInput
+      <RichInput
         type="text"
         ref={composerInputSignal}
         valueRef={composerValueSignal}

@@ -121,3 +121,12 @@ html {
   visibility: visible;
   opacity: 1
 }
+
+.hide {
+  opacity: 0;
+  position: absolute;
+  display: none;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}

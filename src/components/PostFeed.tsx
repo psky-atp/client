@@ -12,7 +12,7 @@ import {
 } from "solid-js";
 import { PostRecord, DeleteEvent, UpdateEvent } from "../utils/types.js";
 import { MAXPOSTS, SERVER_URL } from "../utils/constants.js";
-import PostItem from "./PostItem.jsx";
+import PostItem from "./PostItem/component.jsx";
 import { loginState } from "./Login.jsx";
 import { unreadState } from "../App.jsx";
 import { registerCallback, unregisterCallback } from "../utils/socket.js";
