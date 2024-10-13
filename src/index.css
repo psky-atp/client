@@ -121,3 +121,23 @@ html {
   visibility: visible;
   opacity: 1
 }
+
+emoji-picker {
+  &:where(.dark, .dark *) {
+    --background: #222;
+    --border-color: #444;
+    --button-active-background: #555555;
+    --button-hover-background: #484848;
+    --category-font-color: #efefef;
+    --indicator-color: #5373ec;
+    --input-border-color: #ccc;
+    --input-font-color: #efefef;
+    --input-placeholder-color: #ccc;
+    --outline-color: #fff;
+  }
+}
+@media screen and (max-width: 640px) {
+  emoji-picker {
+    --category-emoji-size: 1.125rem;
+  }
+}

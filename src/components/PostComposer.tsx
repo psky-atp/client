@@ -11,6 +11,7 @@ import { unreadState } from "../App.jsx";
 import createProp from "../utils/createProp.js";
 import { deletePico } from "../utils/api.js";
 import RichTextInput from "./RichTextInput.jsx";
+import { Picker } from "emoji-picker-element";
 
 const [sendButton, setSendButton] = createSignal<HTMLButtonElement>();
 const composerInputSignal = createSignal<HTMLDivElement>();
@@ -54,7 +55,23 @@ export const editPico = createProp(undefined, function (record?: PostData) {
   return this[1](record);
 });
 
+const EmojiPicker: Component = () => {
+  let pickerElem: HTMLDivElement | undefined;
+  onMount(() => {
+    const picker = new Picker();
+    pickerElem?.appendChild(picker);
+    document
+      .querySelector("emoji-picker")
+      ?.addEventListener("emoji-click", (event) => {
+        composerValue.set(composerValue.get() + event.detail.unicode);
+      });
+  });
+  return <div class="absolute bottom-20" ref={pickerElem}></div>;
+};
+
 const PostComposer: Component = () => {
+  const [showPicker, setShowPicker] = createSignal(false);
+
   const putPost = async (text: string, rkey?: string) => {
     let rt = new RichTextAPI({ text });
     await rt.detectFacets();
@@ -137,6 +154,15 @@ const PostComposer: Component = () => {
       >
         {CHARLIMIT - graphemeLen(composerValue.get())}
       </div>
+      <button
+        class="bg-stone-600 px-1 py-1 text-xs font-bold text-white hover:bg-stone-700"
+        onclick={() => setShowPicker((v) => !v)}
+      >
+        Emoji
+      </button>
+      <Show when={showPicker()}>
+        <EmojiPicker></EmojiPicker>
+      </Show>
       <RichTextInput
         type="text"
         ref={composerInputSignal}
