@@ -102,12 +102,21 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
                 </span>
               </span>
 
-              <span class="w-fit shrink-0 text-right font-mono text-xs">
-                {new Date(props.record().indexedAt).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </span>
+              {((date) => (
+                <span
+                  title={date.toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit",
+                  })}
+                  class="w-fit shrink-0 text-right font-mono text-xs"
+                >
+                  {date.toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+              ))(new Date(props.record().indexedAt))}
             </span>
           </Show>
 
