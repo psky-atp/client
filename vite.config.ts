@@ -3,7 +3,7 @@ import solidPlugin from "vite-plugin-solid";
 // import devtools from 'solid-devtools/vite';
 import metadata from "./public/client-metadata.json";
 const SERVER_HOST = "127.0.0.1";
-const SERVER_PORT = 13213;
+const SERVER_PORT = 1313;
 
 export default defineConfig({
   plugins: [

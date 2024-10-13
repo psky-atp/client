@@ -112,6 +112,10 @@ function onPostDelete(
       let all = untrack(posts);
       all.splice(i, 1);
       setPosts([...all]);
+
+      let state = unreadState.get();
+      if (i + 1 <= state.count)
+        unreadState.set({ ...state, count: state.count - 1 });
       break;
     }
   }
