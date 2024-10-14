@@ -15,7 +15,7 @@ const Layout: Component = () => {
   return (
     <Sidebar
       id="sidebar"
-      barClass="flex h-full w-fit flex-col p-4 bg-zinc-100 dark:bg-zinc-800 dark:text-white"
+      barClass="flex h-full w-full flex-col p-4 bg-zinc-100 dark:bg-zinc-800 dark:text-white"
       barChildren={
         <>
           <h1 class="mx-auto text-xl font-bold uppercase tracking-widest">

@@ -82,5 +82,4 @@
 }
 .sidebar-toggle:checked ~ .sidebar-desktop {
   width: var(--sidebar-size);
-  max-width: fit-content;
 }
