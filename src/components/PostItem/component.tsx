@@ -71,7 +71,12 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
         id={props.id}
       >
         {/* Reply Context */}
-        <div class="flex h-fit w-full"></div>
+        <div class="relative flex h-fit w-full">
+          <div class="absolute bottom-0 left-1.5 h-2.5 w-5 rounded-tl-md border-l-2 border-t-2 border-zinc-600" />
+          <div class="mb-0.5 ml-[1.625rem] flex pl-1 text-xs">
+            <span>Yesterday at 20:20</span>
+          </div>
+        </div>
 
         {/* Post */}
         <div class="flex w-full">

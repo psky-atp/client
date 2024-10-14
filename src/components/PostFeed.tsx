@@ -88,29 +88,27 @@ const PostFeed: Component = () => {
       >
         Load More
       </button>
-      <div class="flex w-full flex-col">
-        <For each={Array.from(posts.get())}>
-          {(entry, idx) => (
-            <PostItem
-              id={entry[0]}
-              record={entry[1][0]}
-              isSamePoster={() => {
-                const curr = Array.from(posts.get());
-                return (
-                  idx() > 0 &&
-                  curr[idx() - 1][1][0]().did === entry[1][0]().did &&
-                  entry[1][0]().indexedAt - curr[idx() - 1][1][0]().indexedAt <
-                    600000
-                );
-              }}
-              firstUnread={() => idx() + 1 === unreadState.get().count}
-              markAsUnread={() =>
-                unreadState.set({ count: idx() + 1, ignoreOnce: true })
-              }
-            />
-          )}
-        </For>
-      </div>
+      <For each={Array.from(posts.get())}>
+        {(entry, idx) => (
+          <PostItem
+            id={entry[0]}
+            record={entry[1][0]}
+            isSamePoster={() => {
+              const curr = Array.from(posts.get());
+              return (
+                idx() > 0 &&
+                curr[idx() - 1][1][0]().did === entry[1][0]().did &&
+                entry[1][0]().indexedAt - curr[idx() - 1][1][0]().indexedAt <
+                  600000
+              );
+            }}
+            firstUnread={() => idx() + 1 === unreadState.get().count}
+            markAsUnread={() =>
+              unreadState.set({ count: idx() + 1, ignoreOnce: true })
+            }
+          />
+        )}
+      </For>
     </div>
   );
 };
