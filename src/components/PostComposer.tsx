@@ -134,12 +134,11 @@ const PostComposer: Component = () => {
     }
 
     if (input && event.key === "ArrowUp" && !composerValue.get().length) {
-      let allPosts = posts().toSorted(
-        (a, b) => a[0]().indexedAt - b[0]().indexedAt,
-      );
+      let curr = posts.get();
+      let values = Array.from(curr.values());
       let post: PostRecord | undefined = undefined;
-      for (let i = allPosts.length - 1; i >= 0; i--) {
-        let p = allPosts[i][0]();
+      for (let i = curr.size - 1; i >= 0; i--) {
+        let p = values[i][0]();
         if (p.did === getSessionDid()) {
           post = p;
           break;

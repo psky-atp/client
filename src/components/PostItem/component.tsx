@@ -70,6 +70,9 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
         }}
         id={props.id}
       >
+        {/* Reply Context */}
+        <div class="flex h-fit w-full"></div>
+
         {/* Post */}
         <div class="flex w-full">
           {/* Post Content */}

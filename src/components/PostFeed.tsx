@@ -1,12 +1,10 @@
 import {
-  Accessor,
   Component,
   createEffect,
   createSignal,
   For,
   onCleanup,
   onMount,
-  Setter,
   Signal,
   untrack,
 } from "solid-js";
@@ -16,9 +14,23 @@ import PostItem from "./PostItem/component.jsx";
 import { loginState } from "./Login.jsx";
 import { unreadState } from "../App.jsx";
 import { registerCallback, unregisterCallback } from "../utils/socket.js";
+import createProp, { Prop } from "../utils/createProp.js";
 
-export const [posts, setPosts] = createSignal<Signal<PostRecord>[]>([]);
 export const [feed, setFeed] = createSignal<HTMLDivElement>();
+type PostStore = Map<string, Signal<PostRecord>>;
+export const posts = createProp<PostStore>(
+  new Map(),
+  function (state: PostStore) {
+    return this[1](new Map(state));
+  },
+);
+const setAllPosts = (signals: Signal<PostRecord>[]) =>
+  posts.set(
+    signals.reduce(
+      (acc, p) => acc.set(((p) => `${p.did}_${p.rkey}`)(p[0]()), p),
+      posts.get(),
+    ),
+  );
 
 const PostFeed: Component = () => {
   let cursor = "0";
@@ -28,7 +40,11 @@ const PostFeed: Component = () => {
     );
     const json = await res.json();
     cursor = json.cursor.toString();
-    return json.messages.map((p: PostRecord) => createSignal<PostRecord>(p));
+    return json.messages
+      .reverse()
+      .map((p: PostRecord) =>
+        createSignal<PostRecord>(p),
+      ) as Signal<PostRecord>[];
   };
 
   const scrollToBottom = () => {
@@ -43,16 +59,16 @@ const PostFeed: Component = () => {
     if (previousHandle !== currState.handle) {
       cursor = "0";
       previousHandle = currState.handle;
-      setPosts(await getPosts());
+      posts.signal[1](new Map()); // Reset state
+      setAllPosts(await getPosts());
     }
     scrollToBottom();
   });
 
   const postCreateCallback = (data: PostRecord) =>
-    onPostCreation(feed()!.parentElement!, untrack(posts), data, setPosts);
-  const postUpdateCallback = (data: UpdateEvent) => onPostUpdate(posts(), data);
-  const postDeleteCallback = (data: DeleteEvent) =>
-    onPostDelete(posts, data, setPosts);
+    onPostCreation(posts, data, feed()!.parentElement!);
+  const postUpdateCallback = (event: UpdateEvent) => onPostUpdate(posts, event);
+  const postDeleteCallback = (event: DeleteEvent) => onPostDelete(posts, event);
   onMount(() => {
     registerCallback("social.psky.chat.message#create", postCreateCallback);
     registerCallback("social.psky.chat.message#update", postUpdateCallback);
@@ -68,23 +84,26 @@ const PostFeed: Component = () => {
     <div ref={setFeed} class="flex h-fit w-full flex-col items-center px-5">
       <button
         class="my-3 bg-stone-600 px-1 py-1 font-bold text-white hover:bg-stone-700"
-        onclick={async () => setPosts(posts().concat(await getPosts()))}
+        onclick={async () => setAllPosts(await getPosts())}
       >
         Load More
       </button>
-      <div class="flex w-full flex-col-reverse">
-        <For each={posts()}>
-          {(record, idx) => (
+      <div class="flex w-full flex-col">
+        <For each={Array.from(posts.get())}>
+          {(entry, idx) => (
             <PostItem
-              id={`${record[0]().did}_${record[0]().rkey}`}
-              isSamePoster={() =>
-                idx() < posts().length - 1 &&
-                posts()[idx() + 1][0]().did === record[0]().did &&
-                record[0]().indexedAt - posts()[idx() + 1][0]().indexedAt <
-                  600000
-              }
+              id={entry[0]}
+              record={entry[1][0]}
+              isSamePoster={() => {
+                const curr = Array.from(posts.get());
+                return (
+                  idx() > 0 &&
+                  curr[idx() - 1][1][0]().did === entry[1][0]().did &&
+                  entry[1][0]().indexedAt - curr[idx() - 1][1][0]().indexedAt <
+                    600000
+                );
+              }}
               firstUnread={() => idx() + 1 === unreadState.get().count}
-              record={record[0]}
               markAsUnread={() =>
                 unreadState.set({ count: idx() + 1, ignoreOnce: true })
               }
@@ -96,45 +115,36 @@ const PostFeed: Component = () => {
   );
 };
 
-function onPostDelete(
-  posts: Accessor<Signal<PostRecord>[]>,
-  data: DeleteEvent,
-  setPosts: Setter<Signal<PostRecord>[]>,
-) {
-  for (const [i, p] of posts().entries()) {
-    let post = p[0]();
-    if (post.did === data.did && post.rkey === data.rkey) {
-      let all = untrack(posts);
-      all.splice(i, 1);
-      setPosts([...all]);
+function onPostDelete(posts: Prop<PostStore>, event: DeleteEvent) {
+  const id = `${event.did}_${event.rkey}`;
+  const curr = posts.get();
+  const asArr = Array.from(curr.keys());
+  const idx = asArr.indexOf(id);
+  if (idx === -1) return;
+  curr.delete(id);
+  posts.set(curr); // Update state
 
-      let state = unreadState.get();
-      if (i + 1 <= state.count)
-        unreadState.set({ ...state, count: state.count - 1 });
-      break;
-    }
-  }
+  let state = unreadState.get();
+  if (idx + 1 >= asArr.length - state.count)
+    unreadState.set({ ...state, count: state.count - 1 });
 }
 
-function onPostUpdate(currPosts: Signal<PostRecord>[], data: UpdateEvent) {
-  for (const p of currPosts) {
-    let post = p[0]();
-    if (post.did === data.did && post.rkey === data.rkey) {
-      const newPost = data as PostRecord;
-      newPost.handle = post.handle;
-      newPost.indexedAt = post.indexedAt;
-      newPost.nickname = post.nickname;
-      p[1](newPost);
-      break;
-    }
+function onPostUpdate(posts: Prop<PostStore>, event: UpdateEvent) {
+  const post = posts.get().get(`${event.did}_${event.rkey}`);
+  if (post) {
+    const oldPost = post[0]();
+    const newPost = event as PostRecord;
+    newPost.handle = oldPost.handle;
+    newPost.indexedAt = oldPost.indexedAt;
+    newPost.nickname = oldPost.nickname;
+    post[1](newPost);
   }
 }
 
 function onPostCreation(
+  posts: Prop<PostStore>,
+  data: PostRecord,
   scrollBox: HTMLElement,
-  currPosts: Signal<PostRecord>[],
-  newPost: PostRecord,
-  setter: Setter<Signal<PostRecord>[]>,
 ) {
   let toScroll = false;
   if (
@@ -143,13 +153,16 @@ function onPostCreation(
   )
     toScroll = true;
 
-  setter([
-    createSignal<PostRecord>(newPost as PostRecord),
-    ...currPosts.slice(
-      0,
-      currPosts.length < MAXPOSTS ? currPosts.length : currPosts.length - 1,
-    ),
-  ]);
+  const currPosts = untrack(posts.signal[0]);
+  if (currPosts.size >= MAXPOSTS) {
+    // Remove the first inserted (oldest) post
+    const firstKey = currPosts.keys().next().value;
+    if (firstKey) currPosts.delete(firstKey);
+  }
+  // Insert current
+  currPosts.set(`${data.did}_${data.rkey}`, createSignal(data));
+  // Update state
+  posts.set(currPosts);
 
   const currUnreadState = unreadState.get();
   if (!document.hasFocus() || currUnreadState.count) {
