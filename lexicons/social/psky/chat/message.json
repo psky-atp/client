@@ -1,22 +1,24 @@
 {
   "lexicon": 1,
-  "id": "social.psky.feed.post",
+  "id": "social.psky.chat.message",
   "defs": {
     "main": {
       "type": "record",
-      "description": "A Picosky post containing at most 256 graphemes.",
+      "description": "A Picosky message containing at most 2048 graphemes.",
       "key": "tid",
       "record": {
         "type": "object",
-        "required": [
-          "text"
-        ],
+        "required": ["content", "room"],
         "properties": {
-          "text": {
+          "content": {
             "type": "string",
-            "maxLength": 2560,
-            "maxGraphemes": 256,
+            "maxLength": 20480,
+            "maxGraphemes": 2048,
             "description": "Text content."
+          },
+          "room": {
+            "type": "string",
+            "format": "at-uri"
           },
           "facets": {
             "type": "array",

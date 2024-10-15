@@ -1,10 +1,10 @@
 import { Component, createSignal, onCleanup, onMount, Show } from "solid-js";
 import { getSessionDid, loginState } from "./Login.jsx";
 import { feed, posts } from "./PostFeed.jsx";
-import { CHARLIMIT } from "../utils/constants.js";
+import { CHARLIMIT, GENERAL_ROOM_URI } from "../utils/constants.js";
 import { graphemeLen, isTouchDevice } from "../utils/lib.js";
 import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
-import { SocialPskyFeedPost } from "@atcute/client/lexicons";
+import { SocialPskyChatMessage } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
 import { Emoji, PostData, PostRecord } from "../utils/types.js";
 import { theme, unreadState } from "../App.jsx";
@@ -42,7 +42,7 @@ export { composerInput, composerValue };
 let lastScrollTop: number | undefined = undefined;
 export const editPico = createProp(undefined, function (record?: PostData) {
   if (record) {
-    composerValue.set(record.post);
+    composerValue.set(record.content);
   } else if (this[0]()) {
     let scrollBox = feed()?.parentElement!;
     if (lastScrollTop && scrollBox) {
@@ -104,13 +104,14 @@ const PostComposer: Component = () => {
       .rpc!.call("com.atproto.repo.putRecord", {
         data: {
           repo: getSessionDid(),
-          collection: "social.psky.feed.post",
+          collection: "social.psky.chat.message",
           rkey: rkey ?? TID.now(),
           record: {
-            $type: "social.psky.feed.post",
-            text: rt.text,
+            $type: "social.psky.chat.message",
+            content: rt.text,
+            room: GENERAL_ROOM_URI,
             facets: rt.facets,
-          } as SocialPskyFeedPost.Record,
+          } as SocialPskyChatMessage.Record,
         },
       })
       .catch((err) => console.log(err));

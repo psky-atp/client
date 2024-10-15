@@ -21,7 +21,8 @@ interface PostIdentifier {
 }
 
 interface PostData extends PostIdentifier {
-  post: string;
+  content: string;
+  room: string;
   facets?: SocialPskyRichtextFacet.Main[];
   reply?: ComAtprotoRepoStrongRef.Main;
 }
