@@ -234,7 +234,7 @@ const Login: Component = () => {
               App Password:
             </label>
             <input
-              type="text"
+              type="password"
               id="password"
               placeholder="leave empty for oauth"
               class="mr-2 w-44 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700"
