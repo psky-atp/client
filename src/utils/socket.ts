@@ -3,15 +3,15 @@ import { WebSocket } from "partysocket";
 
 type SocketMessageKind =
   | "serverState"
-  | "social.psky.feed.post#create"
-  | "social.psky.feed.post#update"
-  | "social.psky.feed.post#delete";
+  | "social.psky.chat.message#create"
+  | "social.psky.chat.message#update"
+  | "social.psky.chat.message#delete";
 
 const callbacks = new Map<SocketMessageKind, Set<(data: any) => void>>();
 callbacks.set("serverState", new Set());
-callbacks.set("social.psky.feed.post#create", new Set());
-callbacks.set("social.psky.feed.post#update", new Set());
-callbacks.set("social.psky.feed.post#delete", new Set());
+callbacks.set("social.psky.chat.message#create", new Set());
+callbacks.set("social.psky.chat.message#update", new Set());
+callbacks.set("social.psky.chat.message#delete", new Set());
 
 export const registerCallback = (
   eventNsid: SocketMessageKind,
@@ -30,16 +30,22 @@ socket.addEventListener("message", (event) => {
       callbacks.get("serverState")?.forEach((cb) => cb(data));
       break;
 
-    case "social.psky.feed.post#create":
-      callbacks.get("social.psky.feed.post#create")?.forEach((cb) => cb(data));
+    case "social.psky.chat.message#create":
+      callbacks
+        .get("social.psky.chat.message#create")
+        ?.forEach((cb) => cb(data));
       break;
 
-    case "social.psky.feed.post#update":
-      callbacks.get("social.psky.feed.post#update")?.forEach((cb) => cb(data));
+    case "social.psky.chat.message#update":
+      callbacks
+        .get("social.psky.chat.message#update")
+        ?.forEach((cb) => cb(data));
       break;
 
-    case "social.psky.feed.post#delete":
-      callbacks.get("social.psky.feed.post#delete")?.forEach((cb) => cb(data));
+    case "social.psky.chat.message#delete":
+      callbacks
+        .get("social.psky.chat.message#delete")
+        ?.forEach((cb) => cb(data));
       break;
   }
 });

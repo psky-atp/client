@@ -24,11 +24,11 @@ const PostFeed: Component = () => {
   let cursor = "0";
   const getPosts = async () => {
     const res = await fetch(
-      `https://${SERVER_URL}/posts?limit=${MAXPOSTS}&cursor=${cursor}`,
+      `https://${SERVER_URL}/xrpc/social.psky.chat.getMessages?limit=${MAXPOSTS}&cursor=${cursor}`,
     );
     const json = await res.json();
     cursor = json.cursor.toString();
-    return json.posts.map((p: PostRecord) => createSignal<PostRecord>(p));
+    return json.messages.map((p: PostRecord) => createSignal<PostRecord>(p));
   };
 
   const scrollToBottom = () => {
@@ -54,14 +54,14 @@ const PostFeed: Component = () => {
   const postDeleteCallback = (data: DeleteEvent) =>
     onPostDelete(posts, data, setPosts);
   onMount(() => {
-    registerCallback("social.psky.feed.post#create", postCreateCallback);
-    registerCallback("social.psky.feed.post#update", postUpdateCallback);
-    registerCallback("social.psky.feed.post#delete", postDeleteCallback);
+    registerCallback("social.psky.chat.message#create", postCreateCallback);
+    registerCallback("social.psky.chat.message#update", postUpdateCallback);
+    registerCallback("social.psky.chat.message#delete", postDeleteCallback);
   });
   onCleanup(() => {
-    unregisterCallback("social.psky.feed.post#create", postCreateCallback);
-    unregisterCallback("social.psky.feed.post#update", postUpdateCallback);
-    unregisterCallback("social.psky.feed.post#delete", postDeleteCallback);
+    unregisterCallback("social.psky.chat.message#create", postCreateCallback);
+    unregisterCallback("social.psky.chat.message#update", postUpdateCallback);
+    unregisterCallback("social.psky.chat.message#delete", postDeleteCallback);
   });
 
   return (
@@ -150,7 +150,10 @@ function onPostCreation(
 
   setter([
     createSignal<PostRecord>(newPost as PostRecord),
-    ...currPosts.slice(0, currPosts.length - 1),
+    ...currPosts.slice(
+      0,
+      currPosts.length < MAXPOSTS ? currPosts.length : currPosts.length - 1,
+    ),
   ]);
 
   const currUnreadState = unreadState.get();

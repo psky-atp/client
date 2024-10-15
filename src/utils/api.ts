@@ -32,7 +32,7 @@ const deletePico = async (rkey: string) => {
     .rpc!.call("com.atproto.repo.deleteRecord", {
       data: {
         repo: getSessionDid(),
-        collection: "social.psky.feed.post",
+        collection: "social.psky.chat.message",
         rkey,
       },
     })
