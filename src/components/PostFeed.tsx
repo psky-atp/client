@@ -150,7 +150,10 @@ function onPostCreation(
 
   setter([
     createSignal<PostRecord>(newPost as PostRecord),
-    ...currPosts.slice(0, currPosts.length - 1),
+    ...currPosts.slice(
+      0,
+      currPosts.length < MAXPOSTS ? currPosts.length : currPosts.length - 1,
+    ),
   ]);
 
   const currUnreadState = unreadState.get();
