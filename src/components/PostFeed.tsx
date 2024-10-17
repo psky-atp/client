@@ -24,12 +24,15 @@ export const posts = createProp<PostStore>(
     return this[1](new Map(state));
   },
 );
-const setAllPosts = (signals: Signal<PostRecord>[]) =>
+const insertOldPosts = (postSignals: Signal<PostRecord>[]) =>
   posts.set(
-    signals.reduce(
-      (acc, p) => acc.set(((p) => `${p.did}_${p.rkey}`)(p[0]()), p),
-      posts.get(),
-    ),
+    new Map([
+      ...postSignals.map((s) => {
+        const data = s[0]();
+        return [`${data.did}_${data.rkey}`, s] as [string, Signal<PostRecord>];
+      }),
+      ...posts.get(),
+    ]),
   );
 
 const PostFeed: Component = () => {
@@ -60,7 +63,7 @@ const PostFeed: Component = () => {
       cursor = "0";
       previousHandle = currState.handle;
       posts.signal[1](new Map()); // Reset state
-      setAllPosts(await getPosts());
+      insertOldPosts(await getPosts());
     }
     scrollToBottom();
   });
@@ -84,27 +87,32 @@ const PostFeed: Component = () => {
     <div ref={setFeed} class="flex h-fit w-full flex-col items-center px-5">
       <button
         class="my-3 bg-stone-600 px-1 py-1 font-bold text-white hover:bg-stone-700"
-        onclick={async () => setAllPosts(await getPosts())}
+        onclick={async () => insertOldPosts(await getPosts())}
       >
         Load More
       </button>
-      <For each={Array.from(posts.get())}>
+      <For each={Array.from(posts.get().values())}>
         {(entry, idx) => (
           <PostItem
-            id={entry[0]}
-            record={entry[1][0]}
+            id={((curr) => `${curr.did}_${curr.rkey}`)(entry[0]())}
+            record={entry[0]}
             isSamePoster={() => {
               const curr = Array.from(posts.get());
               return (
                 idx() > 0 &&
-                curr[idx() - 1][1][0]().did === entry[1][0]().did &&
-                entry[1][0]().indexedAt - curr[idx() - 1][1][0]().indexedAt <
+                curr[idx() - 1][1][0]().did === entry[0]().did &&
+                entry[0]().indexedAt - curr[idx() - 1][1][0]().indexedAt <
                   600000
               );
             }}
-            firstUnread={() => idx() + 1 === unreadState.get().count}
+            firstUnread={() =>
+              posts.get().size - idx() === unreadState.get().count
+            }
             markAsUnread={() =>
-              unreadState.set({ count: idx() + 1, ignoreOnce: true })
+              unreadState.set({
+                count: posts.get().size - idx(),
+                ignoreOnce: true,
+              })
             }
           />
         )}
@@ -123,7 +131,7 @@ function onPostDelete(posts: Prop<PostStore>, event: DeleteEvent) {
   posts.set(curr); // Update state
 
   let state = unreadState.get();
-  if (idx + 1 >= asArr.length - state.count)
+  if (asArr.length - idx - 1 < state.count)
     unreadState.set({ ...state, count: state.count - 1 });
 }
 
