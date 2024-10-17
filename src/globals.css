@@ -27,6 +27,10 @@
   *::-webkit-scrollbar-thumb {
     background-color: var(--scroll-thumb);
   }
+
+  .layout-w {
+    @apply max-w-[1333.333px] w-full;
+  }
 }
 
 @layer components { }

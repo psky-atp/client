@@ -15,7 +15,7 @@ import { PostRecord } from "../../utils/types.js";
 import { isMention } from "../../utils/rich-text/util.js";
 import { loginState } from "../Login.js";
 import { SocialPskyRichtextFacet } from "@atcute/client/lexicons";
-import { composerValue } from "../PostComposer/component.jsx";
+import { composerValue } from "../PostComposer.jsx";
 import { RichText as RichTextAPI } from "../../utils/rich-text/lib.js";
 import { RichText } from "../RichText/text.jsx";
 import { configs } from "../Settings/component.jsx";
@@ -25,9 +25,9 @@ import { isOverflowing } from "../../utils/lib.js";
 
 interface PostItemProps {
   id: string;
+  record: Accessor<PostRecord>;
   isSamePoster: () => boolean;
   firstUnread: () => boolean;
-  record: Accessor<PostRecord>;
   markAsUnread: () => void;
 }
 const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
@@ -56,78 +56,84 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
 
   return (
     <NewMessagesIndicator
-      isSamePoster={props.isSamePoster}
+      classList={() => ({
+        "post-item w-full": true,
+        "same-poster": props.isSamePoster(),
+        "line-separator": configs.get().lineSeparator,
+      })}
       firstUnread={props.firstUnread}
-      mentionsUser={mentionsUser}
     >
       <div
         classList={{
-          "flex items-start": true,
-          "w-full": !mentionsUser(),
+          "flex flex-col w-full": true,
           "mentions-user": mentionsUser(),
-          "!py-1": mentionsUser() && !props.isSamePoster(),
         }}
         id={props.id}
       >
-        {/* Post Content */}
-        <div
-          classList={{
-            "flex-1 text-sm my-0.5 flex min-w-0 flex-col items-start hoverable-dropdown":
-              true,
-          }}
-        >
-          <Show when={!props.isSamePoster()}>
-            <span class="mb-1 flex w-full items-center justify-between gap-x-2 break-words text-sm text-stone-500 dark:text-stone-400">
-              <span class="flex w-full min-w-0 grow">
-                <a
-                  classList={{
-                    "mr-1": props.record().nickname ? true : false,
-                    "truncate font-bold text-black dark:text-white": true,
-                  }}
-                  target="_blank"
-                  href={`https://bsky.app/profile/${props.record().handle}`}
-                >
-                  {props.record().nickname ? `${props.record().nickname} ` : ""}
-                </a>
-                <span
-                  class="w-fit max-w-full shrink-0 cursor-pointer truncate text-zinc-600 dark:text-zinc-400"
-                  onclick={() =>
-                    composerValue.set(
-                      `${composerValue.get()}@${props.record().handle} `,
-                    )
-                  }
-                >
-                  @{props.record().handle}
+        {/* Post */}
+        <div class="flex w-full">
+          {/* Post Content */}
+          <div
+            classList={{
+              "flex-1 text-sm flex min-w-0 flex-col items-start hoverable-dropdown":
+                true,
+            }}
+          >
+            <Show when={!props.isSamePoster()}>
+              <span class="flex w-full items-center justify-between gap-x-2 break-words text-sm text-stone-500 dark:text-stone-400">
+                <span class="flex w-full min-w-0 grow">
+                  <a
+                    classList={{
+                      "mr-1": props.record().nickname ? true : false,
+                      "truncate font-bold text-black dark:text-white": true,
+                    }}
+                    target="_blank"
+                    href={`https://bsky.app/profile/${props.record().handle}`}
+                  >
+                    {props.record().nickname ?
+                      `${props.record().nickname} `
+                    : ""}
+                  </a>
+                  <span
+                    class="w-fit max-w-full shrink-0 cursor-pointer truncate text-zinc-600 dark:text-zinc-400"
+                    onclick={() =>
+                      composerValue.set(
+                        `${composerValue.get()}@${props.record().handle} `,
+                      )
+                    }
+                  >
+                    @{props.record().handle}
+                  </span>
                 </span>
+
+                {((date) => (
+                  <span
+                    title={date.toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                    })}
+                    class="w-fit shrink-0 text-right font-mono text-xs"
+                  >
+                    {date.toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                ))(new Date(props.record().indexedAt))}
               </span>
+            </Show>
 
-              {((date) => (
-                <span
-                  title={date.toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                  })}
-                  class="w-fit shrink-0 text-right font-mono text-xs"
-                >
-                  {date.toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
-              ))(new Date(props.record().indexedAt))}
-            </span>
-          </Show>
-
-          <div class="flex min-h-0 w-full flex-1">
-            <TextContent
-              richText={richText}
-              updatedAt={() => props.record().updatedAt}
-            />
-            <PostDropdown
-              record={props.record}
-              markAsUnread={props.markAsUnread}
-            />
+            <div class="flex w-full">
+              <TextContent
+                richText={richText}
+                updatedAt={() => props.record().updatedAt}
+              />
+              <PostDropdown
+                record={props.record}
+                markAsUnread={props.markAsUnread}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -136,27 +142,23 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
 };
 
 interface NewMessagesIndicatorProps {
-  children?: JSX.Element;
-  isSamePoster: () => boolean;
-  mentionsUser: () => boolean;
+  class?: string;
+  classList?: () => Record<string, boolean>;
   firstUnread: () => boolean;
+  children?: JSX.Element;
 }
 const NewMessagesIndicator: Component<NewMessagesIndicatorProps> = ({
-  children,
-  isSamePoster,
-  mentionsUser,
+  class: htmlClass,
+  classList,
   firstUnread,
+  children,
 }: NewMessagesIndicatorProps) => {
   return (
     <div
       classList={{
-        "flex flex-col py-1.5": true,
-        "mt-[-0.75rem]": isSamePoster(),
+        [`flex flex-col ${htmlClass || ""}`]: true,
         "first-unread": firstUnread(),
-        "pt-0 border-t-0 mt-[-0.25rem]": !isSamePoster() && firstUnread(),
-        "!mt-[-0.625rem]": isSamePoster() && !firstUnread() && mentionsUser(),
-        "border-t dark:border-neutral-800":
-          !isSamePoster() && configs.get().lineSeparator,
+        ...classList?.(),
       }}
       children={children}
     />
@@ -206,7 +208,7 @@ const TextContent: Component<TextContentProps> = ({
     }),
   );
   return (
-    <div ref={setSelf} class="post-content min-w-0 max-w-full flex-1">
+    <div ref={setSelf} class="post-text min-w-0 max-w-full flex-1">
       <RichText value={richText} />
       <Show when={!!updatedAt()}>
         <span ref={setEdited} class="select-none text-xs text-zinc-500">

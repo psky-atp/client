@@ -65,18 +65,13 @@ const PostFeed: Component = () => {
   });
 
   return (
-    <div
-      ref={setFeed}
-      class="flex h-fit w-80 flex-col items-center sm:w-[32rem]"
-    >
-      <div>
-        <button
-          class="mt-3 bg-stone-600 px-1 py-1 font-bold text-white hover:bg-stone-700"
-          onclick={async () => setPosts(posts().concat(await getPosts()))}
-        >
-          Load More
-        </button>
-      </div>
+    <div ref={setFeed} class="flex h-fit w-full flex-col items-center px-5">
+      <button
+        class="my-3 bg-stone-600 px-1 py-1 font-bold text-white hover:bg-stone-700"
+        onclick={async () => setPosts(posts().concat(await getPosts()))}
+      >
+        Load More
+      </button>
       <div class="flex w-full flex-col-reverse">
         <For each={posts()}>
           {(record, idx) => (

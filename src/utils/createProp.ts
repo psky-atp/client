@@ -2,9 +2,10 @@ import { Accessor, createSignal, Signal } from "solid-js";
 
 type Updatable<T> = T | ((prev: T) => T);
 type Setter<T> = (updatable: Updatable<T>) => T;
-interface Prop<T> {
+export interface Prop<T> {
   get: Accessor<T>;
   set: Setter<T>;
+  signal: Signal<T>;
 }
 const createProp = <T>(
   initial: T | Signal<T>,
@@ -37,6 +38,7 @@ const createProp = <T>(
   return {
     get: accessorOverrider ? accessorOverrider(signal[0]) : signal[0],
     set: setter,
+    signal,
   };
 };
 export default createProp;

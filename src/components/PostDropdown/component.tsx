@@ -10,7 +10,7 @@ import {
 } from "../SVGs.jsx";
 import { PostData } from "../../utils/types.js";
 import { getSessionDid } from "../Login.jsx";
-import { editPico } from "../PostComposer/component.jsx";
+import { editPico } from "../PostComposer.jsx";
 import { isTouchDevice } from "../../utils/lib.js";
 import { deletePico } from "../../utils/api.js";
 

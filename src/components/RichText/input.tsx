@@ -5,13 +5,21 @@ interface RichTextInputProps {
   valueRef?: Signal<string>;
   autocomplete?: "list" | "none" | "inline" | "both";
   class?: string;
+  wrapperClass?: string;
   placeholder?: string;
   type?: string;
   maxLength?: number;
   onInput?: JSX.InputEventHandlerUnion<HTMLDivElement, InputEvent>;
 }
 const RichInput = (props: RichTextInputProps) => {
-  const { ref, valueRef, autocomplete, class: htmlClass, placeholder } = props;
+  const {
+    ref,
+    valueRef,
+    autocomplete,
+    class: htmlClass,
+    wrapperClass,
+    placeholder,
+  } = props;
   const [self, setSelf] = ref ?? createSignal<HTMLDivElement>();
   const [value, setValue] = valueRef ?? createSignal<string>("");
 
@@ -31,7 +39,7 @@ const RichInput = (props: RichTextInputProps) => {
   onCleanup(() => self()?.removeEventListener("keydown", keyEvent));
 
   return (
-    <div class={htmlClass}>
+    <div class={wrapperClass}>
       <div class="relative h-full w-full">
         <div class="pointer-events-none absolute left-0 right-0 select-none truncate px-2 py-1 text-[#9ca3af]">
           {value() ? "" : placeholder}
@@ -45,7 +53,7 @@ const RichInput = (props: RichTextInputProps) => {
             aria-multiline="true"
             contenteditable={true}
             spellcheck={true}
-            class="z-[-1] overflow-hidden whitespace-pre-wrap break-words px-2 py-1"
+            class={`z-[-1] whitespace-pre-wrap break-words rounded-lg px-2 py-1 ${htmlClass}`}
             onInput={(e) => setValue(e.currentTarget.textContent ?? "")}
           />
         </div>

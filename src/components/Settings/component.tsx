@@ -8,10 +8,7 @@ interface Configs {
   lineSeparator?: boolean;
 }
 export const configs = createProp(
-  (() => {
-    let stored = localStorage.configs;
-    return !!stored ? JSON.parse(stored) : {};
-  })(),
+  !!localStorage.configs ? JSON.parse(localStorage.configs) : {},
   function (newConfigs: Configs) {
     newConfigs = { ...this[0](), ...newConfigs };
     this[1](newConfigs);

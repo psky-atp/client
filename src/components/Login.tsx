@@ -187,7 +187,7 @@ const Login: Component = () => {
   };
 
   return (
-    <div class="mb-3 flex flex-col items-center text-sm">
+    <div class="flex w-full flex-col items-center text-sm">
       <Show when={isLoggedIn() && loginState.get().handle}>
         <form
           class="mt-2 flex items-center"

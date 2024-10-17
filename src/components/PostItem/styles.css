@@ -1,37 +1,81 @@
-
-.mentions-user {
-  /* Background Colour */
-  @apply bg-neutral-200 dark:bg-neutral-800;
-  /* Border */
-  --border-left-width: 2px;
-  border-left-width: var(--border-left-width);
-  @apply rounded-md border-zinc-400;
-  /* Padding */
-  --padding: 1.5%;
-  padding: 0 var(--padding);
-  /* Width */
-  width: calc(100% + var(--border-left-width) + var(--padding) * 2);
-  margin-right: calc(-1 * var(--padding));
-  margin-left: calc(-1 * (var(--padding) + var(--border-left-width)));
+.post-item {
+  --mention-border-left-width: 2px;
+  --highlight-padding: 8px;
+  --gap-between: 20px;
+  padding-top: calc(var(--gap-between) / 2);
+  padding-left: calc(var(--highlight-padding) + var(--mention-border-left-width));
+  padding-right: calc(var(--highlight-padding));
+  padding-bottom: calc(var(--gap-between) / 2);
 }
-.first-unread::before {
-  @apply border-y dark:border-neutral-800 py-1 my-1.5;
-  content: "New messages";
-  color: rgb(239, 68, 68);
-  text-align: center;
-  width: 100%;
+.post-item.same-poster {
+  @apply pt-1;
+  margin-top: calc(-1 * var(--gap-between) / 2);
+}
+.post-item:not(.same-poster).line-separator {
+  @apply border-t dark:border-neutral-800;
+}
+.post-item.first-unread {
+  &::before {
+    @apply border-y dark:border-neutral-800 py-1 text-center w-full;
+    margin-bottom: calc(var(--gap-between) / 2);
+    content: "New messages";
+    color: rgb(239, 68, 68);
+  }
+}
+.post-item.first-unread:not(.same-poster) {
+  @apply pt-0 border-t-0;
 }
 
-.post-content {
+.post-item .post-text {
+  @apply hidden relative;
   --line-height: 1.333rem;
   --max-lines: 9;
   max-height: calc(var(--line-height)*var(--max-lines));
   line-height: var(--line-height);
-  overflow: hidden;
-  position: relative;
   /* Limits number of lines */
   display: -webkit-inline-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: var(--max-lines);
   line-clamp: var(--max-lines);
+}
+
+.highlight {
+  --highlight-border-left-width: 0px;
+  /* Background Colour */
+  @apply bg-neutral-200 dark:bg-neutral-800;
+  /* Border */
+  border-left-width: var(--highlight-border-left-width);
+  @apply rounded-md border-zinc-400;
+  /* Padding */
+  padding: 0 var(--highlight-padding);
+  /* Width */
+  width: calc(100% + var(--highlight-border-left-width) + var(--highlight-padding) * 2) !important;
+  margin-right: calc(-1 * var(--highlight-padding));
+  margin-left: calc(-1 * (var(--highlight-padding) + var(--highlight-border-left-width)));
+}
+:not(.same-poster) > .highlight {
+  @apply !py-1;
+}
+
+.post-item > .mentions-user {
+  @apply highlight;
+  --highlight-border-left-width: var(--mention-border-left-width);
+}
+
+.post-item > .editing {
+  @apply highlight;
+  animation: edit-blink 5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  /* Background Colour */
+  &:where(.dark, .dark *) {
+    --background-color: rgb(55, 55, 55) !important;
+  }
+  --background-color: rgb(219 219 219);
+}
+@keyframes edit-blink {
+  0%, 100% {
+    background-color: rgb(0 0 0 / 0);
+  }
+  50% {
+    background-color: var(--background-color);
+  }
 }

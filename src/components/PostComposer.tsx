@@ -1,28 +1,25 @@
-import "./styles.css";
-
 import { Component, createSignal, onCleanup, onMount, Show } from "solid-js";
-import { getSessionDid, loginState } from "./../Login.jsx";
-import { feed, posts } from "./../PostFeed.jsx";
-import { CHARLIMIT } from "../../utils/constants.js";
-import { graphemeLen, isInView, isTouchDevice } from "../../utils/lib.js";
-import { RichText as RichTextAPI } from "../../utils/rich-text/lib.js";
+import { getSessionDid, loginState } from "./Login.jsx";
+import { feed, posts } from "./PostFeed.jsx";
+import { CHARLIMIT } from "../utils/constants.js";
+import { graphemeLen, isInView, isTouchDevice } from "../utils/lib.js";
+import { RichText as RichTextAPI } from "../utils/rich-text/lib.js";
 import { SocialPskyFeedPost } from "@atcute/client/lexicons";
 import * as TID from "@atcute/tid";
-import { Emoji, PostData, PostRecord } from "../../utils/types.js";
-import { theme, unreadState } from "../../App.jsx";
-import createProp from "../../utils/createProp.js";
-import { deletePico } from "../../utils/api.js";
+import { Emoji, PostData, PostRecord } from "../utils/types.js";
+import { theme, unreadState } from "../App.jsx";
+import createProp from "../utils/createProp.js";
+import { deletePico } from "../utils/api.js";
 import { Picker } from "emoji-mart";
-import { IconEmojiSmile } from "../SVGs.jsx";
-import RichInput from "./../RichText/input.jsx";
+import { IconEmojiSmile } from "./SVGs.jsx";
+import RichInput from "./RichText/input.jsx";
 
 const [sendButton, setSendButton] = createSignal<HTMLButtonElement>();
 const composerInputSignal = createSignal<HTMLDivElement>();
 const [composerInput] = composerInputSignal;
 const [showPicker, setShowPicker] = createSignal(false);
 
-const composerValueSignal = createSignal<string>("");
-const composerValue = createProp(composerValueSignal, function (text: string) {
+const composerValue = createProp("", function (text: string) {
   const sendPostButton = sendButton();
   if (sendPostButton) {
     if (graphemeLen(text) > CHARLIMIT) sendPostButton.disabled = true;
@@ -86,7 +83,7 @@ const EmojiPicker: Component = () => {
       autoFocus: true,
       theme: theme.get() === "dark" ? "dark" : "light",
       data: async () => {
-        return (await import("../../assets/emoji-picker-data.json")).default;
+        return (await import("../assets/emoji-picker-data.json")).default;
       },
     });
     // NOTE: emoji-mart doesnt have proper typescript support
@@ -162,7 +159,7 @@ const PostComposer: Component = () => {
   return (
     <form
       id="postForm"
-      class="flex w-full max-w-80 items-center gap-2 px-2 pb-6 pt-4 sm:max-w-[32rem]"
+      class="layout-w flex items-center gap-2"
       onsubmit={(e) => {
         e.currentTarget.reset();
         e.preventDefault();
@@ -190,10 +187,11 @@ const PostComposer: Component = () => {
       <RichInput
         type="text"
         ref={composerInputSignal}
-        valueRef={composerValueSignal}
+        valueRef={composerValue.signal}
         placeholder={!!editPico.get() ? "edit pico" : "pico pico"}
         autocomplete="list"
-        class="flex min-w-0 flex-1 border border-black dark:border-white dark:bg-neutral-700"
+        wrapperClass="flex min-w-0 flex-1"
+        class="overflow-hidden rounded-lg border border-black dark:border-white dark:bg-neutral-700"
       />
       <button
         ref={setSendButton}

@@ -4,6 +4,7 @@ import { registerCallback } from "../utils/socket.js";
 import { ServerState } from "../utils/types.js";
 import { theme } from "../App.jsx";
 import Settings from "./Settings/component.jsx";
+import { SidebarArrow } from "./SVGs.jsx";
 
 const Header: Component = () => {
   const [sessionCount, setSessionCount] = createSignal(0);
@@ -14,29 +15,14 @@ const Header: Component = () => {
   });
 
   return (
-    <div class="mt-2 flex w-80 sm:w-[32rem]">
+    <div class="flex w-full">
       <div class="flex basis-1/3 items-center gap-2 text-sm">
         <label
           for="sidebar"
           tabIndex={0}
           class="sidebar-expand-btn btn btn-ghost btn-circle"
         >
-          <svg
-            class="text-xl"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            stroke-width="2"
-            stroke="currentColor"
-            fill="none"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M7 7l5 5l-5 5"></path>
-            <path d="M13 7l5 5l-5 5"></path>
-          </svg>
+          <SidebarArrow class="h-3.5" />
         </label>
         <Settings />
         <button
