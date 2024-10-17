@@ -9,8 +9,22 @@ const graphemeLen = (text: string): number => {
   return count;
 };
 
-const MULTILINE_VALIDATOR =
-  /\n[\u{0000}-\u{001F}\u{0020}\u{007F}\u{0080}-\u{009F}\u{00A0}\u{00AD}\u{0300}-\u{036F}\u{061C}\u{0F0B}\u{1680}\u{1AB0}-\u{1AFF}\u{1DC0}-\u{1DFF}\u{180E}\u{17B4}\u{17B5}\u{2000}-\u{200F}\u{2028}-\u{202F}\u{205F}\u{2060}-\u{206F}\u{3000}\u{3164}\u{D800}-\u{DFFF}\u{FE00}-\u{FE0F}\u{FE20}-\u{FE2F}\u{FEFF}\u{FFF9}-\u{FFFD}\u{E0000}-\u{E007F}]*\n/gu;
+const MULTILINE_VALIDATOR = (() => {
+  let pattern = "";
+  // Other: Control + Format + Surrogate + Private_Use + Unassigned
+  pattern += "\\p{C}";
+  // Separator: Space_Separator + Line_Separator + Paragraph_Separator
+  pattern += "\\p{Z}";
+  // Mark: Nonspacing_Mark + Spacing_Mark + Enclosing_Mark
+  pattern += "\\p{M}";
+  // Invisible Letters (yes, I know... unicode is damn weird hahaha)
+  pattern += "\\u{115F}\\u{1160}\\u{3164}\\u{FFA0}";
+  // Invisible Symbols
+  pattern += "\\u{2800}\\u{FFFC}\\u{1D159}";
+  // Pattern will look for two or more line breaks in a row, even if someone
+  // tries to add invalid characters in between to bypass the validation
+  return new RegExp(`\\n[${pattern}]*\\n`, "gu");
+})();
 const ensureMultilineValid = (text: string) =>
   text.replace(MULTILINE_VALIDATOR, "\n\n");
 

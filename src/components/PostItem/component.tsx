@@ -34,7 +34,7 @@ const PostItem: Component<PostItemProps> = (props: PostItemProps) => {
   const richText = createMemo(() => {
     const record = props.record();
     return new RichTextAPI({
-      text: record.post,
+      text: record.content,
       facets: record.facets,
     });
   });

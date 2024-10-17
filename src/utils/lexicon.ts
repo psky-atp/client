@@ -16,19 +16,52 @@ declare module "@atcute/client/lexicons" {
     }
   }
 
-  namespace SocialPskyFeedPost {
-    /** A Picosky post containing at most 256 graphemes. */
+  namespace SocialPskyChatMessage {
+    /** A Picosky message containing at most 2048 graphemes. */
     interface Record {
-      $type: "social.psky.feed.post";
+      $type: "social.psky.chat.message";
       /**
        * Text content. \
-       * Maximum string length: 2560 \
-       * Maximum grapheme length: 256
+       * Maximum string length: 20480 \
+       * Maximum grapheme length: 2048
        */
-      text: string;
+      content: string;
+      room: At.Uri;
       /** Annotations of text (mentions, URLs, hashtags, etc) */
       facets?: SocialPskyRichtextFacet.Main[];
       reply?: ComAtprotoRepoStrongRef.Main;
+    }
+  }
+
+  namespace SocialPskyChatRoom {
+    /** A Picosky room belonging to the user. */
+    interface Record {
+      $type: "social.psky.chat.room";
+      /**
+       * Maximum string length: 320 \
+       * Maximum grapheme length: 32
+       */
+      name: string;
+      /** List of users allowed to send messages in the room. */
+      allowlist?: ModlistRef;
+      /** List of users disallowed to send messages in the room. */
+      denylist?: ModlistRef;
+      /** Maximum array length: 3 */
+      languages?: string[];
+      /** Maximum array length: 20 */
+      tags?: string[];
+      /**
+       * Topic title of the room. \
+       * Maximum string length: 2560 \
+       * Maximum grapheme length: 256
+       */
+      topic?: string;
+    }
+    interface ModlistRef {
+      [Brand.Type]?: "social.psky.chat.room#modlistRef";
+      /** @default false */
+      active: boolean;
+      users: At.DID[];
     }
   }
 
@@ -70,7 +103,8 @@ declare module "@atcute/client/lexicons" {
 
   interface Records {
     "social.psky.actor.profile": SocialPskyActorProfile.Record;
-    "social.psky.feed.post": SocialPskyFeedPost.Record;
+    "social.psky.chat.message": SocialPskyChatMessage.Record;
+    "social.psky.chat.room": SocialPskyChatRoom.Record;
   }
 
   interface Queries {}

@@ -65,7 +65,7 @@ const PostDropdown: Component<{
         </li>
         <li>
           <a
-            href={`https://atproto-browser.vercel.app/at/${record().did}/social.psky.feed.post/${record().rkey}`}
+            href={`https://atproto-browser.vercel.app/at/${record().did}/social.psky.chat.message/${record().rkey}`}
             class="inline-flex w-max cursor-pointer items-center justify-center gap-x-2"
             target="_blank"
           >
