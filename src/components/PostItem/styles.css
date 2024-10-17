@@ -17,9 +17,18 @@
 .post-item.first-unread {
   &::before {
     @apply border-y dark:border-neutral-800 py-1 text-center w-full;
+    width: calc(100% + var(--highlight-padding) * 2 + var(--mention-border-left-width));
+    margin-left: calc(-1 * (var(--highlight-padding) + var(--mention-border-left-width)));
+    margin-right: calc(-1 * var(--highlight-padding));
     margin-bottom: calc(var(--gap-between) / 2);
     content: "New messages";
     color: rgb(239, 68, 68);
+  }
+  &.same-poster {
+    padding-top: 5px;
+    &::before {
+      margin-bottom: 5px;
+    }
   }
 }
 .post-item.first-unread:not(.same-poster) {
