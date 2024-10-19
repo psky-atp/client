@@ -173,7 +173,7 @@ const Login: Component = () => {
       .get()
       .rpc!.call("com.atproto.repo.putRecord", {
         data: {
-          repo: loginState.get().session!.sub,
+          repo: getSessionDid(),
           collection: "social.psky.actor.profile",
           rkey: "self",
           record: {
