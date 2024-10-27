@@ -23,8 +23,9 @@ export const [feed, setFeed] = createSignal<HTMLDivElement>();
 const PostFeed: Component = () => {
   let cursor = "0";
   const getPosts = async () => {
+    // FIX: hardcoded room uri
     const res = await fetch(
-      `https://${SERVER_URL}/xrpc/social.psky.chat.getMessages?limit=${MAXPOSTS}&cursor=${cursor}`,
+      `https://${SERVER_URL}/xrpc/social.psky.chat.getMessages?limit=${MAXPOSTS}&cursor=${cursor}&uri=at://did:plc:bpmiiiabnbf2hf7uuqdbjne6/social.psky.chat.room/3l6k3isiuzb2j`,
     );
     const json = await res.json();
     cursor = json.cursor.toString();
