@@ -22,7 +22,10 @@ export const unregisterCallback = (
   callback: (data: any) => void,
 ) => callbacks.get(eventNsid)?.delete(callback);
 
-const socket = new WebSocket(`wss://${SERVER_URL}/subscribe`);
+// FIX: hardcoding the room uri
+const socket = new WebSocket(
+  `wss://${SERVER_URL}/subscribe?wantedRooms=at://did:plc:bpmiiiabnbf2hf7uuqdbjne6/social.psky.chat.room/3l6k3isiuzb2j`,
+);
 socket.addEventListener("message", (event) => {
   let data = JSON.parse(event.data);
   switch (data.$type) {
