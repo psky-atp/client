@@ -13,6 +13,7 @@ import { deletePico } from "../utils/api.js";
 import RichInput from "./RichText/input.jsx";
 import { IconEmojiSmile } from "./SVGs.jsx";
 import { Picker } from "emoji-mart";
+import { configs } from "./Settings.jsx";
 
 const [sendButton, setSendButton] = createSignal<HTMLButtonElement>();
 const composerInputSignal = createSignal<HTMLDivElement>();
@@ -96,6 +97,12 @@ const EmojiPicker: Component = () => {
 };
 
 const PostComposer: Component = () => {
+  onMount(() => {
+    const input = composerInput();
+    if (input && configs.get().focusOnOpen) {
+      input.focus();
+    }
+  });
   const putPost = async (text: string, rkey?: string) => {
     let rt = new RichTextAPI({ text });
     await rt.detectFacets();

@@ -8,7 +8,11 @@ interface Configs {
 export const configs = createProp(
   (() => {
     let stored = localStorage.configs;
-    return !!stored ? JSON.parse(stored) : {};
+    return !!stored ?
+        JSON.parse(stored)
+      : {
+          focusOnOpen: false,
+        };
   })(),
   function (newConfigs: Configs) {
     newConfigs = { ...this[0](), ...newConfigs };
@@ -62,6 +66,20 @@ const Settings = () => {
               />
               <label for="lineSeparator" class="text-sm">
                 Add a line separator between messages
+              </label>
+            </div>
+            <div class="inline-flex gap-2">
+              <input
+                type="checkbox"
+                id="focusOnOpen"
+                checked={!!configs.get().focusOnOpen}
+                class="accent-stone-600"
+                onChange={(e) => {
+                  configs.set({ focusOnOpen: e.currentTarget.checked });
+                }}
+              />
+              <label for="focusOnOpen" class="text-sm">
+                Focus input when opening the app
               </label>
             </div>
           </div>
