@@ -1,19 +1,16 @@
-import { onMount, type Component } from "solid-js";
+import { createSignal, onMount, type Component } from "solid-js";
 import { APP_NAME } from "./utils/constants.js";
 import createProp from "./utils/createProp.js";
 import Layout from "./Layout.jsx";
 
-type Theme = "light" | "dark";
-export const theme = createProp<Theme>(
-  localStorage?.theme || "light",
-  function (newState: Theme) {
-    if (newState === "dark") document.documentElement.classList.add("dark");
-    else document.documentElement.classList.remove("dark");
-
-    localStorage.theme = newState;
-    this[1](newState);
-    return newState;
-  },
+export const [theme, setTheme] = createSignal(
+  (
+    localStorage.theme === "dark" ||
+      (!("theme" in localStorage) &&
+        globalThis.matchMedia("(prefers-color-scheme: dark)").matches)
+  ) ?
+    "dark"
+  : "light",
 );
 
 type UnreadState = {

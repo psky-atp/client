@@ -75,7 +75,7 @@ const EmojiPicker: Component = () => {
       onEmojiSelect: emojiEvent,
       onClickOutside: () => setShowPicker(false),
       autoFocus: true,
-      theme: theme.get() === "dark" ? "dark" : "light",
+      theme: theme() === "dark" ? "dark" : "light",
       data: async () => {
         return (await import("../assets/emoji-picker-data.json")).default;
       },
