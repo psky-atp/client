@@ -34,9 +34,6 @@ const Header: Component = () => {
         </button>
       </div>
       <div class="flex basis-1/3 flex-col text-center text-xs">
-        <a class="text-sky-500" href="https://bsky.app/profile/psky.social">
-          psky.social
-        </a>
         <span>{sessionCount()} online</span>
       </div>
       <Show when={isLoggedIn()}>
