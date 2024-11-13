@@ -11,7 +11,7 @@ import {
   untrack,
 } from "solid-js";
 import { PostRecord, DeleteEvent, UpdateEvent } from "../utils/types.js";
-import { MAXPOSTS, SERVER_URL } from "../utils/constants.js";
+import { GENERAL_ROOM_URI, MAXPOSTS, SERVER_URL } from "../utils/constants.js";
 import PostItem from "./PostItem/component.jsx";
 import { loginState } from "./Login.jsx";
 import { unreadState } from "../App.jsx";
@@ -25,7 +25,7 @@ const PostFeed: Component = () => {
   const getPosts = async () => {
     // FIX: hardcoded room uri
     const res = await fetch(
-      `https://${SERVER_URL}/xrpc/social.psky.chat.getMessages?limit=${MAXPOSTS}&cursor=${cursor}&uri=at://did:plc:bpmiiiabnbf2hf7uuqdbjne6/social.psky.chat.room/3l6k3isiuzb2j`,
+      `https://${SERVER_URL}/xrpc/social.psky.chat.getMessages?limit=${MAXPOSTS}&cursor=${cursor}&uri=${GENERAL_ROOM_URI}`,
     );
     const json = await res.json();
     cursor = json.cursor.toString();
