@@ -1,4 +1,4 @@
-import { SERVER_URL } from "./constants.js";
+import { GENERAL_ROOM_URI, SERVER_URL } from "./constants.js";
 import { WebSocket } from "partysocket";
 
 type SocketMessageKind =
@@ -24,7 +24,7 @@ export const unregisterCallback = (
 
 // FIX: hardcoding the room uri
 const socket = new WebSocket(
-  `wss://${SERVER_URL}/subscribe?wantedRooms=at://did:plc:bpmiiiabnbf2hf7uuqdbjne6/social.psky.chat.room/3l6k3isiuzb2j`,
+  `wss://${SERVER_URL}/subscribe?wantedRooms=${GENERAL_ROOM_URI}`,
 );
 socket.addEventListener("message", (event) => {
   let data = JSON.parse(event.data);
