@@ -1,5 +1,5 @@
 import { Component, createSignal, onMount, Show } from "solid-js";
-import { resolveDid, resolveHandle } from "../utils/api.js";
+import { resolveDid } from "../utils/api.js";
 import { CredentialManager, XRPC } from "@atcute/client";
 import { At, SocialPskyActorProfile } from "@atcute/client/lexicons";
 import {
@@ -54,10 +54,8 @@ export const isLoggedIn = () => stateIsLoggedIn(loginState.get());
 export const getSessionDid = () =>
   loginState.get().session?.sub ?? loginState.get().did!;
 
-let manager: CredentialManager;
 const Login: Component = () => {
   const [loginInput, setLoginInput] = createSignal("");
-  const [password, setPassword] = createSignal("");
   const [nickname, setNickname] = createSignal("");
   const [notice, setNotice] = createSignal("");
 
@@ -117,54 +115,23 @@ const Login: Component = () => {
     }),
   );
 
-  const fetchService = async (handle: string) => {
-    const did = await resolveHandle(handle);
-    if (!did) return;
-
-    const res = await fetch(
-      did.startsWith("did:web") ?
-        "https://" + did.split(":")[2] + "/.well-known/did.json"
-      : "https://plc.directory/" + did,
-    );
-
-    return res.json().then((doc) => {
-      for (const service of doc.service) {
-        if (service.id.includes("#atproto_pds")) {
-          return service.serviceEndpoint;
-        }
-      }
-    });
-  };
-
   const login = async (handle: string) => {
-    if (password().length) {
-      const service = await fetchService(handle);
-      manager = new CredentialManager({ service: service });
-      loginState.set({
-        manager: manager,
-        rpc: new XRPC({ handler: manager }),
-        handle: loginInput(),
-        did: await resolveHandle(loginInput()),
+    try {
+      setNotice(`Resolving your identity...`);
+      const resolved = await resolveFromIdentity(handle);
+
+      setNotice(`Contacting your data server...`);
+      const authUrl = await createAuthorizationUrl({
+        scope: import.meta.env.VITE_OAUTH_SCOPE,
+        ...resolved,
       });
-      await manager.login({ identifier: loginInput(), password: password() });
-    } else {
-      try {
-        setNotice(`Resolving your identity...`);
-        const resolved = await resolveFromIdentity(handle);
 
-        setNotice(`Contacting your data server...`);
-        const authUrl = await createAuthorizationUrl({
-          scope: import.meta.env.VITE_OAUTH_SCOPE,
-          ...resolved,
-        });
+      setNotice(`Redirecting...`);
+      await new Promise((resolve) => setTimeout(resolve, 250));
 
-        setNotice(`Redirecting...`);
-        await new Promise((resolve) => setTimeout(resolve, 250));
-
-        location.assign(authUrl);
-      } catch (err) {
-        setNotice("Error during OAuth login");
-      }
+      location.assign(authUrl);
+    } catch (err) {
+      setNotice("Error during OAuth login");
     }
   };
 
@@ -214,7 +181,7 @@ const Login: Component = () => {
       </Show>
       <Show when={!isLoggedIn() && !notice().includes("Loading")}>
         <form
-          class="mt-3 flex flex-col items-center"
+          class="mt-3 flex items-center"
           onsubmit={(e) => e.preventDefault()}
         >
           <div>
@@ -229,19 +196,7 @@ const Login: Component = () => {
               onInput={(e) => setLoginInput(e.currentTarget.value)}
             />
           </div>
-          <div class="mt-2">
-            <label for="password" class="ml-1 mr-2">
-              App Password:
-            </label>
-            <input
-              type="password"
-              id="password"
-              placeholder="leave empty for oauth"
-              class="mr-2 w-44 border border-black px-2 py-1 dark:border-white dark:bg-neutral-700"
-              onInput={(e) => setPassword(e.currentTarget.value)}
-            />
-          </div>
-          <div class="mt-2">
+          <div>
             <button
               onclick={() => login(loginInput())}
               class="bg-stone-600 px-1 py-1 text-sm font-bold text-white hover:bg-stone-700"
