@@ -1,4 +1,4 @@
-import { Accessor, Component, createMemo } from "solid-js";
+import { type Accessor, type Component, createMemo } from "solid-js";
 import { RichText as RichTextAPI } from "../../utils/rich-text/lib.js";
 import { ensureMultilineValid } from "../../utils/lib.js";
 
@@ -16,7 +16,7 @@ export const RichText: Component<RichTextProps> = ({
       val instanceof RichTextAPI ? val : new RichTextAPI({ text: val });
     const { text, facets } = richText;
 
-    if (!!facets?.length) {
+    if (facets?.length) {
       const seg = [];
       // Must access segments via `richText.segments`, not via destructuring
       for (const segment of richText.segments()) {
@@ -24,7 +24,7 @@ export const RichText: Component<RichTextProps> = ({
           seg.push(<span class="font-bold">{segment.text}</span>);
         } else if (segment.link) {
           seg.push(
-            <a target="_blank" class="text-sky-500" href={segment.link.uri}>
+            <a target="_blank" rel="noreferrer" class="text-sky-500" href={segment.link.uri}>
               {segment.text}
             </a>,
           );
@@ -35,7 +35,7 @@ export const RichText: Component<RichTextProps> = ({
             </span>,
           );
         } else {
-          seg.push(<>{ensureMultilineValid(segment.text)}</>);
+          seg.push(ensureMultilineValid(segment.text));
         }
       }
       return seg;
