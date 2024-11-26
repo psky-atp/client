@@ -6,14 +6,10 @@ interface RichTextProps {
   class?: string;
   value: Accessor<RichTextAPI | string>;
 }
-export const RichText: Component<RichTextProps> = ({
-  class: htmlClass,
-  value,
-}: RichTextProps) => {
+export const RichText: Component<RichTextProps> = ({ class: htmlClass, value }: RichTextProps) => {
   const res = createMemo(() => {
     const val = value();
-    const richText =
-      val instanceof RichTextAPI ? val : new RichTextAPI({ text: val });
+    const richText = val instanceof RichTextAPI ? val : new RichTextAPI({ text: val });
     const { text, facets } = richText;
 
     if (facets?.length) {
@@ -29,11 +25,7 @@ export const RichText: Component<RichTextProps> = ({
             </a>,
           );
         } else if (segment.room) {
-          seg.push(
-            <span class="text-emerald-500 dark:text-emerald-400">
-              {segment.text}
-            </span>,
-          );
+          seg.push(<span class="text-emerald-500 dark:text-emerald-400">{segment.text}</span>);
         } else {
           seg.push(ensureMultilineValid(segment.text));
         }
@@ -45,10 +37,6 @@ export const RichText: Component<RichTextProps> = ({
   });
 
   return (
-    <span
-      class={`overflow-hidden text-ellipsis whitespace-pre-wrap break-words ${htmlClass ?? ""}`}
-    >
-      {res()}
-    </span>
+    <span class={`overflow-hidden text-ellipsis whitespace-pre-wrap break-words ${htmlClass ?? ""}`}>{res()}</span>
   );
 };

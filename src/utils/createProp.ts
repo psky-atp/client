@@ -1,4 +1,4 @@
-import { Accessor, createSignal, Signal } from "solid-js";
+import { type Accessor, createSignal, type Signal } from "solid-js";
 
 type Updatable<T> = T | ((prev: T) => T);
 type Setter<T> = (updatable: Updatable<T>) => T;
@@ -14,24 +14,16 @@ const createProp = <T>(
   // Type guard to check if initial is Signal<T>
   function isSignal<T>(value: any): value is Signal<T> {
     return (
-      Array.isArray(value) &&
-      value.length === 2 &&
-      typeof value[0] === "function" &&
-      typeof value[1] === "function"
+      Array.isArray(value) && value.length === 2 && typeof value[0] === "function" && typeof value[1] === "function"
     );
   }
-  const signal =
-    isSignal(initial) ? (initial as Signal<T>) : createSignal<T>(initial as T);
+  const signal = isSignal(initial) ? (initial as Signal<T>) : createSignal<T>(initial as T);
 
   let setter: Setter<T>;
   if (setterOverrider) {
     const overrider = setterOverrider.bind(signal);
     setter = (updatable: Updatable<T>) =>
-      overrider(
-        typeof updatable === "function" ?
-          (updatable as Function)(signal[0]())
-        : updatable,
-      );
+      overrider(typeof updatable === "function" ? (updatable as Function)(signal[0]()) : updatable);
   } else setter = signal[1];
 
   return {

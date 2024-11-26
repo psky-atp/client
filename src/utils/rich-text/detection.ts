@@ -1,12 +1,7 @@
 import TLDs from "tlds";
-import { UnicodeString } from "./unicode.js";
-import {
-  URL_REGEX,
-  MENTION_REGEX,
-  TAG_REGEX as ROOM_REGEX,
-  TRAILING_PUNCTUATION_REGEX,
-} from "./util.js";
-import { SocialPskyRichtextFacet } from "@atcute/client/lexicons";
+import type { UnicodeString } from "./unicode.js";
+import { URL_REGEX, MENTION_REGEX, TAG_REGEX as ROOM_REGEX, TRAILING_PUNCTUATION_REGEX } from "./util.js";
+import type { SocialPskyRichtextFacet } from "@atcute/client/lexicons";
 
 type Facet = SocialPskyRichtextFacet.Main;
 

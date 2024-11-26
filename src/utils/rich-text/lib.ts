@@ -95,7 +95,7 @@ import { resolveHandle } from "../api.js";
 import { UnicodeString } from "./unicode.js";
 import { sanitizeRichText } from "./sanitization.js";
 import { facetSort, isLink, isMention, isRoom } from "./util.js";
-import { SocialPskyRichtextFacet } from "@atcute/client/lexicons";
+import type { SocialPskyRichtextFacet } from "@atcute/client/lexicons";
 import detect from "./detection.js";
 
 export type Facet = SocialPskyRichtextFacet.Main;
@@ -206,18 +206,13 @@ export class RichText {
     do {
       const currFacet = facets[facetCursor];
       if (textCursor < currFacet.index.byteStart) {
-        yield new RichTextSegment(
-          this.unicodeText.slice(textCursor, currFacet.index.byteStart),
-        );
+        yield new RichTextSegment(this.unicodeText.slice(textCursor, currFacet.index.byteStart));
       } else if (textCursor > currFacet.index.byteStart) {
         facetCursor++;
         continue;
       }
       if (currFacet.index.byteStart < currFacet.index.byteEnd) {
-        const subtext = this.unicodeText.slice(
-          currFacet.index.byteStart,
-          currFacet.index.byteEnd,
-        );
+        const subtext = this.unicodeText.slice(currFacet.index.byteStart, currFacet.index.byteEnd);
         if (!subtext.trim()) {
           // dont empty string entities
           yield new RichTextSegment(subtext);
@@ -229,17 +224,13 @@ export class RichText {
       facetCursor++;
     } while (facetCursor < facets.length);
     if (textCursor < this.unicodeText.length) {
-      yield new RichTextSegment(
-        this.unicodeText.slice(textCursor, this.unicodeText.length),
-      );
+      yield new RichTextSegment(this.unicodeText.slice(textCursor, this.unicodeText.length));
     }
   }
 
   insert(insertIndex: number, insertText: string) {
     this.unicodeText = new UnicodeString(
-      this.unicodeText.slice(0, insertIndex) +
-        insertText +
-        this.unicodeText.slice(insertIndex),
+      this.unicodeText.slice(0, insertIndex) + insertText + this.unicodeText.slice(insertIndex),
     );
 
     if (!this.facets?.length) {
@@ -256,10 +247,7 @@ export class RichText {
         ent.index.byteEnd += numCharsAdded;
       }
       // scenario B (inner)
-      else if (
-        insertIndex >= ent.index.byteStart &&
-        insertIndex < ent.index.byteEnd
-      ) {
+      else if (insertIndex >= ent.index.byteStart && insertIndex < ent.index.byteEnd) {
         // move end by num added
         ent.index.byteEnd += numCharsAdded;
       }
@@ -271,8 +259,7 @@ export class RichText {
 
   delete(removeStartIndex: number, removeEndIndex: number) {
     this.unicodeText = new UnicodeString(
-      this.unicodeText.slice(0, removeStartIndex) +
-        this.unicodeText.slice(removeEndIndex),
+      this.unicodeText.slice(0, removeStartIndex) + this.unicodeText.slice(removeEndIndex),
     );
 
     if (!this.facets?.length) {
@@ -283,10 +270,7 @@ export class RichText {
     for (const ent of this.facets) {
       // see comment at top of file for labels of each scenario
       // scenario A (entirely outer)
-      if (
-        removeStartIndex <= ent.index.byteStart &&
-        removeEndIndex >= ent.index.byteEnd
-      ) {
+      if (removeStartIndex <= ent.index.byteStart && removeEndIndex >= ent.index.byteEnd) {
         // delete slice (will get removed in final pass)
         ent.index.byteStart = 0;
         ent.index.byteEnd = 0;
@@ -305,10 +289,7 @@ export class RichText {
         ent.index.byteEnd = removeStartIndex;
       }
       // scenario D (entirely inner)
-      else if (
-        removeStartIndex >= ent.index.byteStart &&
-        removeEndIndex <= ent.index.byteEnd
-      ) {
+      else if (removeStartIndex >= ent.index.byteStart && removeEndIndex <= ent.index.byteEnd) {
         // move end by num removed
         ent.index.byteEnd -= numCharsRemoved;
       }
@@ -331,9 +312,7 @@ export class RichText {
     }
 
     // filter out any facets that were made irrelevant
-    this.facets = this.facets.filter(
-      (ent) => ent.index.byteStart < ent.index.byteEnd,
-    );
+    this.facets = this.facets.filter((ent) => ent.index.byteStart < ent.index.byteEnd);
     return this;
   }
 
@@ -348,9 +327,7 @@ export class RichText {
         for (const feature of facet.features) {
           if (isMention(feature)) {
             const mention = feature as FacetMention;
-            const did = await resolveHandle(mention.did).catch(
-              (_) => undefined,
-            );
+            const did = await resolveHandle(mention.did).catch((_) => undefined);
             mention.did = did || "";
           }
         }

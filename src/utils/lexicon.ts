@@ -107,7 +107,7 @@ declare module "@atcute/client/lexicons" {
     "social.psky.chat.room": SocialPskyChatRoom.Record;
   }
 
-  interface Queries {}
+  type Queries = {}
 
-  interface Procedures {}
+  type Procedures = {}
 }

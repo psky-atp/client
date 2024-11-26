@@ -1,7 +1,7 @@
 const isTouchDevice = "ontouchstart" in window || navigator.maxTouchPoints > 1;
 
 const graphemeLen = (text: string): number => {
-  let iterator = new Intl.Segmenter().segment(text)[Symbol.iterator]();
+  const iterator = new Intl.Segmenter().segment(text)[Symbol.iterator]();
   let count = 0;
 
   while (!iterator.next().done) count++;
@@ -25,15 +25,10 @@ const MULTILINE_VALIDATOR = (() => {
   // tries to add invalid characters in between to bypass the validation
   return new RegExp(`\\n[${pattern}]*\\n`, "gu");
 })();
-const ensureMultilineValid = (text: string) =>
-  text.replace(MULTILINE_VALIDATOR, "\n\n");
+const ensureMultilineValid = (text: string) => text.replace(MULTILINE_VALIDATOR, "\n\n");
 
 const isOverflowing = (element?: Element | null) => {
-  return (
-    element &&
-    (element.scrollWidth > element.clientWidth ||
-      element.scrollHeight > element.clientHeight)
-  );
+  return element && (element.scrollWidth > element.clientWidth || element.scrollHeight > element.clientHeight);
 };
 
 /// HACK:
@@ -49,13 +44,7 @@ function convertToPx(parent: HTMLElement, size: string) {
   const computedWidth = getComputedStyle(tempElement).width;
   parent.removeChild(tempElement);
 
-  return parseFloat(computedWidth);
+  return Number.parseFloat(computedWidth);
 }
 
-export {
-  graphemeLen,
-  ensureMultilineValid,
-  isOverflowing,
-  convertToPx,
-  isTouchDevice,
-};
+export { graphemeLen, ensureMultilineValid, isOverflowing, convertToPx, isTouchDevice };

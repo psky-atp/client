@@ -1,7 +1,4 @@
-async function* chrono(
-  msDuration: number,
-  msInterval: number,
-): AsyncGenerator<number, number, unknown> {
+async function* chrono(msDuration: number, msInterval: number): AsyncGenerator<number, number, unknown> {
   const start = Date.now();
   const getDiff = () => Date.now() - start;
 

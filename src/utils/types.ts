@@ -1,7 +1,4 @@
-import {
-  ComAtprotoRepoStrongRef,
-  SocialPskyRichtextFacet,
-} from "@atcute/client/lexicons";
+import type { ComAtprotoRepoStrongRef, SocialPskyRichtextFacet } from "@atcute/client/lexicons";
 
 interface Emoji {
   aliases?: string[];
@@ -44,11 +41,4 @@ interface ServerState {
   sessionCount: number;
 }
 
-export type {
-  Emoji,
-  PostData,
-  PostRecord,
-  UpdateEvent,
-  DeleteEvent,
-  ServerState,
-};
+export type { Emoji, PostData, PostRecord, UpdateEvent, DeleteEvent, ServerState };
